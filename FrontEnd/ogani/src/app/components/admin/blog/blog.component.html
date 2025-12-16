@@ -1,0 +1,178 @@
+<p-card class="card">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="Add Blog" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="showNew()"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="listBlog" [rows]="10" [paginator]="true" [globalFilterFields]="['title','name']"
+        [tableStyle]="{'min-width': '75rem'}" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Manage Blog</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Search" />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th>Image</th>
+                <th pSortableColumn="name" style="min-width:10rem">Title <p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="price" style="min-width:15rem">Description <p-sortIcon field="price"></p-sortIcon>
+                </th>
+                <th pSortableColumn="category" style="min-width:15rem">Content <p-sortIcon
+                        field="category"></p-sortIcon></th>
+                <th style="min-width:10rem">Action</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-blog>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="blog"></p-tableCheckbox>
+                </td>
+                <td>
+                    <img *ngIf="blog.image" [src]="'http://localhost:8080/api/image/file/' + blog.image.name"
+                        [alt]="blog.title" width="100" class="shadow-4" onerror="this.src='assets/image/cat-1.jpg'" />
+                    <img *ngIf="!blog.image" src="assets/image/cat-1.jpg" [alt]="blog.title" width="100"
+                        class="shadow-4" />
+                </td>
+                <td>{{blog.title}}</td>
+                <td>{{blog.description}}</td>
+                <td>{{blog.content}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                        (click)="showUpdate(blog)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="showDelete(blog.id,blog.title)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                <!-- In total there are {{products ? products.length : 0 }} products. -->
+            </div>
+        </ng-template>
+    </p-table>
+
+</p-card>
+
+
+
+<p-dialog [(visible)]="showForm" [style]="{width: '30vw'}" header="Product Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <!-- <img [src]="'assets/showcase/images/demo/product/' + product.image" [alt]="product.image" class="product-image" *ngIf="product.image"> -->
+        <div class="field">
+            <label class="font-bold mb-2 block">Title</label>
+            <input type="text" pInputText class="w-full" [(ngModel)]="blogForm.title" name="title" required>
+        </div>
+        <div class="field">
+            <label class="font-bold mb-2 block">Content</label>
+            <textarea pInputTextarea class="w-full" [(ngModel)]="blogForm.content" name="content" rows="5"
+                required></textarea>
+        </div>
+        <div class="field">
+            <label class="font-bold mb-2 block">Description</label>
+            <textarea pInputTextarea class="w-full" [(ngModel)]="blogForm.description" name="description" rows="3"
+                required></textarea>
+        </div>
+        <div class="field">
+            <label class="font-bold mb-2 block">Status</label>
+            <p-dropdown [options]="statusOptions" [(ngModel)]="blogForm.status" name="status" optionLabel="name"
+                optionValue="value" class="w-full"></p-dropdown>
+        </div>
+
+        <div class="field">
+            <label class="font-bold mb-2 block">Tag</label>
+            <p-multiSelect [options]="listTag" [(ngModel)]="selectedTags" optionLabel="name" optionValue="id"
+                class="w-full"></p-multiSelect>
+            <!-- <small class="p-error" *ngIf="submitted && !product.name">Name is required.</small> -->
+        </div>
+
+        <div class="field">
+            <label class="font-bold mb-2 block">Blog Image</label>
+            <div class="flex flex-column gap-2">
+                <div class="flex align-items-center gap-2">
+                    <input type="file" #file accept="image/*" (change)="uploadFile($event)" hidden>
+                    <button pButton (click)="file.click()" label="Upload from computer" icon="pi pi-upload"
+                        class="p-button-primary w-auto"></button>
+                    <span class="text-sm text-primary font-italic">*Image will be automatically selected after
+                        upload</span>
+                </div>
+                <p-divider></p-divider>
+                <button pButton type="button" class="p-button-outlined p-button-secondary w-auto"
+                    (click)="onChooseImage()">Choose from image library</button>
+            </div>
+
+            <p-dialog header="Image Library" [(visible)]="showImage" position="top" [modal]="true"
+                [style]="{width: '70vw'}" [transitionOptions]="'.3s'">
+                <div class="flex justify-content-between">
+                    <div>
+                        <input type="file" #fileDialog accept="image/*" (change)="uploadFile($event)" hidden>
+                        <button pButton (click)="fileDialog.click()" label="Upload new image" icon="pi pi-upload"
+                            class="p-button-primary w-auto"></button>
+                        <span class="ml-2 text-sm text-gray-500">*Image will be automatically selected after
+                            upload</span>
+                    </div>
+                    <div>
+                        <button pButton class="p-button-primary w-auto" label="Select image" [disabled]="disabled"
+                            (click)="chooseImage()"></button>
+                    </div>
+                </div>
+                <p-divider align="left">
+                    <span class="font-bold">Image Library</span>
+                </p-divider>
+                <p class="text-sm text-blue-500 mb-2">Tip: Double-click on an image to select it quickly</p>
+                <div class="grid">
+                    <div class="col-3 list-image flex align-items-center" *ngFor="let image of listImage">
+                        <div class="image-container w-full h-full relative">
+                            <img [src]="'http://localhost:8080/api/image/file/' + (image.name || '')" alt="Image"
+                                class="w-full h-full p-2 border-1" (click)="selectImage($event,image)"
+                                (dblclick)="selectAndChooseImage($event,image)" title="Double-click to select image"
+                                onerror="this.src='assets/image/cat-1.jpg'; this.classList.add('error-image')">
+                            <div class="image-id">ID: {{image.id}}</div>
+                        </div>
+                    </div>
+                </div>
+            </p-dialog>
+            <div class="mt-3" *ngIf="image != null">
+                <p class="font-bold">Selected Image:</p>
+                <div class="product-image" style="max-width: 200px;">
+                    <img [src]="'http://localhost:8080/api/image/file/' + (image.name || '')" alt="Selected image"
+                        class="w-full h-full border-1 border-primary border-round"
+                        onerror="this.src='assets/image/cat-1.jpg'; this.classList.add('error-image')">
+                    <button pButton pRipple type="button" icon="pi pi-times"
+                        class="p-button-rounded p-button-danger p-button-text delete-image"
+                        (click)="removeImage()"></button>
+                </div>
+            </div>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button type="submit" pButton *ngIf="!onUpdate" (click)="createBlog()">Create</button>
+        <button type="submit" pButton *ngIf="onUpdate" (click)="updateBlog()">Update</button>
+        <button pButton type="button" class="p-button-danger ml-3" (click)="showForm=false">Cancel</button>
+    </ng-template>
+</p-dialog>
+
+
+<p-dialog header="Confirm" [(visible)]="onDelete" [style]="{width :'30vw'}" [modal]="true" [transitionOptions]="'.3s'">
+    <div>
+        <i class="pi pi pi-exclamation-triangle"></i>
+        <span class="ml-2">Are you sure you want to delete <span>{{blogForm.title}}</span>?</span>
+    </div>
+    <div class="flex justify-content-end mt-3">
+        <p-button label="Yes" icon="pi pi-check" class="mr-2" (click)="deleteBlog()"></p-button>
+        <p-button label="No" icon="pi pi-times" (click)="onDelete=false"></p-button>
+    </div>
+</p-dialog>

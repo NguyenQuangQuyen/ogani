@@ -1,0 +1,22 @@
+<!-- Trang xử lý khi OAuth2 thành công -->
+<div class="oauth-success-container">
+    <p-toast></p-toast>
+
+    <div class="card" *ngIf="!error">
+        <div class="card-body text-center" *ngIf="loading">
+            <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+                animationDuration=".5s"></p-progressSpinner>
+            <h3>Processing login...</h3>
+            <p>You will be redirected to the homepage in a few seconds.</p>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="error">
+        <div class="card-body text-center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f44336;"></i>
+            <h3>Login Error</h3>
+            <p>{{ errorMessage }}</p>
+            <p>You will be redirected to the login page.</p>
+        </div>
+    </div>
+</div>

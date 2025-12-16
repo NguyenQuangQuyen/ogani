@@ -1,0 +1,28 @@
+.price-input{
+    font-size: 16px;
+    color: #dd2222;
+    font-weight: 700;
+    border: none;
+    display: inline-block;
+}
+
+
+:host ::ng-deep .p-slider .p-slider-range, :host ::ng-deep  .p-slider .p-slider-handle {
+    background-color: #dd2222;
+    border-color: #dd2222;
+}
+
+:host ::ng-deep .p-dataview.p-dataview-list .p-dataview-content > .p-grid > div{
+    border: none;
+}
+
+.active-category {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    border-left: 3px solid #7fad39;
+    padding-left: 5px;
+}
+
+.active-category a {
+    color: #7fad39 !important;
+}

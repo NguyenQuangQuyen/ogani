@@ -1,0 +1,197 @@
+/* About Section */
+.about {
+    padding: 80px 0;
+}
+
+.about__text h3 {
+    color: #1c1c1c;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.about__text p {
+    margin-bottom: 20px;
+    color: #6f6f6f;
+    line-height: 1.8;
+}
+
+.about__image {
+    position: relative;
+}
+
+.about__image img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Mission Section */
+.mission {
+    padding: 80px 0;
+    background-color: #f5f5f5;
+}
+
+.mission__text h3 {
+    color: #1c1c1c;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.mission__text p {
+    margin-bottom: 20px;
+    color: #6f6f6f;
+    line-height: 1.8;
+}
+
+.mission__text h4 {
+    color: #1c1c1c;
+    font-weight: 700;
+}
+
+.mission__list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.mission__list li {
+    margin-bottom: 10px;
+    color: #6f6f6f;
+}
+
+.mission__list li i {
+    color: #7fad39;
+    margin-right: 10px;
+}
+
+.mission__image img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Features Section */
+.features {
+    padding: 80px 0;
+}
+
+.feature__item {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.feature__item__icon {
+    margin-bottom: 20px;
+}
+
+.feature__item__icon span {
+    font-size: 36px;
+    color: #7fad39;
+}
+
+.feature__item h6 {
+    font-weight: 700;
+    color: #1c1c1c;
+    margin-bottom: 15px;
+}
+
+.feature__item p {
+    color: #6f6f6f;
+    margin-bottom: 0;
+}
+
+/* Team Section */
+.team {
+    padding: 80px 0;
+    background-color: #f5f5f5;
+}
+
+.team__item {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.team__item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.team__item h5 {
+    font-weight: 700;
+    color: #1c1c1c;
+    margin-bottom: 5px;
+}
+
+.team__item span {
+    font-size: 14px;
+    color: #6f6f6f;
+}
+
+/* Testimonial Section */
+.testimonial {
+    padding: 80px 0;
+}
+
+.testimonial__item {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    height: 100%;
+}
+
+.testimonial__item p {
+    font-style: italic;
+    color: #6f6f6f;
+    margin-bottom: 20px;
+    line-height: 1.8;
+}
+
+.testimonial__author {
+    display: flex;
+    align-items: center;
+}
+
+.testimonial__author__pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+.testimonial__author__pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.testimonial__author__text h5 {
+    font-weight: 700;
+    color: #1c1c1c;
+    margin-bottom: 5px;
+}
+
+.testimonial__author__text span {
+    font-size: 12px;
+    color: #6f6f6f;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .about__image, .mission__image {
+        margin-top: 30px;
+    }
+    
+    .mission__text {
+        margin-top: 30px;
+    }
+    
+    .testimonial__item {
+        margin-bottom: 30px;
+    }
+}

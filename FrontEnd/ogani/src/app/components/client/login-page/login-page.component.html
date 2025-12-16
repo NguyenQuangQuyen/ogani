@@ -1,0 +1,137 @@
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form (submit)="$event.preventDefault()">
+			<h1>Create Account</h1>
+			<input type="text" placeholder="Username" [(ngModel)]="registerForm.username" name="username" />
+			<input type="email" placeholder="Email" [(ngModel)]="registerForm.email" name="email" />
+			<input type="password" placeholder="Password" [(ngModel)]="registerForm.password" name="password" />
+			<button type="button" (click)="register()">Sign Up</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form (submit)="$event.preventDefault()">
+			<h1>Log in</h1>
+			<input type="text" placeholder="Username" [(ngModel)]="loginForm.username" name="username" />
+			<input type="password" placeholder="Password" [(ngModel)]="loginForm.password" name="password" />
+
+			<button type="button" (click)="login()">Login</button>
+			<div class="login-divider">
+				<span>OR</span>
+			</div>
+			<div class="social-login">
+				<button type="button" class="google-login-btn" (click)="simulateGoogleLogin()">
+					<img src="assets/image/google-logo.png" alt="Google" width="20">
+					<span>Login with Google</span>
+				</button>
+			</div>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>To keep connected with us please login with your personal info</p>
+				<button class="ghost" id="signIn" (click)="loginFormChange()">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello, Friend!</h1>
+				<p>Enter your personal details and start journey with us</p>
+				<button class="ghost" id="signUp" (click)="registerFormChange()">Sign Up</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Dialog for login error notification -->
+<p-dialog [(visible)]="displayErrorDialog" [modal]="true" header="Login Error" [style]="{width: '450px'}"
+	[baseZIndex]="10000">
+	<div class="error-dialog-content">
+		<i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f44336; margin-bottom: 1rem;"></i>
+		<h3>{{ errorTitle }}</h3>
+		<p>{{ errorMessage }}</p>
+	</div>
+	<ng-template pTemplate="footer">
+		<button pButton type="button" label="Đã hiểu" (click)="closeErrorDialog()" class="p-button-text"></button>
+	</ng-template>
+</p-dialog>
+
+<!-- Dialog for successful registration notification -->
+<p-dialog [(visible)]="displayRegisterSuccessDialog" [modal]="true" header="Registration Successful"
+	[style]="{width: '450px'}" [baseZIndex]="10000" [closable]="false">
+	<div class="success-dialog-content">
+		<i class="pi pi-check-circle" style="font-size: 3rem; color: #4CAF50; margin-bottom: 1rem;"></i>
+		<h3>Account registration successful!</h3>
+		<p>You have successfully registered your account. Please log in to continue using the service.</p>
+	</div>
+	<ng-template pTemplate="footer">
+		<button pButton type="button" label="Log in now" (click)="closeRegisterSuccessDialog()"
+			class="p-button-success"></button>
+	</ng-template>
+</p-dialog>
+
+<!-- Dialog for forgot password -->
+<p-dialog [(visible)]="displayForgotPasswordDialog" [modal]="true" header="Forgot Password" [style]="{width: '450px'}"
+	[baseZIndex]="10000">
+	<div class="forgot-password-dialog-content">
+		<i class="pi pi-lock" style="font-size: 3rem; color: #2196F3; margin-bottom: 1rem;"></i>
+
+		<!-- Step 1: Enter information -->
+		<div *ngIf="forgotPasswordStep === 1" class="forgot-password-step">
+			<h3>Password Recovery</h3>
+			<p>Please enter your registered account and email. We will verify your information.</p>
+			<div class="p-fluid">
+				<div class="p-field">
+					<label for="username">Account</label>
+					<input type="text" id="username" pInputText [(ngModel)]="forgotPasswordUsername"
+						placeholder="Account" />
+				</div>
+				<div class="p-field">
+					<label for="email">Email</label>
+					<input type="email" id="email" pInputText [(ngModel)]="forgotPasswordEmail" placeholder="Email" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Step 2: Reset password -->
+		<div *ngIf="forgotPasswordStep === 2" class="forgot-password-step">
+			<h3>Reset Password</h3>
+			<p>Please enter your new password.</p>
+			<div class="p-fluid">
+				<div class="p-field">
+					<label for="newPassword">New password</label>
+					<input type="password" id="newPassword" pInputText [(ngModel)]="newPassword"
+						placeholder="New password" />
+				</div>
+				<div class="p-field">
+					<label for="confirmPassword">Confirm password</label>
+					<input type="password" id="confirmPassword" pInputText [(ngModel)]="confirmPassword"
+						placeholder="Confirm password" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Step 3: Success confirmation -->
+		<div *ngIf="forgotPasswordStep === 3" class="forgot-password-step success-step">
+			<i class="pi pi-check-circle" style="font-size: 3rem; color: #4CAF50; margin-bottom: 1rem;"></i>
+			<h3>Password reset successful!</h3>
+			<p>Your password has been updated. Please login again with your new password.</p>
+		</div>
+	</div>
+	<ng-template pTemplate="footer">
+		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Cancel"
+			(click)="closeForgotPasswordDialog()" class="p-button-text"></button>
+		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Continue"
+			(click)="verifyForgotPasswordInfo()" class="p-button-primary"></button>
+
+		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Back" (click)="forgotPasswordStep = 1"
+			class="p-button-text"></button>
+		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Reset password" (click)="resetPassword()"
+			class="p-button-primary"></button>
+
+		<button *ngIf="forgotPasswordStep === 3" pButton type="button" label="Login now"
+			(click)="closeForgotPasswordAndLogin()" class="p-button-success"></button>
+	</ng-template>
+</p-dialog>
+
+<!-- Toast container for error notifications -->
+<p-toast position="top-right"></p-toast>

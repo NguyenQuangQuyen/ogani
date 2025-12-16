@@ -1,0 +1,44 @@
+/* Sidebar styling */
+.sidebar {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+    background-size: cover;
+}
+
+.sidebar-brand {
+    height: 4.375rem;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    letter-spacing: 0.05rem;
+}
+
+.sidebar-brand-text {
+    color: #fff;
+}
+
+.sidebar-heading {
+    padding: 0 1rem;
+    font-weight: 800;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+}
+
+.sidebar hr {
+    margin: 0 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.nav-item.active .nav-link {
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* User profile image */
+.img-profile {
+    height: 2rem;
+    width: 2rem;
+} 

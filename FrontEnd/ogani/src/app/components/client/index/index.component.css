@@ -1,0 +1,206 @@
+.cart-box{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+}
+.listItemInCart .cart-box:last-child{
+    border: none;
+    padding: 0;
+}
+
+.listItemInCart .cart-box a{
+    color: #64748B;
+}
+
+.cart-box-text{
+    display: flex;
+    flex-direction: column;
+    margin-left: 2rem;
+}
+
+.cart-box-image{
+    box-shadow: 0 1px 10px #a5a5a51f,0 4px 5px #a5a5a51f,0 2px 4px -1px #a5a5a51f!important;
+}
+
+.dropdown-item{
+    padding: 4px 0;
+}
+
+/* Định dạng cho nút admin */
+.header__cart ul li a fa-icon[icon="adminIcon"] {
+  color: #4CAF50;
+}
+
+.header__cart ul li a:hover fa-icon[icon="adminIcon"] {
+  color: #45a049;
+}
+
+/* Định dạng cho nút đăng nhập gộp */
+.login-btn {
+  background-color: #FF7800 !important;
+  border-color: #FF7800 !important;
+  font-weight: bold !important;
+  width: 100% !important;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #E56A00 !important;
+  border-color: #E56A00 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Style cho dropdown item admin */
+.dropdown-item fa-icon[icon="adminIcon"] {
+  color: #4CAF50;
+  margin-right: 8px;
+}
+
+.admin-login-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+.admin-login-btn:hover {
+    background-color: #45a049;
+}
+
+.login-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.user-login-btn {
+  background-color: #FF4B2B !important;
+  border-color: #FF4B2B !important;
+}
+
+.admin-login-btn {
+  background-color: #4CAF50 !important;
+  border-color: #4CAF50 !important;
+}
+
+.error-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+}
+
+.error-dialog-content i {
+  margin-bottom: 1rem;
+}
+
+.error-dialog-content h3 {
+  color: #f44336;
+  margin-bottom: 1rem;
+}
+
+.error-dialog-content p {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-divider {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  line-height: 0.1em;
+  margin: 15px 0;
+}
+
+.login-divider span {
+  background: #fff;
+  padding: 0 10px;
+  color: #888;
+  font-size: 14px;
+}
+
+.social-login {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.google-login-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px;
+  background-color: #fff !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  padding: 10px 15px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #555 !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.google-login-btn:hover {
+  background-color: #f5f5f5 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.google-login-btn img {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.footer__about ul li {
+    position: relative;
+    padding-left: 25px;
+    line-height: 36px;
+}
+
+.footer__about ul li i {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7fad39;
+}
+
+.footer__widget__social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 41px;
+    width: 41px;
+    background: #ffffff;
+    border: 1px solid #ededed;
+    border-radius: 50%;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.footer__widget__social a:hover {
+    background: #7fad39;
+    border-color: #7fad39;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.footer__widget__social a img {
+    transition: all 0.3s ease;
+}
+
+.footer__widget__social a:hover img {
+    filter: brightness(0) invert(1);
+    transform: scale(1.1);
+}

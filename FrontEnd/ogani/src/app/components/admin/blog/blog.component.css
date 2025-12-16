@@ -1,0 +1,82 @@
+.list-image {
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.list-image img {
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.list-image img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+
+.list-image img.choosen {
+    border: 2px solid #2196F3 !important;
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(33, 150, 243, 0.3);
+}
+
+.product-image {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.product-image img {
+    border-radius: 5px;
+    width: 100%;
+    height: auto;
+}
+
+.delete-image {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.product-image:hover .delete-image {
+    opacity: 1;
+}
+
+:host ::ng-deep p-dialog .p-dialog-content {
+    padding: 1.5rem;
+}
+
+:host ::ng-deep .p-dialog-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    background-color: #f8f9fa;
+}
+
+.error-image {
+    opacity: 0.7;
+    border: 1px dashed #ff0000 !important;
+}
+
+.image-container {
+    position: relative;
+}
+
+.image-id {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.choosen {
+    border: 2px solid #2196F3 !important;
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}

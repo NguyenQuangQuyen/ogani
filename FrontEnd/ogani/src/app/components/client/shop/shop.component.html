@@ -1,0 +1,158 @@
+<p-toast></p-toast>
+
+<section class="breadcrumb-section set-bg" [ngStyle]="{backgroundImage:'url(assets/image/breadcrumb.jpg'}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2 *ngIf="!id">Tất cả sản phẩm</h2>
+                    <h2 *ngIf="id">Danh mục sản phẩm</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-5">
+                <div class="sidebar">
+                    <div class="sidebar__item">
+                        <!-- <h4>
+                            Danh Mục:
+                            <span *ngIf="id && currentCategory"
+                                class="badge badge-success ml-2">{{currentCategory}}</span>
+                        </h4> -->
+                        <ul>
+                            <li *ngFor="let category of listCategory"
+                                [ngClass]="{'active-category': id && category.id == id}">
+                                <a routerLink="/category/{{category.id}}">{{category.name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="sidebar__item">
+                        <h4>Khoảng giá</h4>
+                        <p-slider [(ngModel)]="rangeValues" [range]="true" [min]="0" [max]="5000000"
+                            [style]="{'background':'#dd2222'}" (onChange)="getListProductByPriceRange()"></p-slider>
+                        <div class="price-input mt-3">
+                            {{rangeValues[0] | currency:'VND':''}} VNĐ - {{rangeValues[1] | currency:'VND':''}} VNĐ
+                        </div>
+
+                        <!-- Input fields cho nhập giá trực tiếp -->
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <label>Giá tối thiểu</label>
+                                <input type="number" class="form-control" placeholder="Giá tối thiểu"
+                                    [(ngModel)]="minPriceInput" min="0" [max]="maxPriceInput">
+                            </div>
+                            <div class="col-6">
+                                <label>Giá tối đa</label>
+                                <input type="number" class="form-control" placeholder="Giá tối đa"
+                                    [(ngModel)]="maxPriceInput" [min]="minPriceInput" max="5000000">
+                            </div>
+                        </div>
+                        <div class="mt-3 d-flex">
+                            <button class="site-btn flex-grow-1" (click)="applyPriceFilter()">Lọc giá</button>
+                            <button class="btn btn-secondary ml-2" (click)="resetPriceFilter()">Đặt lại</button>
+                        </div>
+                    </div>
+                    <div class="sidebar__item">
+                        <div class="latest-product__text">
+                            <h4>Sản phẩm mới nhất</h4>
+                            <div class="latest-product__slider">
+                                <div class="latest-prdouct__slider__item">
+                                    <a href="javascript:void(0)" routerLink="/product/{{product.id}}"
+                                        class="latest-product__item" *ngFor="let product of listProductNewest">
+                                        <div class="latest-product__item__pic">
+                                            <img [src]="product.images && product.images.length > 0 && product.images[0].name ? 'http://localhost:8080/api/image/file/' + product.images[0].name : 'assets/image/no-image.jpg'"
+                                                alt="">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>{{product.name}}</h6>
+                                            <span>{{product.price | currency:'VND':''}} VNĐ</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7">
+                <!-- <div class="product__discount">
+                    <div class="section-title product__discount__title">
+                        <h2>Sale Off</h2>
+                    </div>
+                    <div class="row">
+                        <div class="product__discount__slider">
+                            <div class="col-lg-4">
+                                <div class="product__discount__item">
+                                    <div class="product__discount__item__pic set-bg"
+                                        data-setbg="img/product/discount/pd-1.jpg">
+                                        <div class="product__discount__percent">-20%</div>
+                                        <ul class="product__item__pic__hover">
+                                            <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="product__discount__item__text">
+                                        <span>Dried Fruit</span>
+                                        <h5><a href="#">Raisin'n'nuts</a></h5>
+                                        <div class="product__item__price">$30.00 <span>$36.00</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="row">
+                    <div class="col-12 mb-3" *ngIf="listProduct && listProduct.length > 0">
+                        <div class="alert alert-success">
+                            <span *ngIf="!id">Có {{listProduct.length}} sản phẩm.</span>
+                            <span *ngIf="id">Có {{listProduct.length}} sản phẩm trong danh mục này.</span>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3" *ngIf="listProduct && listProduct.length === 0">
+                        <div class="alert alert-warning">
+                            <span *ngIf="!id && rangeValues[0] === 0 && rangeValues[1] === 1000000">Không có sản phẩm
+                                nào.</span>
+                            <span *ngIf="id && rangeValues[0] === 0 && rangeValues[1] === 1000000">Không có sản phẩm nào
+                                trong danh mục này.</span>
+                            <span *ngIf="!(rangeValues[0] === 0 && rangeValues[1] === 1000000)">Không tìm thấy sản phẩm
+                                nào trong khoảng giá từ {{rangeValues[0] | currency:'VND':''}} VNĐ đến {{rangeValues[1]
+                                | currency:'VND':''}} VNĐ.</span>
+                        </div>
+                    </div>
+                    <p-dataView [value]="listProduct" [paginator]="true" [rows]="9">
+                        <ng-template let-product pTemplate="listItem">
+                            <div class="col-lg-4 col-md-5 col-sm-6 px-2">
+                                <div class="featured__item">
+                                    <div class="featured__item__pic set-bg"
+                                        [ngStyle]="{'background-image': product.images && product.images.length > 0 && product.images[0].name ? 'url(http://localhost:8080/api/image/file/' + product.images[0].name + ')' : 'url(assets/image/no-image.jpg)'}">
+                                        <ul class="featured__item__pic__hover">
+                                            <li><a href="javascript:void(0)" (click)="addToWishList(product)"><fa-icon
+                                                        [icon]="heart"></fa-icon></a></li>
+                                            <li><a href="javascript:void(0)"
+                                                    routerLink="/product/{{product.id}}"><fa-icon
+                                                        [icon]="retweet"></fa-icon></a></li>
+                                            <li><a href="javascript:void(0)" (click)="addToCart(product)"><fa-icon
+                                                        [icon]="bag"></fa-icon></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="featured__item__text">
+                                        <h6><a href="javascript:void(0)">{{product.name}}</a></h6>
+                                        <h5>{{product.price | currency:'VND':''}} VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dataView>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

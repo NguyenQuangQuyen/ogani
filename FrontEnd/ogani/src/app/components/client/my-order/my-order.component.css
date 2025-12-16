@@ -1,0 +1,21 @@
+.btn-group {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.p-button-danger {
+    color: #f44336 !important;
+}
+
+.p-button-danger:hover {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+}
+
+.p-button-info {
+    color: #2196F3 !important;
+}
+
+.p-button-info:hover {
+    background-color: rgba(33, 150, 243, 0.1) !important;
+}

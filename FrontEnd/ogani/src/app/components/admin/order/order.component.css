@@ -1,0 +1,52 @@
+.order-details {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    font-size: 0.85em;
+    border-radius: 4px;
+}
+
+.bg-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.bg-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.bg-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.bg-info {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table th {
+    background-color: #f1f1f1;
+}
+
+.table td, .table th {
+    padding: 0.75rem;
+    vertical-align: middle;
+}
+
+.p-button-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.p-dropdown {
+    min-width: 150px;
+}

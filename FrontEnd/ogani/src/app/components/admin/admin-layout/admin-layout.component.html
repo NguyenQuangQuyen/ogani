@@ -1,0 +1,155 @@
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="/admin">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <fa-icon [icon]="faceLaugh"></fa-icon>
+            </div>
+            <div class="sidebar-brand-text mx-3">Admin Page <sup></sup></div>
+        </a>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/">
+                <fa-icon [icon]="home"></fa-icon>
+                <span>Back To Home Page</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin">
+                <fa-icon [icon]="tachometer"></fa-icon>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading"> Interface </div>
+
+        <!-- Nav Item - Category -->
+        <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/category">
+                <fa-icon [icon]="bookmark"></fa-icon>
+                <span>Category</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Product -->
+        <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/product">
+                <fa-icon [icon]="receipt"></fa-icon>
+                <span>Product</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading"> Addons </div>
+
+        <!-- Nav Item - Order -->
+        <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/order">
+                <fa-icon [icon]="cart"></fa-icon>
+                <span>Order</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Tag -->
+        <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/tag">
+                <fa-icon [icon]="tag"></fa-icon>
+                <span>Tag</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Blog -->
+        <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/blog">
+                <fa-icon [icon]="rocket"></fa-icon>
+                <span>Blog</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - User -->
+        <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/account">
+                <fa-icon [icon]="users"></fa-icon>
+                <span>User</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+    </ul>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                <!-- Sidebar Toggle (Topbar) -->
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <fa-icon [icon]="bars"></fa-icon>
+                </button>
+
+                <!-- Topbar Search -->
+                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <div class="input-group">
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                            aria-label="Search" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button">
+                                <fa-icon [icon]="search"></fa-icon>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Topbar Navbar -->
+                <ul class="navbar-nav ml-auto">
+
+                    <div class="topbar-divider d-none d-sm-block"></div>
+
+                    <!-- User Info -->
+                    <li class="nav-item dropdown no-arrow" ngbDropdown>
+                        <a class="nav-link dropdown-toggle" role="button" ngbDropdownToggle>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                            <img class="img-profile rounded-circle" src="assets/image/author.jpg">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" ngbDropdownMenu>
+                            <a class="dropdown-item" routerLink="/admin/profile">
+                                <fa-icon [icon]="userIcon"></fa-icon> Profile
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" (click)="logout()">
+                                <fa-icon [icon]="logoutIcon"></fa-icon> Logout
+                            </a>
+                        </div>
+                    </li>
+
+                </ul>
+
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid">
+                <!-- Router Outlet để hiển thị nội dung của các route con -->
+                <router-outlet></router-outlet>
+            </div>
+            <!-- End of Main Content -->
+        </div>
+    </div>
+</div>

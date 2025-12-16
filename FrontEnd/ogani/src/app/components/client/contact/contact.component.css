@@ -1,0 +1,249 @@
+/* Breadcrumb Section */
+.breadcrumb-section {
+    margin-bottom: 50px;
+}
+
+/* Custom styles for contact page */
+.contact__widget {
+    margin-bottom: 30px;
+}
+
+.contact__widget span {
+    font-size: 36px;
+    color: #7fad39;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.contact__widget h4 {
+    color: #1c1c1c;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.contact__widget p {
+    color: #666666;
+    margin-bottom: 0;
+}
+
+/* Social links section */
+.contact-social {
+    padding: 30px 0;
+    background-color: #f5f5f5;
+    margin-bottom: 30px;
+}
+
+.contact__social__links h4 {
+    color: #1c1c1c;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.social-icons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    width: 60px;
+    background: #ffffff;
+    border-radius: 50%;
+    margin: 0 15px 15px;
+    transition: all 0.3s ease;
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hiển thị logo */
+.social-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.social-icons a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.social-icons a:hover .social-logo {
+    transform: scale(1.1);
+}
+
+/* Colors for different social networks */
+.social-icons a.facebook {
+    color: #3b5998;
+}
+
+.social-icons a.instagram {
+    color: #e1306c;
+}
+
+.social-icons a.twitter {
+    color: #1da1f2;
+}
+
+.social-icons a.youtube {
+    color: #ff0000;
+}
+
+.social-icons a.tiktok {
+    color: #000000;
+}
+
+.social-icons a.zalo {
+    color: #0068ff;
+}
+
+/* Hover effects */
+.social-icons a.facebook:hover {
+    background: #3b5998;
+    color: #ffffff;
+}
+
+.social-icons a.instagram:hover {
+    background: #e1306c;
+    color: #ffffff;
+}
+
+.social-icons a.twitter:hover {
+    background: #1da1f2;
+    color: #ffffff;
+}
+
+.social-icons a.youtube:hover {
+    background: #ff0000;
+    color: #ffffff;
+}
+
+.social-icons a.tiktok:hover {
+    background: #000000;
+    color: #ffffff;
+}
+
+.social-icons a.zalo:hover {
+    background: #0068ff;
+    color: #ffffff;
+}
+
+/* Map styling */
+.map {
+    position: relative;
+    height: 550px;
+}
+
+.map iframe {
+    width: 100%;
+}
+
+.map-inside {
+    position: absolute;
+    left: 50%;
+    top: 160px;
+    transform: translateX(-175px);
+}
+
+.map-inside i {
+    position: absolute;
+    left: 50%;
+    top: -30px;
+    transform: translateX(-7.5px);
+    font-size: 48px;
+    color: #7fad39;
+}
+
+.map-inside .inside-widget {
+    width: 350px;
+    background: #ffffff;
+    text-align: center;
+    padding: 23px 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.1);
+}
+
+.map-inside .inside-widget:after {
+    position: absolute;
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-6px);
+    border: 12px solid transparent;
+    border-top: 30px solid #ffffff;
+    content: "";
+    z-index: -1;
+}
+
+.map-inside .inside-widget h4 {
+    color: #1c1c1c;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.map-inside .inside-widget ul li {
+    list-style: none;
+    font-size: 16px;
+    color: #666666;
+    line-height: 26px;
+}
+
+/* Contact form styling */
+.contact-form {
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+.contact__form__title {
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.contact__form__title h2 {
+    color: #1c1c1c;
+    font-weight: 700;
+}
+
+.contact-form form input {
+    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    color: #6f6f6f;
+    padding-left: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+}
+
+.contact-form form textarea {
+    width: 100%;
+    height: 150px;
+    font-size: 16px;
+    color: #6f6f6f;
+    padding: 12px 20px;
+    margin-bottom: 30px;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    resize: none;
+}
+
+.contact-form form button {
+    width: auto;
+    padding: 10px 28px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    background: #7fad39;
+    color: #ffffff;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.contact-form form button:hover {
+    background: #638e2a;
+}

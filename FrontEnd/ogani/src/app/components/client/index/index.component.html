@@ -1,0 +1,330 @@
+<p-toast></p-toast>
+
+<p-dialog [(visible)]="authModal" [style]="{width: '30vw'}" [baseZIndex]="10000" [modal]="true"
+    [dismissableMask]="true">
+    <p-tabView>
+        <p-tabPanel header="Login">
+            <div class="p-field">
+                <label for="username">Username: </label>
+                <input type="text" pInputText class="w-full" [(ngModel)]="loginForm.username" name="username">
+            </div>
+            <div class="p-field">
+                <label for="password">Password: </label>
+                <input type="password" pPassword class="w-full" [(ngModel)]="loginForm.password" name="password">
+            </div>
+            <div class="p-field mt-3 login-buttons">
+                <button type="submit" pButton (click)="login()" class="login-btn w-full">Login</button>
+            </div>
+            <div class="login-divider mt-3">
+                <span>OR</span>
+            </div>
+            <div class="social-login mt-3">
+                <button type="button" class="google-login-btn" (click)="simulateGoogleLogin()">
+                    <img src="assets/image/google-logo.png" alt="Google Logo" width="20px">
+                    <span>Login with Google</span>
+                </button>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Login with Gmail">
+            <div class="p-field text-center">
+                <p>Login with your Google account to continue.</p>
+                <button type="button" class="google-login-btn mt-3" (click)="simulateGoogleLogin()">
+                    <img src="assets/image/google-logo.png" alt="Google Logo" width="20px">
+                    <span>Login with Gmail</span>
+                </button>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Register">
+            <form action="">
+                <div class="p-field">
+                    <label for="username">Username: </label>
+                    <input type="text" pInputText class="w-full" [(ngModel)]="registerForm.username" name="username">
+                </div>
+                <div class="p-field">
+                    <label for="email">Email: </label>
+                    <input type="email" pInputText class="w-full" [(ngModel)]="registerForm.email" name="email">
+                </div>
+                <div class="p-field">
+                    <label for="password">Password: </label>
+                    <input type="password" pPassword class="w-full" [(ngModel)]="registerForm.password" name="password">
+                </div>
+                <div class="p-field mt-3">
+                    <button type="submit" pButton (click)="register()">Register</button>
+                </div>
+            </form>
+        </p-tabPanel>
+
+
+    </p-tabView>
+</p-dialog>
+
+
+
+<header class="header">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="header__top__left">
+                        <ul>
+                            <li><i class="fa fa-envelope"></i>
+                                <span *ngIf="!isLoggedIn">Hello Guest</span>
+                                <span *ngIf="isLoggedIn">Hello {{username}}</span>
+                            </li>
+                            <li>Free Shipping for all Order of 2.000.000 VNĐ</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="header__logo">
+                    <a href="javascript:void(0)" routerLink="/home"><img src="assets/image/logo.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <nav class="header__menu">
+                    <ul>
+                        <li class="active"><a href="javascript:void(0)" routerLink="/home">HOME</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/">ABOUT</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/products">SHOP</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/blog">BLOG</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/contact">CONTACT</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-3">
+                <div class="header__cart">
+                    <ul>
+                        <li><a href="javascript:void(0)" (click)="wishlist.toggle($event)"><fa-icon
+                                    [icon]="heart"></fa-icon> <span>{{wishlistService.items.length}}</span></a></li>
+                        <p-overlayPanel #wishlist>
+                            <ng-template pTemplate>
+                                <div class="listItemInCart">
+                                    <ul>
+                                        <li *ngFor="let product of wishlistService.items" class="cart-box">
+                                            <div class="cart-box-image p-2">
+                                                <a href="javascript:void(0)" class="block">
+                                                    <img *ngIf="product.images && product.images.length > 0 && product.images[0].name"
+                                                        src="http://localhost:8080/api/image/file/{{product.images[0].name}}"
+                                                        alt="{{product.name}}" width="80px">
+                                                    <img *ngIf="!product.images || product.images.length === 0 || !product.images[0].name"
+                                                        src="assets/image/no-image.jpg" alt="No image" width="80px">
+                                                </a>
+                                            </div>
+                                            <div class="cart-box-text">
+                                                <a href="javascript:void(0)">{{product.name}}</a>
+                                            </div>
+                                            <button pButton pRipple type="button" icon="pi pi-times"
+                                                class="p-button-rounded p-button-danger p-button-text"
+                                                (click)="removeWishList(product)"></button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </ng-template>
+                        </p-overlayPanel>
+                        <li><a href="javascript:void(0)" (click)="cart.toggle($event)"><fa-icon [icon]="bag"></fa-icon>
+                                <span>{{cartService.items.length}}</span></a></li>
+                        <p-overlayPanel #cart>
+                            <ng-template pTemplate>
+                                <div class="listItemInCart">
+                                    <ul>
+                                        <li *ngFor="let product of cartService.items" class="cart-box">
+                                            <div class="cart-box-image p-2">
+                                                <a href="javascript:void(0)" class="block">
+                                                    <img *ngIf="product.images && product.images.length > 0 && product.images[0].name"
+                                                        src="http://localhost:8080/api/image/file/{{product.images[0].name}}"
+                                                        alt="{{product.name}}" width="80px">
+                                                    <img *ngIf="!product.images || product.images.length === 0 || !product.images[0].name"
+                                                        src="assets/image/no-image.jpg" alt="No image" width="80px">
+                                                </a>
+                                            </div>
+                                            <div class="cart-box-text">
+                                                <a href="javascript:void(0)">{{product.name}}</a>
+                                                <div><span>{{product.quantity}} x </span>{{product.price | currency}}
+                                                </div>
+                                            </div>
+                                            <button pButton pRipple type="button" icon="pi pi-times"
+                                                class="p-button-rounded p-button-danger p-button-text"
+                                                (click)="removeFromCart(product)"></button>
+                                        </li>
+                                    </ul>
+                                    <p-divider></p-divider>
+                                    <div class="text-center">
+                                        <strong>Total: </strong><span class="ml-2">{{cartService.getTotalPrice() |
+                                            currency}}</span>
+                                    </div>
+                                    <p-divider></p-divider>
+                                    <div class="cart-button">
+                                        <button pButton pRipple label="GO TO CART" class="w-full p-button-warning"
+                                            routerLink="cart"></button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-overlayPanel>
+                        <li>
+                            <a href="javascript:void(0)" (click)="showAuthForm()" *ngIf="!isLoggedIn"><fa-icon
+                                    [icon]="userIcon"></fa-icon></a>
+                            <a href="javascript:void(0)" (click)="profile.toggle($event)" *ngIf="isLoggedIn"><fa-icon
+                                    [icon]="userIcon"></fa-icon></a>
+                            <p-overlayPanel #profile>
+                                <div>
+                                    <a class="dropdown-item" href="javascript:void(0)" routerLink="/user">
+                                        <fa-icon [icon]="userIcon"></fa-icon>
+                                        Profile
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0)" routerLink="my-order">
+                                        <fa-icon [icon]="bag"></fa-icon>
+                                        My Orders
+                                    </a>
+                                    <a *ngIf="isAdmin()" class="dropdown-item" href="javascript:void(0)"
+                                        routerLink="/admin">
+                                        <fa-icon [icon]="adminIcon"></fa-icon>
+                                        Admin Dashboard
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" (click)="logout();profile.toggle($event)">
+                                        <fa-icon [icon]="logoutIcon"></fa-icon>
+                                        Logout
+                                    </a>
+                                </div>
+                            </p-overlayPanel>
+                        </li>
+                        <li *ngIf="isLoggedIn"><a href="javascript:void(0)" (click)="navigateToAdmin()"
+                                pTooltip="Admin Dashboard" tooltipPosition="bottom"><fa-icon
+                                    [icon]="adminIcon"></fa-icon></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="humberger__open">
+            <i class="fa fa-bars"></i>
+        </div>
+    </div>
+</header>
+<section class="hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="hero__categories">
+                    <div class="hero__categories__all" (click)="showDepartmentClick()" style="cursor: pointer;">
+                        <fa-icon [icon]="bars"></fa-icon>
+                        <span>All departments</span>
+                    </div>
+                    <ul *ngIf="showDepartment" style="z-index: 1000; max-height: 400px; overflow-y: auto;">
+                        <li *ngFor="let category of listCategoryEnabled">
+                            <a [routerLink]="['/category', category.id]">{{category.name}}</a>
+                        </li>
+                        <li *ngIf="!listCategoryEnabled || listCategoryEnabled.length === 0">
+                            <span style="color: #999;">No categories available</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="hero__search">
+                    <div class="hero__search__form">
+                        <form action="#">
+                            <div class="hero__search__categories">
+                                All Categories
+                                <span class="arrow_carrot-down"></span>
+                            </div>
+                            <input type="text" placeholder="Enter product name you want to search" [(ngModel)]="keyword"
+                                name="keyword">
+                            <button class="site-btn" routerLink="/search/{{keyword}}">SEARCH</button>
+                        </form>
+                    </div>
+                    <div class="hero__search__phone">
+                        <div class="hero__search__phone__icon">
+                            <fa-icon [icon]="phone"></fa-icon>
+                        </div>
+                        <div class="hero__search__phone__text">
+                            <h5>+84 974 580 133</h5>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<router-outlet></router-outlet>
+
+
+
+<footer class="footer spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer__about">
+                    <div class="footer__about__logo">
+                        <a href="javascript:void(0)" routerLink="/home"><img src="assets/image/logo.png" alt=""></a>
+                    </div>
+                    <ul>
+                        <li><i class="icon_pin_alt"></i> Co Nhue 2, Bac Tu Liem, Ha Noi</li>
+                        <li><i class="icon_phone"></i> +84 974 580 133</li>
+                        <li><i class="icon_mail_alt"></i> quyenquy053@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
+                <div class="footer__widget">
+                    <h6>Useful Links</h6>
+                    <ul>
+                        <li><a href="javascript:void(0)" routerLink="/">About Us</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/products">Shop</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/cart">Cart</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/checkout">Checkout</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/blog">News</a></li>
+                        <li><a href="javascript:void(0)" routerLink="/contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="footer__widget">
+                    <h6>Follow Us</h6>
+                    <p>Hãy theo dõi chúng tôi trên mạng xã hội để cập nhật các chương trình mới nhất.</p>
+                    <!-- <form action="#">
+                        <input type="text" placeholder="Enter your email">
+                        <button type="submit" class="site-btn">Subscribe</button>
+                    </form> -->
+                    <div class="footer__widget__social">
+                        <a *ngFor="let social of socialLinks" [href]="social.url" target="_blank"
+                            [title]="social.label">
+                            <img [src]="social.logoSrc" [alt]="social.label" width="20" height="20">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="footer__copyright">
+                    <div class="footer__copyright__text">
+                        <p>© 2024 Ogani Shop. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Dialog cho thông báo lỗi đăng nhập sai vai trò -->
+<p-dialog [(visible)]="displayErrorDialog" [modal]="true" header="Login Error" [style]="{width: '450px'}"
+    [baseZIndex]="10000">
+    <div class="error-dialog-content">
+        <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f44336; margin-bottom: 1rem;"></i>
+        <h3>{{ errorTitle }}</h3>
+        <p>{{ errorMessage }}</p>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Got it" (click)="closeErrorDialog()" class="p-button-text"></button>
+    </ng-template>
+</p-dialog>

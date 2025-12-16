@@ -1,0 +1,127 @@
+<div class="container-fluid">
+    <p-toast position="top-right"></p-toast>
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">User Management</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+        </div>
+        <div class="card-body">
+            <p-table #dt [value]="users" styleClass="p-datatable-sm" [rows]="10" [paginator]="true"
+                [globalFilterFields]="['username', 'email']" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]">
+                <ng-template pTemplate="caption">
+                    <div class="table-header d-flex justify-content-between">
+                        <div></div>
+                        <span class="p-input-icon-left ml-auto">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text"
+                                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="username">Username <p-sortIcon field="username"></p-sortIcon></th>
+                        <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+                        <th>Roles</th>
+                        <th style="width: 120px;">Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-user>
+                    <tr>
+                        <td>{{user.username}}</td>
+                        <td>{{user.email}}</td>
+                        <td>
+                            <span *ngFor="let role of user.roles; let i = index">
+                                <span class="badge"
+                                    [ngClass]="{'bg-danger': role.name === 'ROLE_ADMIN', 'bg-info': role.name === 'ROLE_USER'}">
+                                    {{role.name === 'ROLE_ADMIN' ? 'Admin' : 'User'}}
+                                </span>
+                                <span *ngIf="i < user.roles.length - 1">&nbsp;</span>
+                            </span>
+                        </td>
+                        <td>
+                            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm mr-2"
+                                (click)="openEditDialog(user)" pTooltip="Edit Role"></button>
+                            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm"
+                                (click)="confirmDelete(user)" pTooltip="Delete Account"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4" class="text-center">No users found.</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="paginatorleft">
+                    <div>Showing {{dt.first + 1}} to {{dt.first + dt.rows > dt.totalRecords ? dt.totalRecords : dt.first
+                        + dt.rows}} of {{dt.totalRecords}} entries</div>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Role Dialog -->
+<p-dialog header="Edit User Role" [(visible)]="displayEditDialog" [modal]="true" [style]="{width: '550px'}"
+    [draggable]="false" [resizable]="false" styleClass="p-fluid">
+    <div *ngIf="selectedUser" class="edit-user-form">
+        <div class="field mb-3">
+            <label for="username">Username</label>
+            <input type="text" pInputText id="username" [(ngModel)]="selectedUser.username" readonly class="w-100" />
+        </div>
+        <div class="field mb-3" *ngIf="selectedUser.email">
+            <label for="userEmail">Email</label>
+            <input type="text" pInputText id="userEmail" [(ngModel)]="selectedUser.email" readonly class="w-100" />
+        </div>
+        <div class="field mb-3">
+            <label for="roles">Roles</label>
+            <div class="p-field-checkbox">
+                <!-- Sử dụng p-checkbox thay vì p-multiSelect -->
+                <div class="role-checkboxes">
+                    <div class="role-checkbox-item" *ngFor="let role of availableRoles">
+                        <p-checkbox [name]="role.code" [value]="role.code" [(ngModel)]="selectedRoles"
+                            [inputId]="role.code"></p-checkbox>
+                        <label [for]="role.code" class="ml-2"
+                            [ngClass]="{'admin-role': role.code === 'ROLE_ADMIN', 'user-role': role.code === 'ROLE_USER'}">
+                            {{role.name}}
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+            <small class="form-text text-muted">
+                Có thể chọn 1 trong 2 vai trò hoặc cũng có thể chọn cả 2 vai trò.
+            </small>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="displayEditDialog = false"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveUserRole()"
+            [disabled]="!selectedRoles || selectedRoles.length === 0"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete User Confirmation Dialog -->
+<p-dialog header="Confirm Deletion" [(visible)]="displayDeleteDialog" [modal]="true" [style]="{width: '450px'}"
+    [draggable]="false" [resizable]="false">
+    <div *ngIf="selectedUser" class="confirm-delete">
+        <p>Are you sure you want to delete the account <strong>{{selectedUser.username}}</strong>?</p>
+        <p class="text-danger">Note: This action cannot be undone.</p>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="No" icon="pi pi-times" class="p-button-text"
+            (click)="displayDeleteDialog = false"></button>
+        <button pButton pRipple label="Yes, delete account" icon="pi pi-trash" class="p-button-text p-button-danger"
+            (click)="deleteUser()"></button>
+    </ng-template>
+</p-dialog>
