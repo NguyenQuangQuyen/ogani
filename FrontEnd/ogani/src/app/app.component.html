@@ -1,1 +1,12 @@
 <router-outlet></router-outlet>
+
+<!-- Floating AI chat button above Fchat -->
+<button class="ai-chat-fab" (click)="toggleAiChat()">
+    <span *ngIf="!showAiChat">AI</span>
+    <span *ngIf="showAiChat">×</span>
+</button>
+
+<!-- Floating AI chat panel -->
+<div class="ai-chat-panel" *ngIf="showAiChat">
+    <app-chat-bot></app-chat-bot>
+</div>

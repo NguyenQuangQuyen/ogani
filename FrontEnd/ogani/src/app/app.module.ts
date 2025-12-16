@@ -39,7 +39,8 @@ import { SearchComponent } from './components/client/search/search.component';
 import { LoginPageComponent } from './components/client/login-page/login-page.component';
 import { ContactComponent } from './components/client/contact/contact.component';
 import { AboutComponent } from './components/client/about/about.component';
-import { CheckboxModule } from 'primeng/checkbox'; // THÊM DÒNG NÀY
+import { ChatBotComponent } from './components/client/chat-bot/chat-bot.component';
+import { CheckboxModule } from 'primeng/checkbox'; 
 import { OAuthSuccessComponent } from './components/client/oauth-success/oauth-success.component';
 
 // FontAwesome
@@ -109,7 +110,8 @@ registerLocaleData(localeFr, 'vi');
     LoginPageComponent,
     ContactComponent,
     AboutComponent,
-    OAuthSuccessComponent
+    OAuthSuccessComponent,
+    ChatBotComponent
   ],
   imports: [
     BrowserModule,

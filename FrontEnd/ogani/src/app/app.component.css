@@ -1,0 +1,47 @@
+/* Floating AI chat button (vị trí ngay trên nút Fchat ở góc dưới bên phải) */
+.ai-chat-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 96px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+
+  background: linear-gradient(135deg, #22c55e, #020617);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.4);
+  cursor: pointer;
+  z-index: 9999;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
+}
+
+.ai-chat-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(34, 197, 94, 0.7);
+}
+
+.ai-chat-fab:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.4);
+}
+
+
+.ai-chat-fab span:nth-child(2) {
+  font-size: 24px;
+  line-height: 1;
+}
+
+
+.ai-chat-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 160px; 
+  z-index: 9998;
+}
+

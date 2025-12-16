@@ -1,0 +1,55 @@
+<div class="chat-wrapper">
+  <div class="chat-header">
+    <div class="chat-title">AI Chat</div>
+    <div class="chat-subtitle">Hỏi tôi bất cứ điều gì về sản phẩm, đơn hàng, v.v.</div>
+  </div>
+
+  <div class="chat-body">
+    <div
+      *ngFor="let msg of messages"
+      class="message-row"
+      [ngClass]="{ 'from-user': msg.from === 'user', 'from-bot': msg.from === 'bot' }"
+    >
+      <div class="avatar" *ngIf="msg.from === 'bot'">
+        <span>AI</span>
+      </div>
+      <div class="bubble" [ngClass]="{ 'bubble-user': msg.from === 'user', 'bubble-bot': msg.from === 'bot' }">
+        <div class="text">
+          {{ msg.text }}
+        </div>
+      </div>
+      <div class="avatar user-avatar" *ngIf="msg.from === 'user'">
+        <span>U</span>
+      </div>
+    </div>
+
+    <div class="message-row from-bot" *ngIf="isLoading">
+      <div class="avatar">
+        <span>AI</span>
+      </div>
+      <div class="bubble bubble-bot">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-footer">
+    <input
+      type="text"
+      [(ngModel)]="input"
+      (keyup.enter)="send()"
+      placeholder="Nhập câu hỏi của bạn..."
+      [disabled]="isLoading"
+    />
+    <button (click)="send()" [disabled]="isLoading || !input.trim()">
+      <span *ngIf="!isLoading">Gửi</span>
+      <span *ngIf="isLoading">Đang gửi...</span>
+    </button>
+  </div>
+</div>
+
+
