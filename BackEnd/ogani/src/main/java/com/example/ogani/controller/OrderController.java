@@ -205,8 +205,40 @@ public class OrderController {
     public PayOSResponse<WebhookData> payosTransferHandler(@RequestBody Object body)
             throws JsonProcessingException, IllegalArgumentException {
         try {
+            // Verify webhook từ PayOS
             WebhookData data = payOS.webhooks().verify(body);
-            System.out.println(data);
+            System.out.println("PayOS Webhook received: " + data);
+            
+            // Lấy orderCode và status từ webhook data
+            Long orderCode = data.getData().getOrderCode();
+            String status = data.getData().getStatus();
+            
+            if (orderCode != null) {
+                String orderId = String.valueOf(orderCode);
+                Order order = orderService.getStatusById(orderId);
+                
+                if (order != null) {
+                    // Cập nhật status dựa trên trạng thái từ PayOS
+                    // PayOS status: PAID, CANCELLED, PENDING, etc.
+                    if ("PAID".equals(status)) {
+                        order.setStatus("PAID");
+                        orderService.saveOrder(order);
+                        System.out.println("Order " + orderId + " status updated to PAID");
+                    } else if ("CANCELLED".equals(status)) {
+                        order.setStatus("CANCELLED");
+                        orderService.saveOrder(order);
+                        System.out.println("Order " + orderId + " status updated to CANCELLED");
+                    } else {
+                        // Có thể có các status khác như PENDING, EXPIRED, etc.
+                        order.setStatus(status);
+                        orderService.saveOrder(order);
+                        System.out.println("Order " + orderId + " status updated to " + status);
+                    }
+                } else {
+                    System.out.println("Order not found with orderId: " + orderId);
+                }
+            }
+            
             return PayOSResponse.success("Webhook delivered", data);
         } catch (Exception e) {
             e.printStackTrace();

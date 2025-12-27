@@ -8,11 +8,9 @@ import { ProductService } from 'src/app/_service/product.service';
   selector: 'app-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.css'],
-  providers: [MessageService, ConfirmationService]
-
+  providers: [MessageService, ConfirmationService],
 })
 export class ProductComponent implements OnInit {
-
   listProduct: any;
   listCategory: any;
   listImage: any;
@@ -38,16 +36,19 @@ export class ProductComponent implements OnInit {
     price: null,
     quantity: null,
     categoryId: null,
-    imageIds: []
+    imageIds: [],
   };
 
   checkCate: boolean = false;
 
   image: any;
 
-  constructor(private messageService: MessageService, private productService: ProductService, private imageService: ImageService, private categoryService: CategoryService) {
-
-  }
+  constructor(
+    private messageService: MessageService,
+    private productService: ProductService,
+    private imageService: ImageService,
+    private categoryService: CategoryService
+  ) {}
 
   ngOnInit(): void {
     this.getListProduct();
@@ -71,8 +72,8 @@ export class ProductComponent implements OnInit {
       price: null,
       quantity: null,
       categoryId: null,
-      imageIds: []
-    }
+      imageIds: [],
+    };
   }
 
   openUpdate(data: any) {
@@ -103,56 +104,61 @@ export class ProductComponent implements OnInit {
     }
   }
 
-
   onChooseImage() {
     this.showImage = true;
     this.disabled = true;
     let data = document.querySelectorAll('.list-image img');
-    data.forEach(i => {
+    data.forEach((i) => {
       i.classList.remove('choosen');
-    })
+    });
   }
-
 
   getListProduct() {
     this.productService.getListProduct().subscribe({
-      next: res => {
+      next: (res) => {
         this.listProduct = res;
         // Cập nhật timestamp để hiển thị ảnh mới nhất
         this.timestamp = Date.now();
         console.log('Products loaded:', res);
       },
-      error: err => {
+      error: (err) => {
         console.error('Error loading products:', err);
-        this.showError(err.message || "Không thể tải danh sách sản phẩm");
-      }
+        this.showError(err.message || 'Không thể tải danh sách sản phẩm');
+      },
     });
   }
 
   getListCategoryEnabled() {
     this.categoryService.getListCategory().subscribe({
-      next: res => {
+      next: (res) => {
         this.listCategory = res;
         console.log('Danh sách category:', this.listCategory);
         // Nếu không có category nào, hiển thị thông báo
         if (this.listCategory.length === 0) {
-          this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No categories available. Please create categories first.' });
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Warning',
+            detail: 'No categories available. Please create categories first.',
+          });
         }
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
         this.showError('Không thể tải danh sách danh mục');
-      }
-    })
+      },
+    });
   }
 
   getListImage() {
     this.imageService.getList().subscribe({
-      next: res => {
-
-
+      next: (res) => {
         // Kiểm tra xem có ảnh nào không
         if (!res || (Array.isArray(res) && res.length === 0)) {
-          this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No images available in the library' });
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Warning',
+            detail: 'No images available in the library',
+          });
           this.listImage = [];
           return;
         }
@@ -160,7 +166,11 @@ export class ProductComponent implements OnInit {
         // Kiểm tra kiểu dữ liệu trả về
         if (!Array.isArray(res)) {
           console.error('Invalid response format for images:', res);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Image data format is not valid' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Image data format is not valid',
+          });
           this.listImage = [];
           return;
         }
@@ -175,16 +185,14 @@ export class ProductComponent implements OnInit {
           // Nếu không có id, giữ nguyên thứ tự
           return 0;
         });
-
-
-
       },
-      error: err => {
+      error: (err) => {
         console.error('Error fetching images:', err);
-        const errorMessage = err.error?.message || err.message || "Lỗi không xác định";
-        this.showError("Không thể tải danh sách ảnh: " + errorMessage);
+        const errorMessage =
+          err.error?.message || err.message || 'Lỗi không xác định';
+        this.showError('Không thể tải danh sách ảnh: ' + errorMessage);
         this.listImage = [];
-      }
+      },
     });
   }
 
@@ -195,10 +203,21 @@ export class ProductComponent implements OnInit {
       if (file) {
         this.currentFile = file;
         // Log chi tiết về file
-        console.log('Selected file:', file.name, 'size:', file.size, 'type:', file.type);
+        console.log(
+          'Selected file:',
+          file.name,
+          'size:',
+          file.size,
+          'type:',
+          file.type
+        );
 
         // Hiển thị thông báo đang tải
-        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Đang tải ảnh lên...' });
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Info',
+          detail: 'Đang tải ảnh lên...',
+        });
 
         this.imageService.upload(this.currentFile).subscribe({
           next: (res: any) => {
@@ -214,14 +233,16 @@ export class ProductComponent implements OnInit {
               // Thêm ảnh mới vào listImageChoosen (xóa các ảnh cũ)
               this.listImageChoosen = [res];
 
-              this.showSuccess("Đã tải lên và chọn ảnh thành công");
+              this.showSuccess('Đã tải lên và chọn ảnh thành công');
               this.showImage = false; // Đóng dialog chọn ảnh
 
               // Làm mới danh sách ảnh và cập nhật timestamp
               this.getListImage();
               this.timestamp = Date.now();
             } else {
-              this.showWarn("Tải lên thành công nhưng không nhận được thông tin ảnh");
+              this.showWarn(
+                'Tải lên thành công nhưng không nhận được thông tin ảnh'
+              );
               this.getListImage();
             }
           },
@@ -230,43 +251,60 @@ export class ProductComponent implements OnInit {
             if (err.error) {
               console.error('Server error details:', err.error);
             }
-            this.showError("Không thể tải ảnh lên: " + (err.error?.message || err.message || "Lỗi không xác định"));
+            this.showError(
+              'Không thể tải ảnh lên: ' +
+                (err.error?.message || err.message || 'Lỗi không xác định')
+            );
             this.currentFile = undefined;
-          }
+          },
         });
       }
     } else {
-      this.showWarn("Please select an image file");
+      this.showWarn('Please select an image file');
     }
   }
-
-
 
   createProduct() {
     this.productForm.imageIds = []; // Reset imageIds array
     let data = this.listImageChoosen;
     data.forEach((res: any) => {
       this.productForm.imageIds.push(res.id);
-    })
+    });
 
-    const { name, description, price, quantity, categoryId, imageIds } = this.productForm;
+    const { name, description, price, quantity, categoryId, imageIds } =
+      this.productForm;
 
     // Chuyển đổi categoryId thành số nếu cần
-    const numericCategoryId = typeof categoryId === 'string' ? parseInt(categoryId, 10) : categoryId;
+    const numericCategoryId =
+      typeof categoryId === 'string' ? parseInt(categoryId, 10) : categoryId;
 
     console.log('Form data:', this.productForm);
-    console.log('Category ID:', numericCategoryId, 'Type:', typeof numericCategoryId);
+    console.log(
+      'Category ID:',
+      numericCategoryId,
+      'Type:',
+      typeof numericCategoryId
+    );
 
-    this.productService.createProduct(name, description, price, quantity, numericCategoryId, imageIds).subscribe({
-      next: res => {
-        this.getListProduct();
-        this.showForm = false;
-        this.showSuccess("Thêm mới thành công");
-
-      }, error: err => {
-        this.showError(err.message || "Lỗi khi tạo sản phẩm");
-      }
-    })
+    this.productService
+      .createProduct(
+        name,
+        description,
+        price,
+        quantity,
+        numericCategoryId,
+        imageIds
+      )
+      .subscribe({
+        next: (res) => {
+          this.getListProduct();
+          this.showForm = false;
+          this.showSuccess('Thêm mới thành công');
+        },
+        error: (err) => {
+          this.showError(err.message || 'Lỗi khi tạo sản phẩm');
+        },
+      });
   }
 
   updateProduct() {
@@ -274,26 +312,43 @@ export class ProductComponent implements OnInit {
     let data = this.listImageChoosen;
     data.forEach((res: any) => {
       this.productForm.imageIds.push(res.id);
-    })
+    });
 
-    const { id, name, description, price, quantity, categoryId, imageIds } = this.productForm;
+    const { id, name, description, price, quantity, categoryId, imageIds } =
+      this.productForm;
 
     // Chuyển đổi categoryId thành số nếu cần
-    const numericCategoryId = typeof categoryId === 'string' ? parseInt(categoryId, 10) : categoryId;
+    const numericCategoryId =
+      typeof categoryId === 'string' ? parseInt(categoryId, 10) : categoryId;
 
     console.log('Form data:', this.productForm);
-    console.log('Category ID:', numericCategoryId, 'Type:', typeof numericCategoryId);
+    console.log(
+      'Category ID:',
+      numericCategoryId,
+      'Type:',
+      typeof numericCategoryId
+    );
 
-    this.productService.updateProduct(id, name, description, price, quantity, numericCategoryId, imageIds).subscribe({
-      next: res => {
-        this.getListProduct();
-        this.showForm = false;
-        this.showSuccess("Cập nhật thành công");
-      }, error: err => {
-        this.showError(err.message || "Lỗi khi cập nhật sản phẩm");
-      }
-    })
-
+    this.productService
+      .updateProduct(
+        id,
+        name,
+        description,
+        price,
+        quantity,
+        numericCategoryId,
+        imageIds
+      )
+      .subscribe({
+        next: (res) => {
+          this.getListProduct();
+          this.showForm = false;
+          this.showSuccess('Cập nhật thành công');
+        },
+        error: (err) => {
+          this.showError(err.message || 'Lỗi khi cập nhật sản phẩm');
+        },
+      });
   }
 
   onDelete(id: number, name: string) {
@@ -305,26 +360,27 @@ export class ProductComponent implements OnInit {
 
   deleteProduct() {
     this.productService.deleteProduct(this.productForm.id).subscribe({
-      next: res => {
+      next: (res) => {
         this.getListProduct();
-        this.showWarn("Xóa thành công");
+        this.showWarn('Xóa thành công');
         this.showDelete = false;
-      }, error: err => {
-        this.showError(err.message || "Lỗi khi xóa sản phẩm");
-      }
-    })
+      },
+      error: (err) => {
+        this.showError(err.message || 'Lỗi khi xóa sản phẩm');
+      },
+    });
   }
 
   // Phương thức xử lý khi chọn ảnh từ thư viện
   selectImage(event: any, res: any) {
     // Xóa lớp 'choosen' khỏi tất cả hình ảnh
     let data = document.querySelectorAll('.list-image img');
-    data.forEach(i => {
+    data.forEach((i) => {
       i.classList.remove('choosen');
     });
 
     // Thêm lớp 'choosen' vào hình ảnh được chọn
-    event.target.classList.add("choosen");
+    event.target.classList.add('choosen');
     this.imageChoosen = res;
     this.disabled = false;
 
@@ -347,13 +403,13 @@ export class ProductComponent implements OnInit {
       this.image = this.imageChoosen;
 
       console.log('Images chosen:', this.listImageChoosen);
-      this.showSuccess("Đã chọn ảnh cho sản phẩm");
+      this.showSuccess('Đã chọn ảnh cho sản phẩm');
       this.showImage = false;
 
       // Cập nhật timestamp để hiển thị ảnh mới nhất
       this.timestamp = Date.now();
     } else {
-      this.showWarn("Please select an image");
+      this.showWarn('Please select an image');
     }
   }
 
@@ -371,7 +427,7 @@ export class ProductComponent implements OnInit {
     // Cập nhật biến image để hiển thị ảnh đã chọn
     this.image = this.imageChoosen;
 
-    this.showSuccess("Đã chọn ảnh cho sản phẩm");
+    this.showSuccess('Đã chọn ảnh cho sản phẩm');
     this.showImage = false; // Đóng dialog chọn ảnh
 
     // Cập nhật timestamp để hiển thị ảnh mới nhất
@@ -381,26 +437,40 @@ export class ProductComponent implements OnInit {
   // Phương thức xóa ảnh đã chọn
   removeImage() {
     this.image = null;
-    this.showWarn("Đã xóa ảnh");
+    this.showWarn('Đã xóa ảnh');
   }
 
   showSuccess(text: string) {
-    this.messageService.add({ severity: 'success', summary: 'Success', detail: text });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: text,
+    });
   }
 
   showError(text: string) {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: text });
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: text,
+    });
   }
 
   showWarn(text: string) {
-    this.messageService.add({ severity: 'warn', summary: 'Warning', detail: text });
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: text,
+    });
   }
 
   // Lấy tên danh mục từ ID
   getCategoryName(categoryId: number): string {
     if (!this.listCategory) return '';
 
-    const category = this.listCategory.find((cat: any) => cat.id === categoryId);
+    const category = this.listCategory.find(
+      (cat: any) => cat.id === categoryId
+    );
     return category ? category.name : '';
   }
 

@@ -131,6 +131,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getStatusById(String id) {
-        return orderRepository.findById(Long.valueOf(id)).orElse(null);
+        return orderRepository.findByOrderId(id);
     }
 }

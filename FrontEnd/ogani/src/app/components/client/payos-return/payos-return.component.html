@@ -1,0 +1,32 @@
+<!-- Trang xử lý khi PayOS return -->
+<div class="payos-return-container">
+    <p-toast></p-toast>
+
+    <div class="card" *ngIf="loading">
+        <div class="card-body text-center">
+            <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+                animationDuration=".5s"></p-progressSpinner>
+            <h3>Processing payment...</h3>
+            <p>Please wait while we verify your payment.</p>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="success && !loading">
+        <div class="card-body text-center">
+            <i class="pi pi-check-circle" style="font-size: 4rem; color: #4caf50;"></i>
+            <h3>Payment Successful!</h3>
+            <p>{{ successMessage }}</p>
+            <p>You will be redirected to your orders page shortly.</p>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="error && !loading">
+        <div class="card-body text-center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f44336;"></i>
+            <h3>Payment {{ errorMessage.includes('cancelled') ? 'Cancelled' : 'Error' }}</h3>
+            <p>{{ errorMessage }}</p>
+            <p>You will be redirected to checkout page.</p>
+        </div>
+    </div>
+</div>
+

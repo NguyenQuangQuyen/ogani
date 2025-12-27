@@ -1,5 +1,10 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { faBars, faHeart, faPhone, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBars,
+  faHeart,
+  faPhone,
+  faShoppingBag,
+} from '@fortawesome/free-solid-svg-icons';
 import { MessageService } from 'primeng/api';
 import { Order } from 'src/app/_class/order';
 import { OrderDetail } from 'src/app/_class/order-detail';
@@ -17,8 +22,7 @@ declare var paypal: any;
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
-  providers: [MessageService]
-
+  providers: [MessageService],
 })
 export class CheckoutComponent implements OnInit {
   heart = faHeart;
@@ -28,17 +32,20 @@ export class CheckoutComponent implements OnInit {
   showDepartment = false;
   order = new Order();
   listOrderDetail: any[] = [];
-  username !: string;
+  username!: string;
+  userId!: string;
   orderSuccess = false;
   placedOrder: any = null;
 
   // Thêm hai biến sau
   total: number = 0;
-  paypalOrderId?: string;
   qrPaymentUrl: string = '';
   @ViewChild('vnpayQRModal') vnpayQRModal!: TemplateRef<any>;
   orderPendingData: any = null;
   private ngbModalRef: any;
+  payosCheckoutUrl: string = '';
+  showPayOSQR: boolean = false;
+  isProcessingPayOS: boolean = false;
 
   orderForm: any = {
     firstname: null,
@@ -50,8 +57,8 @@ export class CheckoutComponent implements OnInit {
     email: null,
     phone: null,
     note: null,
-    paymentMethod: null
-  }
+    paymentMethod: null,
+  };
 
   constructor(
     public cartService: CartService,
@@ -60,11 +67,30 @@ export class CheckoutComponent implements OnInit {
     private messageService: MessageService,
     private router: Router,
     private modalService: NgbModal
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Get current user
-    this.username = this.storageService.getUser().username;
+    const user = this.storageService.getUser();
+    this.username = user.username;
+    // Lấy userId từ user object (có thể là id, userId, hoặc cần parse)
+    // Kiểm tra các trường hợp: id (số hoặc string), userId, hoặc chuyển đổi
+    if (user) {
+      if (user.id !== undefined && user.id !== null) {
+        this.userId = String(user.id);
+      } else if (user.userId !== undefined && user.userId !== null) {
+        this.userId = String(user.userId);
+      } else {
+        // Nếu không có userId, sử dụng username làm fallback (cần backend hỗ trợ)
+        console.warn(
+          'UserId not found in user object, using username as fallback'
+        );
+        this.userId = this.username;
+      }
+    } else {
+      console.error('User not found in storage');
+      this.userId = '';
+    }
 
     // Ensure cart is loaded and total is calculated
     this.cartService.loadCart();
@@ -89,13 +115,8 @@ export class CheckoutComponent implements OnInit {
     // Set default orderForm values
     this.orderForm = {
       ...this.orderForm,
-      paymentMethod: 'COD'
+      paymentMethod: 'COD',
     };
-
-    // Khởi tạo nút PayPal sau khi DOM đã sẵn sàng
-    setTimeout(() => {
-      this.renderPayPalButton();
-    }, 1000);
   }
 
   showDepartmentClick() {
@@ -132,17 +153,181 @@ export class CheckoutComponent implements OnInit {
     } else {
       // Nếu chưa chọn, chọn mới
       this.orderForm.paymentMethod = method;
-
-      // Show notification for bank transfer with more prominent warning
-      if (method === 'BANK') {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Feature In Development',
-          detail: 'This feature is currently under development. Please select another payment method.',
-          sticky: true
-        });
-      }
     }
+  }
+
+  // Xử lý thanh toán bằng PayOS (Bank Transfer)
+  placeOrderWithPayOS() {
+    // Kiểm tra nếu đang xử lý thì không xử lý lại
+    if (this.isProcessingPayOS) {
+      return;
+    }
+
+    // Validate form
+    if (!this.validateForm()) {
+      // Bỏ chọn PayOS nếu form không hợp lệ
+      this.orderForm.paymentMethod = null;
+      return;
+    }
+
+    // Kiểm tra userId
+    if (!this.userId || this.userId === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'User information is missing. Please log in again.',
+      });
+      this.orderForm.paymentMethod = null;
+      return;
+    }
+
+    // Đặt flag đang xử lý
+    this.isProcessingPayOS = true;
+
+    // Get form values
+    const {
+      firstname,
+      lastname,
+      country,
+      address,
+      town,
+      state,
+      phone,
+      email,
+      note,
+    } = this.orderForm;
+
+    // Kiểm tra giỏ hàng có sản phẩm không
+    const cartItems = this.cartService.getItems();
+    if (!cartItems || cartItems.length === 0) {
+      console.error('Cart is empty when trying to create order with PayOS');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail:
+          'Your cart is empty. Please add products to your cart before checkout.',
+      });
+      return;
+    }
+
+    // Tạo productName từ danh sách sản phẩm
+    const productNames = cartItems.map((item) => item.name).join(', ');
+    const productName =
+      productNames.length > 100
+        ? productNames.substring(0, 100) + '...'
+        : productNames;
+
+    // Tạo description từ thông tin đơn hàng
+    const description = `${this.username} - ${productName}`;
+
+    // Lấy returnUrl và cancelUrl
+    const baseUrl = window.location.origin;
+    const returnUrl = `${baseUrl}/payos-return`;
+    const cancelUrl = `${baseUrl}/checkout`;
+
+    // Gọi API tạo đơn hàng với PayOS
+    this.orderService
+      .createOrderWithPayOS(
+        this.userId,
+        this.username,
+        firstname,
+        lastname,
+        country,
+        address,
+        state,
+        phone,
+        note || '',
+        town || '',
+        '',
+        email,
+        productName,
+        description,
+        returnUrl,
+        cancelUrl,
+        this.total
+      )
+      .subscribe({
+        next: (res) => {
+          console.log('PayOS order response:', res);
+
+          // Lấy data từ response (có thể là res.data hoặc res trực tiếp)
+          const responseData = res.data || res;
+          const checkoutUrl = responseData.checkoutUrl;
+          const qrCode = responseData.qrCode;
+          const link = responseData.link;
+
+          // Kiểm tra response có chứa checkoutUrl
+          if (checkoutUrl) {
+            console.log('Redirecting to PayOS checkout URL:', checkoutUrl);
+            // Hiển thị thông báo đang chuyển hướng
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Redirecting',
+              detail: 'Redirecting to payment page...',
+              life: 1500,
+            });
+            // Redirect đến trang thanh toán PayOS ngay lập tức
+            setTimeout(() => {
+              window.location.href = checkoutUrl;
+            }, 500);
+          } else if (link) {
+            // Nếu response có field 'link' thay vì 'checkoutUrl'
+            console.log('Redirecting to PayOS link:', link);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Redirecting',
+              detail: 'Redirecting to payment page...',
+              life: 1500,
+            });
+            setTimeout(() => {
+              window.location.href = link;
+            }, 500);
+          } else if (qrCode) {
+            // Hiển thị QR code (trường hợp hiếm nếu API trả về QR thay vì URL)
+            console.log('PayOS returned QR code instead of checkout URL');
+            this.isProcessingPayOS = false;
+            this.qrPaymentUrl = qrCode;
+            this.showPayOSQR = true;
+            // Mở modal hiển thị QR code nếu có
+            if (this.vnpayQRModal) {
+              this.ngbModalRef = this.modalService.open(this.vnpayQRModal, {
+                size: 'lg',
+                backdrop: 'static',
+              });
+            }
+          } else {
+            // Nếu không có URL, hiển thị thông báo và log để debug
+            console.error(
+              'PayOS response does not contain checkoutUrl, link, or qrCode:',
+              res
+            );
+            this.isProcessingPayOS = false;
+            this.orderForm.paymentMethod = null;
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail:
+                'Invalid response from payment service. Please try again.',
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Error creating PayOS order:', err);
+          this.isProcessingPayOS = false;
+          this.orderForm.paymentMethod = null;
+          let errorMessage =
+            'An error occurred while creating the order with PayOS.';
+          if (err.error && err.error.message) {
+            errorMessage += ' Details: ' + err.error.message;
+          }
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: errorMessage,
+          });
+        },
+      });
   }
 
   placeOrder() {
@@ -151,21 +336,26 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    // Loại bỏ toàn bộ logic liên quan đến VNPay payment
-
-    // Check if bank transfer is selected and show message
-    if (this.orderForm.paymentMethod === 'BANK') {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Feature In Development',
-        detail: 'This feature is currently under development. Please select another payment method.',
-        sticky: true
-      });
+    // Kiểm tra nếu chọn PayOS (hiển thị là Bank Transfer) thì gọi hàm riêng
+    if (this.orderForm.paymentMethod === 'PAYOS') {
+      this.placeOrderWithPayOS();
       return;
     }
 
+    // Loại bỏ toàn bộ logic liên quan đến VNPay payment
+
     // Get form values
-    const { firstname, lastname, country, address, town, state, phone, email, note } = this.orderForm;
+    const {
+      firstname,
+      lastname,
+      country,
+      address,
+      town,
+      state,
+      phone,
+      email,
+      note,
+    } = this.orderForm;
 
     // Kiểm tra giỏ hàng có sản phẩm không
     const cartItems = this.cartService.getItems();
@@ -174,17 +364,18 @@ export class CheckoutComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Your cart is empty. Please add products to your cart before checkout.'
+        detail:
+          'Your cart is empty. Please add products to your cart before checkout.',
       });
       return;
     }
 
     // Get order details from cart with correct format
-    this.listOrderDetail = cartItems.map(item => {
+    this.listOrderDetail = cartItems.map((item) => {
       return {
         name: item.name,
         price: parseInt(String(item.price)), // Đảm bảo price là số nguyên
-        quantity: item.quantity
+        quantity: item.quantity,
       };
     });
 
@@ -196,79 +387,82 @@ export class CheckoutComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Order details list cannot be empty. Please refresh and try again.'
+        detail:
+          'Order details list cannot be empty. Please refresh and try again.',
       });
       return;
     }
 
     // Place order using improved OrderService
-    this.orderService.placeOrder(
-      firstname,
-      lastname,
-      country,
-      address,
-      town,
-      state,
-      "", // Empty postCode
-      phone,
-      email,
-      note,
-      this.listOrderDetail,
-      this.username
-    ).subscribe({
-      next: res => {
-        this.placedOrder = res;
-        this.orderSuccess = true;
+    this.orderService
+      .placeOrder(
+        firstname,
+        lastname,
+        country,
+        address,
+        town,
+        state,
+        '', // Empty postCode
+        phone,
+        email,
+        note,
+        this.listOrderDetail,
+        this.username
+      )
+      .subscribe({
+        next: (res) => {
+          this.placedOrder = res;
+          this.orderSuccess = true;
 
-        // Lưu đơn hàng mới vào localStorage
-        const order = {
-          firstname,
-          lastname,
-          country,
-          address,
-          town,
-          state,
-          phone,
-          email,
-          note,
-          totalPrice: this.total,
-          orderDetails: this.listOrderDetail,
-          username: this.username,
-          createdDate: new Date(),
-          paymentMethod: this.orderForm.paymentMethod || 'COD',
-          status: 'Unpaid'
-        };
-        this.saveOrderToLocalStorage(order);
+          // Lưu đơn hàng mới vào localStorage
+          const order = {
+            firstname,
+            lastname,
+            country,
+            address,
+            town,
+            state,
+            phone,
+            email,
+            note,
+            totalPrice: this.total,
+            orderDetails: this.listOrderDetail,
+            username: this.username,
+            createdDate: new Date(),
+            paymentMethod: this.orderForm.paymentMethod || 'COD',
+            status: 'Unpaid',
+          };
+          this.saveOrderToLocalStorage(order);
 
-        // Clear cart only after successful order creation
-        this.cartService.clearCart();
+          // Clear cart only after successful order creation
+          this.cartService.clearCart();
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Order placed successfully!'
-        });
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Order placed successfully!',
+          });
 
-        // Navigate to my orders page after successful order
-        setTimeout(() => {
-          this.router.navigate(['/my-order']);
-        }, 2000);
-      },
-      error: err => {
-        console.error('Error placing order:', err);
-        // Hiển thị thông báo lỗi chi tiết
-        let errorMessage = 'An error occurred while placing the order.';
-        if (err.error && err.error.message) {
-          errorMessage += ' Details: ' + err.error.message;
-        }
+          // Navigate to my orders page after successful order
+          setTimeout(() => {
+            this.router.navigate(['/my-order']);
+          }, 2000);
+        },
+        error: (err) => {
+          console.error('Error placing order:', err);
+          // Hiển thị thông báo lỗi chi tiết
+          let errorMessage = 'An error occurred while placing the order.';
+          if (err.error && err.error.message) {
+            errorMessage += ' Details: ' + err.error.message;
+          }
 
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: errorMessage
-        });
-      }
-    });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: errorMessage,
+          });
+        },
+      });
   }
 
   // Thêm phương thức mới để lưu đơn hàng vào localStorage
@@ -320,14 +514,23 @@ export class CheckoutComponent implements OnInit {
   }
 
   validateForm() {
-    const requiredFields = ['firstname', 'lastname', 'country', 'address', 'town', 'state', 'email', 'phone'];
+    const requiredFields = [
+      'firstname',
+      'lastname',
+      'country',
+      'address',
+      'town',
+      'state',
+      'email',
+      'phone',
+    ];
 
     for (const field of requiredFields) {
       if (!this.orderForm[field]) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: `Please fill in all required fields`
+          detail: `Please fill in all required fields`,
         });
         return false;
       }
@@ -339,7 +542,7 @@ export class CheckoutComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Phone number must be between 10 and 15 digits'
+        detail: 'Phone number must be between 10 and 15 digits',
       });
       return false;
     }
@@ -350,7 +553,7 @@ export class CheckoutComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Email must be in the correct format and end with @gmail.com'
+        detail: 'Email must be in the correct format and end with @gmail.com',
       });
       return false;
     }
@@ -366,263 +569,289 @@ export class CheckoutComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Invalid total price. Using default value.'
+        detail: 'Invalid total price. Using default value.',
       });
     }
 
     const formattedTotal = parseFloat(this.total.toFixed(2));
     console.log('Formatted total for PayPal:', formattedTotal);
 
-    paypal.Buttons({
-      createOrder: (data: any, actions: any) => {
-        console.log('Calling PayPal API with total:', formattedTotal);
+    paypal
+      .Buttons({
+        createOrder: (data: any, actions: any) => {
+          console.log('Calling PayPal API with total:', formattedTotal);
 
-        // Thêm logging để kiểm tra request
-        const requestBody = {
-          total: formattedTotal,
-          description: 'Thanh toán đơn hàng Ogani'
-        };
-        console.log('Request to backend:', requestBody);
-
-        return fetch('http://localhost:8080/api/paypal/pay', {
-          method: 'post',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(requestBody)
-        })
-          .then(async (res: any) => {
-            console.log('Response status:', res.status);
-            console.log('Response headers:', res.headers);
-
-            // Đọc response body dưới dạng text trước
-            const responseText = await res.text();
-            console.log('Response raw text:', responseText);
-
-            if (!res.ok) {
-              throw new Error(responseText || `Network error: ${res.status}`);
-            }
-
-            // Kiểm tra nếu response rỗng
-            if (!responseText || responseText.trim() === '') {
-              console.error('Empty API response received');
-              throw new Error('Empty response from server');
-            }
-
-            // Parse JSON từ text
-            try {
-              return JSON.parse(responseText);
-            } catch (e) {
-              console.error('Invalid JSON response:', e);
-              console.error('Response was:', responseText);
-              throw new Error('Invalid response format');
-            }
-          })
-          .then((data: any) => {
-            console.log('PayPal API parsed response:', data);
-
-            // Kiểm tra dữ liệu response
-            if (!data) {
-              throw new Error('Empty data from backend');
-            }
-
-            // Kiểm tra orderId
-            if (!data.orderId) {
-              console.error('Response is missing orderId:', data);
-              throw new Error('Không nhận được orderId từ backend');
-            }
-
-            return data.orderId;
-          })
-          .catch(err => {
-            console.error('PayPal createOrder error:', err);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'PayPal Error',
-              detail: 'Error creating PayPal order: ' + err.message
-            });
-            throw err;
-          });
-      },
-      onApprove: (data: any, actions: any) => {
-        // Validate form trước khi xử lý thanh toán
-        if (!this.validateForm()) {
-          return {
-            error: 'Form validation failed'
+          // Thêm logging để kiểm tra request
+          const requestBody = {
+            total: formattedTotal,
+            description: 'Thanh toán đơn hàng Ogani',
           };
-        }
+          console.log('Request to backend:', requestBody);
 
-        // Gọi API backend để capture order
-        return fetch('http://localhost:8080/api/paypal/capture', {
-          method: 'post',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify({
-            orderId: data.orderID
+          return fetch('http://localhost:8080/api/paypal/pay', {
+            method: 'post',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(requestBody),
           })
-        })
-          .then((res: any) => {
-            if (!res.ok) {
-              throw new Error('PayPal capture failed');
-            }
-            return res.json();
-          })
-          .then((details: any) => {
-            console.log('PayPal payment completed:', details);
+            .then(async (res: any) => {
+              console.log('Response status:', res.status);
+              console.log('Response headers:', res.headers);
 
-            // Validate form trước khi tiếp tục
-            if (!this.validateForm()) {
-              return {
-                error: 'Form validation failed'
-              };
-            }
+              // Đọc response body dưới dạng text trước
+              const responseText = await res.text();
+              console.log('Response raw text:', responseText);
 
-            // Lấy thông tin form
-            const { firstname, lastname, country, address, town, state, phone, email, note } = this.orderForm;
+              if (!res.ok) {
+                throw new Error(responseText || `Network error: ${res.status}`);
+              }
 
-            // Kiểm tra giỏ hàng có sản phẩm không
-            const cartItems = this.cartService.getItems();
-            if (!cartItems || cartItems.length === 0) {
-              console.error('Cart is empty when trying to create order with PayPal');
+              // Kiểm tra nếu response rỗng
+              if (!responseText || responseText.trim() === '') {
+                console.error('Empty API response received');
+                throw new Error('Empty response from server');
+              }
+
+              // Parse JSON từ text
+              try {
+                return JSON.parse(responseText);
+              } catch (e) {
+                console.error('Invalid JSON response:', e);
+                console.error('Response was:', responseText);
+                throw new Error('Invalid response format');
+              }
+            })
+            .then((data: any) => {
+              console.log('PayPal API parsed response:', data);
+
+              // Kiểm tra dữ liệu response
+              if (!data) {
+                throw new Error('Empty data from backend');
+              }
+
+              // Kiểm tra orderId
+              if (!data.orderId) {
+                console.error('Response is missing orderId:', data);
+                throw new Error('Không nhận được orderId từ backend');
+              }
+
+              return data.orderId;
+            })
+            .catch((err) => {
+              console.error('PayPal createOrder error:', err);
               this.messageService.add({
                 severity: 'error',
-                summary: 'Error',
-                detail: 'Your cart is empty. Please add products to your cart before checkout.'
+                summary: 'PayPal Error',
+                detail: 'Error creating PayPal order: ' + err.message,
               });
-              return {
-                error: 'Empty cart'
-              };
-            }
-
-            // Lấy chi tiết đơn hàng từ giỏ hàng với định dạng đúng
-            this.listOrderDetail = cartItems.map(item => {
-              return {
-                name: item.name,
-                price: parseInt(String(item.price)), // Đảm bảo price là số nguyên
-                quantity: item.quantity
-              };
+              throw err;
             });
+        },
+        onApprove: (data: any, actions: any) => {
+          // Validate form trước khi xử lý thanh toán
+          if (!this.validateForm()) {
+            return {
+              error: 'Form validation failed',
+            };
+          }
 
-            console.log('Order details before sending:', this.listOrderDetail);
+          // Gọi API backend để capture order
+          return fetch('http://localhost:8080/api/paypal/capture', {
+            method: 'post',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              orderId: data.orderID,
+            }),
+          })
+            .then((res: any) => {
+              if (!res.ok) {
+                throw new Error('PayPal capture failed');
+              }
+              return res.json();
+            })
+            .then((details: any) => {
+              console.log('PayPal payment completed:', details);
 
-            // Kiểm tra xem danh sách chi tiết đơn hàng có trống không
-            if (!this.listOrderDetail || this.listOrderDetail.length === 0) {
-              console.error('Order details list is empty');
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Order details list cannot be empty. Please refresh and try again.'
-              });
-              return {
-                error: 'Empty order details'
-              };
-            }
+              // Validate form trước khi tiếp tục
+              if (!this.validateForm()) {
+                return {
+                  error: 'Form validation failed',
+                };
+              }
 
-            // Gọi API tạo đơn hàng với OrderService đã cải tiến
-            return new Promise((resolve, reject) => {
-              this.orderService.placeOrder(
+              // Lấy thông tin form
+              const {
                 firstname,
                 lastname,
                 country,
                 address,
                 town,
                 state,
-                "", // Empty postCode
                 phone,
                 email,
                 note,
-                this.listOrderDetail,
-                this.username
-              ).subscribe({
-                next: res => {
-                  this.placedOrder = res;
-                  this.orderSuccess = true;
+              } = this.orderForm;
 
-                  // Lưu đơn hàng vào localStorage với thêm thông tin PayPal
-                  const orderWithExtra = {
+              // Kiểm tra giỏ hàng có sản phẩm không
+              const cartItems = this.cartService.getItems();
+              if (!cartItems || cartItems.length === 0) {
+                console.error(
+                  'Cart is empty when trying to create order with PayPal'
+                );
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail:
+                    'Your cart is empty. Please add products to your cart before checkout.',
+                });
+                return {
+                  error: 'Empty cart',
+                };
+              }
+
+              // Lấy chi tiết đơn hàng từ giỏ hàng với định dạng đúng
+              this.listOrderDetail = cartItems.map((item) => {
+                return {
+                  name: item.name,
+                  price: parseInt(String(item.price)), // Đảm bảo price là số nguyên
+                  quantity: item.quantity,
+                };
+              });
+
+              console.log(
+                'Order details before sending:',
+                this.listOrderDetail
+              );
+
+              // Kiểm tra xem danh sách chi tiết đơn hàng có trống không
+              if (!this.listOrderDetail || this.listOrderDetail.length === 0) {
+                console.error('Order details list is empty');
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail:
+                    'Order details list cannot be empty. Please refresh and try again.',
+                });
+                return {
+                  error: 'Empty order details',
+                };
+              }
+
+              // Gọi API tạo đơn hàng với OrderService đã cải tiến
+              return new Promise((resolve, reject) => {
+                this.orderService
+                  .placeOrder(
                     firstname,
                     lastname,
                     country,
                     address,
                     town,
                     state,
+                    '', // Empty postCode
                     phone,
                     email,
                     note,
-                    totalPrice: this.total,
-                    orderDetails: this.listOrderDetail,
-                    username: this.username,
-                    createdDate: new Date(),
-                    paymentMethod: 'PAYPAL',
-                    status: 'Paid',
-                    paypalOrderId: data.orderID,
-                    paypalTransactionId: details.id
-                  };
-                  this.saveOrderToLocalStorage(orderWithExtra);
+                    this.listOrderDetail,
+                    this.username
+                  )
+                  .subscribe({
+                    next: (res) => {
+                      this.placedOrder = res;
+                      this.orderSuccess = true;
 
-                  // Clear cart only after successful order creation
-                  this.cartService.clearCart();
+                      // Lưu đơn hàng vào localStorage với thêm thông tin PayPal
+                      const orderWithExtra = {
+                        firstname,
+                        lastname,
+                        country,
+                        address,
+                        town,
+                        state,
+                        phone,
+                        email,
+                        note,
+                        totalPrice: this.total,
+                        orderDetails: this.listOrderDetail,
+                        username: this.username,
+                        createdDate: new Date(),
+                        paymentMethod: 'PAYPAL',
+                        status: 'Paid',
+                        paypalOrderId: data.orderID,
+                        paypalTransactionId: details.id,
+                      };
+                      this.saveOrderToLocalStorage(orderWithExtra);
 
-                  this.messageService.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Payment successful and order placed!'
+                      // Clear cart only after successful order creation
+                      this.cartService.clearCart();
+
+                      this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Payment successful and order placed!',
+                      });
+
+                      // Chuyển hướng đến trang đơn hàng
+                      setTimeout(() => {
+                        this.router.navigate(['/my-order']);
+                      }, 2000);
+
+                      resolve({
+                        success: true,
+                        orderId: res.id,
+                      });
+                    },
+                    error: (err) => {
+                      console.error(
+                        'Error creating order after PayPal payment:',
+                        err
+                      );
+                      // Hiển thị thông báo lỗi chi tiết
+                      let errorMessage =
+                        'Payment was successful but there was an error creating your order.';
+                      if (err.error && err.error.message) {
+                        errorMessage += ' Details: ' + err.error.message;
+                      }
+
+                      this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: errorMessage,
+                      });
+
+                      reject(err);
+                    },
                   });
-
-                  // Chuyển hướng đến trang đơn hàng
-                  setTimeout(() => {
-                    this.router.navigate(['/my-order']);
-                  }, 2000);
-
-                  resolve({
-                    success: true,
-                    orderId: res.id
-                  });
-                },
-                error: err => {
-                  console.error('Error creating order after PayPal payment:', err);
-                  // Hiển thị thông báo lỗi chi tiết
-                  let errorMessage = 'Payment was successful but there was an error creating your order.';
-                  if (err.error && err.error.message) {
-                    errorMessage += ' Details: ' + err.error.message;
-                  }
-
-                  this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: errorMessage
-                  });
-
-                  reject(err);
-                }
+              });
+            })
+            .catch((err) => {
+              console.error('PayPal capture error:', err);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Payment Error',
+                detail:
+                  'There was an error processing your payment. Please try again.',
               });
             });
-          })
-          .catch(err => {
-            console.error('PayPal capture error:', err);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Payment Error',
-              detail: 'There was an error processing your payment. Please try again.'
-            });
+        },
+        onCancel: () => {
+          console.log('PayPal payment cancelled');
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Payment Cancelled',
+            detail: 'You have cancelled the PayPal payment',
           });
-      },
-      onCancel: () => {
-        console.log('PayPal payment cancelled');
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Payment Cancelled',
-          detail: 'You have cancelled the PayPal payment'
-        });
-      },
-      onError: (err: any) => {
-        console.error('PayPal error:', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'PayPal Error',
-          detail: 'An error occurred with PayPal. Please try again.'
-        });
-      }
-    }).render('#paypal-button-container');
+        },
+        onError: (err: any) => {
+          console.error('PayPal error:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'PayPal Error',
+            detail: 'An error occurred with PayPal. Please try again.',
+          });
+        },
+      })
+      .render('#paypal-button-container');
   }
 
   // Gọi khi người dùng bấm "Tôi đã thanh toán"
@@ -630,7 +859,9 @@ export class CheckoutComponent implements OnInit {
     if (this.orderPendingData && this.orderPendingData.orderId) {
       this.ngbModalRef.close();
       // Điều hướng về trang vnpay-return để xác thực giao dịch (có thể truyền kèm orderId query param)
-      this.router.navigate(['/vnpay-return'], { queryParams: { orderId: this.orderPendingData.orderId } });
+      this.router.navigate(['/vnpay-return'], {
+        queryParams: { orderId: this.orderPendingData.orderId },
+      });
     }
   }
 }

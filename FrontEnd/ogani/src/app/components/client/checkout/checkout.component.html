@@ -1,161 +1,229 @@
 <p-toast></p-toast>
 
-
-
-<section class="breadcrumb-section set-bg" [ngStyle]="{backgroundImage:'url(assets/image/breadcrumb.jpg'}">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <div class="breadcrumb__text">
-                    <h2>Checkout</h2>
-                    <div class="breadcrumb__option">
-                        <a routerLink="/">Home</a>
-                        <span>Checkout</span>
-                    </div>
-                </div>
-            </div>
+<section
+  class="breadcrumb-section set-bg"
+  [ngStyle]="{ backgroundImage: 'url(assets/image/breadcrumb.jpg' }"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="breadcrumb__text">
+          <h2>Checkout</h2>
+          <div class="breadcrumb__option">
+            <a routerLink="/">Home</a>
+            <span>Checkout</span>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 
-
 <section class="checkout spad">
-    <div class="container">
-        <div class="checkout__form">
-            <h4>Billing Details</h4>
-            <form action="#">
-                <div class="row">
-                    <div class="col-lg-8 col-md-6">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="checkout__input">
-                                    <p>Fist Name<span>*</span></p>
-                                    <input type="text" [(ngModel)]="orderForm.firstname" name="firstname">
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="checkout__input">
-                                    <p>Last Name<span>*</span></p>
-                                    <input type="text" [(ngModel)]="orderForm.lastname" name="lastname">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="checkout__input">
-                            <p>Country<span>*</span></p>
-                            <input type="text" [(ngModel)]="orderForm.country" name="country">
-                        </div>
-                        <div class="checkout__input">
-                            <p>Address<span>*</span></p>
-                            <input type="text" placeholder="Street Address" [(ngModel)]="orderForm.address"
-                                name="address">
-                        </div>
-                        <div class="checkout__input">
-                            <p>Town/City<span>*</span></p>
-                            <input type="text" [(ngModel)]="orderForm.town" name="town">
-                        </div>
-                        <div class="checkout__input">
-                            <p>Country/State<span>*</span></p>
-                            <input type="text" [(ngModel)]="orderForm.state" name="state">
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="checkout__input">
-                                    <p>Phone<span>*</span> <small style="color: #999; font-size: 12px;">(10-15
-                                            digits)</small></p>
-                                    <input type="text" [(ngModel)]="orderForm.phone" name="phone"
-                                        placeholder="Enter phone number from 10-15 digits">
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="checkout__input">
-                                    <p>Email<span>*</span> <small
-                                            style="color: #999; font-size: 12px;">(&#64;gmail.com)</small></p>
-                                    <input type="text" [(ngModel)]="orderForm.email" name="email"
-                                        placeholder="example&#64;gmail.com">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="checkout__input__checkbox">
-                            <label for="diff-acc">
-                                Ship to a different address?
-                                <input type="checkbox" id="diff-acc">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="checkout__input">
-                            <p>Order notes<span>*</span></p>
-                            <input type="text" placeholder="Notes about your order, e.g. special notes for delivery."
-                                [(ngModel)]="orderForm.note" name="note">
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="checkout__order">
-                            <h4>Your Order</h4>
-                            <div class="checkout__order__products">Products <span>Total</span></div>
-                            <ul>
-                                <li *ngFor="let item of cartService.items">{{item.name}} <span>{{item.subTotal |
-                                        currency}}</span></li>
-                            </ul>
-                            <div class="checkout__order__subtotal">Subtotal <span>{{cartService.totalPrice |
-                                    currency}}</span></div>
-                            <div class="checkout__order__sale">Sale <span>0%</span></div>
-                            <div class="checkout__order__total">Total <span>{{cartService.total | currency }}</span>
-                            </div>
-                            <p>Please select a payment method below:</p>
-                            <div class="payment-methods"
-                                style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-                                <button type="button" class="payment-method-btn"
-                                    [ngClass]="{'active': orderForm.paymentMethod === 'COD'}"
-                                    (click)="selectPaymentMethod('COD')"
-                                    style="padding: 10px; border: 1px solid #e1e1e1; background-color: #f5f5f5; border-radius: 5px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s;">
-                                    <i class="fa fa-money" style="margin-right: 10px;"></i>
-                                    COD (Cash on Delivery)
-                                </button>
-
-                                <button type="button" class="payment-method-btn"
-                                    [ngClass]="{'active': orderForm.paymentMethod === 'BANK'}"
-                                    (click)="selectPaymentMethod('BANK')"
-                                    style="padding: 10px; border: 1px solid #e1e1e1; background-color: #f5f5f5; border-radius: 5px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s;">
-                                    <i class="fa fa-bank" style="margin-right: 10px;"></i>
-                                    Bank Transfer
-                                </button>
-                            </div>
-
-                            <div *ngIf="orderForm.paymentMethod === 'BANK'" class="checkout__input">
-                                <div class="alert alert-warning"
-                                    style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; border: 1px solid #ffeeba; margin-bottom: 15px; font-weight: bold;">
-                                    <i class="pi pi-exclamation-triangle" style="margin-right: 10px;"></i>
-                                    NOTE: Bank transfer payment method is currently under development. Please select
-                                    another payment method.
-                                </div>
-                                <p class="mb-2">Bank Transfer Information:</p>
-                                <div class="bank-info"
-                                    style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
-                                    <p><strong>Bank:</strong> MB</p>
-                                    <p><strong>STK:</strong> 0974580133</p>
-                                    <p><strong>Chủ tài khoản:</strong> NGUYEN QUANG QUYEN</p>
-                                    <p><strong>Nội dung:</strong> Order payment</p>
-                                </div>
-                                <div class="text-center mb-3">
-                                    <img src="assets/image/qrcode.jpg" alt="QR Code Thanh Toán"
-                                        style="max-width: 200px; border: 1px solid #ddd; padding: 10px;"
-                                        class="img-fluid">
-                                </div>
-                            </div>
-
-
-
-                            <!-- PayPal button container -->
-                            <div style="margin-top: 20px; margin-bottom: 20px;">
-                                <p style="margin-bottom: 10px;">Or pay with PayPal:</p>
-                                <div id="paypal-button-container"></div>
-                            </div>
-
-                            <button type="submit" class="site-btn" (click)="placeOrder()">PLACE ORDER</button>
-                        </div>
-                    </div>
+  <div class="container">
+    <div class="checkout__form">
+      <h4>Billing Details</h4>
+      <form action="#">
+        <div class="row">
+          <div class="col-lg-8 col-md-6">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Fist Name<span>*</span></p>
+                  <input
+                    type="text"
+                    [(ngModel)]="orderForm.firstname"
+                    name="firstname"
+                  />
                 </div>
-            </form>
+              </div>
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Last Name<span>*</span></p>
+                  <input
+                    type="text"
+                    [(ngModel)]="orderForm.lastname"
+                    name="lastname"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input">
+              <p>Country<span>*</span></p>
+              <input
+                type="text"
+                [(ngModel)]="orderForm.country"
+                name="country"
+              />
+            </div>
+            <div class="checkout__input">
+              <p>Address<span>*</span></p>
+              <input
+                type="text"
+                placeholder="Street Address"
+                [(ngModel)]="orderForm.address"
+                name="address"
+              />
+            </div>
+            <div class="checkout__input">
+              <p>Town/City<span>*</span></p>
+              <input type="text" [(ngModel)]="orderForm.town" name="town" />
+            </div>
+            <div class="checkout__input">
+              <p>Country/State<span>*</span></p>
+              <input type="text" [(ngModel)]="orderForm.state" name="state" />
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>
+                    Phone<span>*</span>
+                    <small style="color: #999; font-size: 12px"
+                      >(10-15 digits)</small
+                    >
+                  </p>
+                  <input
+                    type="text"
+                    [(ngModel)]="orderForm.phone"
+                    name="phone"
+                    placeholder="Enter phone number from 10-15 digits"
+                  />
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>
+                    Email<span>*</span>
+                    <small style="color: #999; font-size: 12px"
+                      >(&#64;gmail.com)</small
+                    >
+                  </p>
+                  <input
+                    type="text"
+                    [(ngModel)]="orderForm.email"
+                    name="email"
+                    placeholder="example&#64;gmail.com"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input__checkbox">
+              <label for="diff-acc">
+                Ship to a different address?
+                <input type="checkbox" id="diff-acc" />
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="checkout__input">
+              <p>Order notes<span>*</span></p>
+              <input
+                type="text"
+                placeholder="Notes about your order, e.g. special notes for delivery."
+                [(ngModel)]="orderForm.note"
+                name="note"
+              />
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="checkout__order">
+              <h4>Your Order</h4>
+              <div class="checkout__order__products">
+                Products <span>Total</span>
+              </div>
+              <ul>
+                <li *ngFor="let item of cartService.items">
+                  {{ item.name }} <span>{{ item.subTotal | currency }}</span>
+                </li>
+              </ul>
+              <div class="checkout__order__subtotal">
+                Subtotal <span>{{ cartService.totalPrice | currency }}</span>
+              </div>
+              <div class="checkout__order__sale">Sale <span>0%</span></div>
+              <div class="checkout__order__total">
+                Total <span>{{ cartService.total | currency }}</span>
+              </div>
+              <p>Please select a payment method below:</p>
+              <div class="payment-methods">
+                <button
+                  type="button"
+                  class="payment-method-btn"
+                  [ngClass]="{ active: orderForm.paymentMethod === 'COD' }"
+                  (click)="selectPaymentMethod('COD')"
+                >
+                  <i class="fa fa-money"></i>
+                  <span>COD (Cash on Delivery)</span>
+                  <i
+                    class="fa fa-check-circle check-icon"
+                    *ngIf="orderForm.paymentMethod === 'COD'"
+                  ></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="payment-method-btn"
+                  [ngClass]="{
+                    active: orderForm.paymentMethod === 'PAYOS',
+                    processing: isProcessingPayOS
+                  }"
+                  (click)="selectPaymentMethod('PAYOS')"
+                  [disabled]="isProcessingPayOS"
+                >
+                  <i class="fa fa-bank"></i>
+                  <span>Bank Transfer</span>
+                  <i
+                    class="fa fa-spinner fa-spin"
+                    *ngIf="isProcessingPayOS"
+                  ></i>
+                  <i
+                    class="fa fa-check-circle check-icon"
+                    *ngIf="
+                      orderForm.paymentMethod === 'PAYOS' && !isProcessingPayOS
+                    "
+                  ></i>
+                </button>
+              </div>
+
+              <!-- PayPal button container removed -->
+
+
+              <!-- Thông báo khi đang xử lý Bank Transfer -->
+              <div
+                *ngIf="orderForm.paymentMethod === 'PAYOS' && isProcessingPayOS"
+                class="processing-message"
+                style="
+                  margin-top: 15px;
+                  padding: 15px;
+                  background-color: #fff3cd;
+                  border: 1px solid #ffc107;
+                  border-radius: 5px;
+                  text-align: center;
+                "
+              >
+                <i class="fa fa-spinner fa-spin" style="margin-right: 8px"></i>
+                <span>Processing your payment request...</span>
+              </div>
+
+              <!-- Nút PLACE ORDER -->
+              <button
+                type="submit"
+                class="site-btn"
+                (click)="placeOrder()"
+                [disabled]="isProcessingPayOS || !orderForm.paymentMethod"
+                style="width: 100%; margin-top: 15px"
+              >
+                <span *ngIf="!isProcessingPayOS">PLACE ORDER</span>
+                <span *ngIf="isProcessingPayOS">
+                  <i
+                    class="fa fa-spinner fa-spin"
+                    style="margin-right: 8px"
+                  ></i>
+                  Processing...
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
 </section>

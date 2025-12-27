@@ -40,8 +40,9 @@ import { LoginPageComponent } from './components/client/login-page/login-page.co
 import { ContactComponent } from './components/client/contact/contact.component';
 import { AboutComponent } from './components/client/about/about.component';
 import { ChatBotComponent } from './components/client/chat-bot/chat-bot.component';
-import { CheckboxModule } from 'primeng/checkbox'; 
+import { CheckboxModule } from 'primeng/checkbox';
 import { OAuthSuccessComponent } from './components/client/oauth-success/oauth-success.component';
+import { PayosReturnComponent } from './components/client/payos-return/payos-return.component';
 
 // FontAwesome
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -111,11 +112,12 @@ registerLocaleData(localeFr, 'vi');
     ContactComponent,
     AboutComponent,
     OAuthSuccessComponent,
-    ChatBotComponent
+    PayosReturnComponent,
+    ChatBotComponent,
   ],
   imports: [
     BrowserModule,
-    CommonModule,  // Được thêm vào để fix lỗi
+    CommonModule, // Được thêm vào để fix lỗi
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
@@ -155,13 +157,13 @@ registerLocaleData(localeFr, 'vi');
     DropdownModule,
     TagModule,
     TooltipModule,
-    CheckboxModule // THÊM DÒNG NÀY
+    CheckboxModule, // THÊM DÒNG NÀY
   ],
   providers: [
     MessageService,
     { provide: LOCALE_ID, useValue: 'vi' },
-    { provide: DEFAULT_CURRENCY_CODE, useValue: 'VNĐ' }
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'VNĐ' },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
