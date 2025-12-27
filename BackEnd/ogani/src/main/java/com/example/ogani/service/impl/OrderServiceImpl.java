@@ -128,4 +128,9 @@ public class OrderServiceImpl implements OrderService {
     public Order saveOrder(Order order) {
         return orderRepository.save(order);
     }
+
+    @Override
+    public Order getStatusById(String id) {
+        return orderRepository.findById(Long.valueOf(id)).orElse(null);
+    }
 }

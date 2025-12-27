@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.example.ogani.entity.Order;
 import com.example.ogani.model.request.CreatePaymentLinkRequestBody;
+import com.example.ogani.model.request.UpdateStatusRequest;
 import com.example.ogani.model.response.MessageResponse;
 import com.example.ogani.model.response.PayOSResponse;
 import com.example.ogani.service.OrderService;
@@ -13,9 +14,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import vn.payos.PayOS;
 import vn.payos.core.FileDownloadResponse;
 import vn.payos.exception.APIException;
@@ -126,6 +129,7 @@ public class OrderController {
             return ResponseEntity.internalServerError().body(new MessageResponse("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage()));
         }
     }
+
     @PutMapping(path = "/{orderId}")
     public PayOSResponse<PaymentLink> cancelOrder(@PathVariable("orderId") long orderId) {
         try {
@@ -208,5 +212,31 @@ public class OrderController {
             e.printStackTrace();
             return PayOSResponse.error(e.getMessage());
         }
+    }
+
+    @GetMapping("/get_status/{order_id}")
+    public String getStatus(@PathVariable("order_id") String orderId) {
+        Order order = orderService.getStatusById(orderId);
+        String status = order.getStatus();
+        if (status == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy đơn hàng với order_id = " + orderId
+            );
+        }
+        return status;
+    }
+    @PutMapping("/update_status/{order_id}")
+    public Order updateStatus(@PathVariable("order_id") String orderId, @RequestBody UpdateStatusRequest request) {
+        System.out.println("Đang tìm kiếm order_id: " + orderId);
+        Order order = orderService.getStatusById(orderId);
+        if (order == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy đơn hàng với order_id = " + orderId
+            );
+        }
+        order.setStatus(request.getStatus());
+        return orderService.saveOrder(order);
     }
 }

@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.example.ogani.entity.Order;
 import com.example.ogani.model.request.CreateOrderRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public interface OrderService {
-
     /**
      * Lấy danh sách tất cả đơn hàng.
      * 
@@ -23,4 +23,5 @@ public interface OrderService {
     List<Order> getOrderByUser(String username);
 
     Order saveOrder(Order order);
+    Order getStatusById(String id);
 }
