@@ -67,7 +67,7 @@ export class CheckoutComponent implements OnInit {
     private messageService: MessageService,
     private router: Router,
     private modalService: NgbModal
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Get current user
@@ -217,6 +217,9 @@ export class CheckoutComponent implements OnInit {
         ? productNames.substring(0, 100) + '...'
         : productNames;
 
+    // Lấy productId của sản phẩm đầu tiên (PayOS chỉ hỗ trợ 1 sản phẩm)
+    const productId = cartItems.length > 0 && cartItems[0].id ? cartItems[0].id : null;
+
     // Tạo description từ thông tin đơn hàng
     const description = `${this.username} - ${productName}`;
 
@@ -244,7 +247,8 @@ export class CheckoutComponent implements OnInit {
         description,
         returnUrl,
         cancelUrl,
-        this.total
+        this.total,
+        productId
       )
       .subscribe({
         next: (res) => {

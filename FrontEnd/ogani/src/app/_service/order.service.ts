@@ -272,4 +272,89 @@ export class OrderService {
       }
     }
   }
+
+  // Create order with PayOS payment
+  createOrderWithPayOS(
+    userId: string,
+    username: string,
+    firstname: string,
+    lastname: string,
+    country: string,
+    address: string,
+    state: string,
+    phone: string,
+    note: string,
+    town: string,
+    postCode: string,
+    email: string,
+    productName: string,
+    description: string,
+    returnUrl: string,
+    cancelUrl: string,
+    price: number,
+    productId: number | null
+  ): Observable<any> {
+    const requestBody = {
+      userId: userId ? parseInt(userId) : null,
+      username: username,
+      firstname: firstname,
+      lastname: lastname,
+      country: country,
+      state: state,
+      address: address,
+      phone: phone,
+      email: email,
+      town: town,
+      postCode: postCode || '',
+      note: note || '',
+      productName: productName,
+      productId: productId,
+      description: description,
+      returnUrl: returnUrl,
+      cancelUrl: cancelUrl,
+      price: Math.round(price) // PayOS requires integer price
+    };
+
+    console.log('Creating PayOS order with request:', requestBody);
+    return this.http.post(ORDER_API + 'create', requestBody, httpOptions)
+      .pipe(
+        catchError(error => {
+          console.error('Error creating PayOS order:', error);
+          if (error.error && error.error.message) {
+            return throwError(() => new Error(error.error.message));
+          }
+          return throwError(() => new Error('Failed to create PayOS order. Please try again.'));
+        })
+      );
+  }
+
+  updateOrderStatus(orderCode: string, status: string): Observable<any> {
+    const requestBody = { status: status };
+    console.log('Updating order status:', orderCode, status);
+    return this.http.put(ORDER_API + 'update_status/' + orderCode, requestBody, httpOptions)
+      .pipe(
+        catchError(error => {
+          console.error('Error updating order status:', error);
+          if (error.error && error.error.message) {
+            return throwError(() => new Error(error.error.message));
+          }
+          return throwError(() => new Error('Failed to update order status. Please try again.'));
+        })
+      );
+  }
+
+  // Get order status
+  getOrderStatus(orderCode: string): Observable<string> {
+    console.log('Getting order status for:', orderCode);
+    return this.http.get<string>(ORDER_API + 'get_status/' + orderCode, httpOptions)
+      .pipe(
+        catchError(error => {
+          console.error('Error getting order status:', error);
+          if (error.error && error.error.message) {
+            return throwError(() => new Error(error.error.message));
+          }
+          return throwError(() => new Error('Failed to get order status. Please try again.'));
+        })
+      );
+  }
 }

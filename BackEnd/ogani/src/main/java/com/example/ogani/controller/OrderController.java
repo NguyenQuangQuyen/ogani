@@ -209,31 +209,22 @@ public class OrderController {
             WebhookData data = payOS.webhooks().verify(body);
             System.out.println("PayOS Webhook received: " + data);
             
-            // Lấy orderCode và status từ webhook data
-            Long orderCode = data.getData().getOrderCode();
-            String status = data.getData().getStatus();
+            // FIX: Lấy orderCode trực tiếp từ data (không qua .getData())
+            Long orderCode = data.getOrderCode();
+            
+            // FIX: WebhookData không có getStatus(). 
+            // Khi Webhook bắn về và verify thành công nghĩa là giao dịch đã thanh toán.
+            String status = "PAID"; 
             
             if (orderCode != null) {
                 String orderId = String.valueOf(orderCode);
                 Order order = orderService.getStatusById(orderId);
                 
                 if (order != null) {
-                    // Cập nhật status dựa trên trạng thái từ PayOS
-                    // PayOS status: PAID, CANCELLED, PENDING, etc.
-                    if ("PAID".equals(status)) {
-                        order.setStatus("PAID");
-                        orderService.saveOrder(order);
-                        System.out.println("Order " + orderId + " status updated to PAID");
-                    } else if ("CANCELLED".equals(status)) {
-                        order.setStatus("CANCELLED");
-                        orderService.saveOrder(order);
-                        System.out.println("Order " + orderId + " status updated to CANCELLED");
-                    } else {
-                        // Có thể có các status khác như PENDING, EXPIRED, etc.
-                        order.setStatus(status);
-                        orderService.saveOrder(order);
-                        System.out.println("Order " + orderId + " status updated to " + status);
-                    }
+                    // Cập nhật status thành PAID vì nhận được webhook thành công
+                    order.setStatus(status);
+                    orderService.saveOrder(order);
+                    System.out.println("Order " + orderId + " status updated to " + status);
                 } else {
                     System.out.println("Order not found with orderId: " + orderId);
                 }
@@ -258,6 +249,7 @@ public class OrderController {
         }
         return status;
     }
+    
     @PutMapping("/update_status/{order_id}")
     public Order updateStatus(@PathVariable("order_id") String orderId, @RequestBody UpdateStatusRequest request) {
         System.out.println("Đang tìm kiếm order_id: " + orderId);

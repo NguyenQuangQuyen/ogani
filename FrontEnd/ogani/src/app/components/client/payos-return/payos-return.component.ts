@@ -23,7 +23,7 @@ export class PayosReturnComponent implements OnInit {
     private messageService: MessageService,
     private cartService: CartService,
     private orderService: OrderService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Kiểm tra query parameters từ PayOS
