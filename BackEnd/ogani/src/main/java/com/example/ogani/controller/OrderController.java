@@ -42,7 +42,7 @@ public class OrderController {
         this.payOS = payOS;
     }
 
-    @GetMapping("/")
+    @GetMapping("/getall")
     @Operation(summary = "Lấy danh sách tất cả đơn hàng")
     public ResponseEntity<?> getList() {
         try {

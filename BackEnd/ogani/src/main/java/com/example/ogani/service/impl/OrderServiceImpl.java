@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public List<Order> getList() {
-        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "orderId"));
     }
 
     /**
