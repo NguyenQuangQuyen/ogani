@@ -79,6 +79,8 @@ public class OrderController {
             CreatePaymentLinkResponse data = payOS.paymentRequests().create(paymentData);
             Order order = new Order();
             order.setOrderId(String.valueOf(orderCode));
+            order.setUserId(RequestBody.getUserId());
+            order.setUsername(RequestBody.getUsername());
             order.setProductId(RequestBody.getProductId());
             order.setProductName(RequestBody.getProductName());
             order.setPrice(RequestBody.getPrice());
@@ -127,6 +129,22 @@ public class OrderController {
             return ResponseEntity.ok(list);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new MessageResponse("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/user-id/{userId}")
+    @Operation(summary = "Lấy danh sách đơn hàng của người dùng theo user_id")
+    public ResponseEntity<?> getListByUserId(@PathVariable("userId") Long userId) {
+        try {
+            List<Order> list = orderService.getOrderByUserId(userId);
+
+            if (list.isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Không tìm thấy đơn hàng cho user_id: " + userId));
+            }
+
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Lỗi khi lấy danh sách đơn hàng theo user_id: " + e.getMessage()));
         }
     }
 

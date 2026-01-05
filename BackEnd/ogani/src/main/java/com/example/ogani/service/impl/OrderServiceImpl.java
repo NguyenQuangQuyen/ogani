@@ -110,7 +110,6 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public List<Order> getOrderByUser(String username) {
-
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new NotFoundException("Người dùng không tồn tại: " + username));
@@ -119,6 +118,20 @@ public class OrderServiceImpl implements OrderService {
 
         if (orders == null || orders.isEmpty()) {
             throw new NotFoundException("Không tìm thấy đơn hàng cho user: " + username);
+        }
+
+        return orders;
+    }
+
+    /**
+     * Lấy đơn hàng theo user_id (dùng khi frontend gửi trực tiếp userId)
+     */
+    @Override
+    public List<Order> getOrderByUserId(Long userId) {
+        List<Order> orders = orderRepository.findByUserIdOrderByOrderIdDesc(userId);
+
+        if (orders == null || orders.isEmpty()) {
+            throw new NotFoundException("Không tìm thấy đơn hàng cho user_id: " + userId);
         }
 
         return orders;

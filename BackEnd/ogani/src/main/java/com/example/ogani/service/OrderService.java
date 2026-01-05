@@ -22,6 +22,14 @@ public interface OrderService {
      */
     List<Order> getOrderByUser(String username);
 
+    /**
+     * Lấy danh sách đơn hàng theo user_id.
+     *
+     * Dùng cho trường hợp frontend gửi trực tiếp userId,
+     * đảm bảo chỉ lấy đúng đơn hàng của user đó.
+     */
+    List<Order> getOrderByUserId(Long userId);
+
     Order saveOrder(Order order);
     Order getStatusById(String id);
 }
