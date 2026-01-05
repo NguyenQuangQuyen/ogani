@@ -5,38 +5,23 @@ import { catchError } from 'rxjs/operators';
 import { Order } from '../_class/order';
 import { OrderDetail } from '../_class/order-detail';
 
-const ORDER_API = "http://localhost:8080/api/order/";
+const ORDER_API = 'http://localhost:8080/api/order/';
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OrderService {
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient) {}
 
   getListOrder(): Observable<any> {
-    // Try to get all orders using the main endpoint
-    console.log('Fetching all orders from main endpoint');
-    return this.http.get(ORDER_API, httpOptions);
+    return this.http.get(ORDER_API + 'getall', httpOptions);
   }
 
-
-  getListOrderByUser(username: string): Observable<any> {
-    // If username is 'all', use getListOrder to get all orders
-    if (username === 'all') {
-      console.log('Fetching all orders');
-      return this.getListOrder();
-    }
-
-    // Otherwise, get orders for a specific user
-    console.log('Fetching orders for user:', username);
-
-    // Try different endpoint formats
-    return this.http.get(ORDER_API + 'user/' + username, httpOptions);
+  getListOrderByUserId(userId: number): Observable<any> {
+    return this.http.get(ORDER_API + 'user-id/' + userId, httpOptions);
   }
 
   // New method to get orders from localStorage as a fallback
@@ -92,7 +77,7 @@ export class OrderService {
               if (this.isValidJson(orderJson)) {
                 const orders = JSON.parse(orderJson);
                 if (Array.isArray(orders)) {
-                  orders.forEach(order => {
+                  orders.forEach((order) => {
                     if (!processedIds.has(order.id)) {
                       allOrders.push(order);
                       processedIds.add(order.id);
@@ -132,11 +117,26 @@ export class OrderService {
     }
   }
 
-  placeOrder(firstname: string, lastname: string, country: string, address: string, town: string, state: string, postCode: string, phone: string, email: string, note: string, orderDetails: OrderDetail[], username: string): Observable<any> {
+  placeOrder(
+    firstname: string,
+    lastname: string,
+    country: string,
+    address: string,
+    town: string,
+    state: string,
+    postCode: string,
+    phone: string,
+    email: string,
+    note: string,
+    orderDetails: OrderDetail[],
+    username: string
+  ): Observable<any> {
     // Validate phone number (10-15 digits)
     const formattedPhone = String(phone || '').replace(/\D/g, '');
     if (formattedPhone.length < 10 || formattedPhone.length > 15) {
-      return throwError(() => new Error('Phone number must be between 10 and 15 digits'));
+      return throwError(
+        () => new Error('Phone number must be between 10 and 15 digits')
+      );
     }
 
     // Validate email format
@@ -153,30 +153,34 @@ export class OrderService {
       address: address.trim(),
       town: town.trim(),
       state: state.trim(),
-      postCode: "", // Default empty string for postCode
+      postCode: '', // Default empty string for postCode
       phone: formattedPhone,
       email: email.trim(),
       note: note ? note.trim() : '',
       // Chuyển đổi orderDetails để đảm bảo định dạng đúng
-      orderDetails: orderDetails.map(item => ({
+      orderDetails: orderDetails.map((item) => ({
         name: item.name,
-        price: typeof item.price === 'number' ? item.price : parseInt(String(item.price)),
-        quantity: item.quantity
+        price:
+          typeof item.price === 'number'
+            ? item.price
+            : parseInt(String(item.price)),
+        quantity: item.quantity,
       })),
-      username: username.trim()
+      username: username.trim(),
     };
 
     console.log('Sending order request to backend:', orderRequest);
-    return this.http.post(ORDER_API + 'create', orderRequest, httpOptions)
-      .pipe(
-        catchError(error => {
-          console.error('Error creating order:', error);
-          if (error.error && error.error.message) {
-            return throwError(() => new Error(error.error.message));
-          }
-          return throwError(() => new Error('Failed to create order. Please try again.'));
-        })
-      );
+    return this.http.post(ORDER_API + 'create', orderRequest, httpOptions).pipe(
+      catchError((error) => {
+        console.error('Error creating order:', error);
+        if (error.error && error.error.message) {
+          return throwError(() => new Error(error.error.message));
+        }
+        return throwError(
+          () => new Error('Failed to create order. Please try again.')
+        );
+      })
+    );
   }
 
   // Thêm phương thức cancelOrder
@@ -198,13 +202,18 @@ export class OrderService {
     // Hiện tại, chúng ta sẽ cập nhật trực tiếp vào localStorage và trả về kết quả thành công
     try {
       // Cập nhật order trong localStorage của user
-      const ordersJson = localStorage.getItem(`orders_${order.username || 'all'}`);
+      const ordersJson = localStorage.getItem(
+        `orders_${order.username || 'all'}`
+      );
       if (ordersJson) {
         const orders = JSON.parse(ordersJson);
         const index = orders.findIndex((o: Order) => o.id === order.id);
         if (index !== -1) {
           orders[index] = order;
-          localStorage.setItem(`orders_${order.username || 'all'}`, JSON.stringify(orders));
+          localStorage.setItem(
+            `orders_${order.username || 'all'}`,
+            JSON.stringify(orders)
+          );
         }
       }
 
@@ -223,7 +232,9 @@ export class OrderService {
       const adminOrdersJson = localStorage.getItem('orders_all');
       if (adminOrdersJson) {
         const adminOrders = JSON.parse(adminOrdersJson);
-        const adminIndex = adminOrders.findIndex((o: Order) => o.id === order.id);
+        const adminIndex = adminOrders.findIndex(
+          (o: Order) => o.id === order.id
+        );
         if (adminIndex !== -1) {
           adminOrders[adminIndex] = order;
           localStorage.setItem('orders_all', JSON.stringify(adminOrders));
@@ -233,7 +244,11 @@ export class OrderService {
       // Đồng bộ thay đổi với tất cả các bộ nhớ cache có thể
       this.syncOrderAcrossAllStorage(order);
 
-      return of({ success: true, message: 'Order updated successfully', data: order });
+      return of({
+        success: true,
+        message: 'Order updated successfully',
+        data: order,
+      });
     } catch (e) {
       console.error('Error updating order in localStorage:', e);
       return of({ success: false, message: 'Failed to update order' });
@@ -261,7 +276,12 @@ export class OrderService {
               }
             }
             // Nếu là đối tượng đơn lẻ và có cùng ID
-            else if (data && typeof data === 'object' && 'id' in data && data.id === order.id) {
+            else if (
+              data &&
+              typeof data === 'object' &&
+              'id' in data &&
+              data.id === order.id
+            ) {
               localStorage.setItem(key, JSON.stringify(order));
               console.log(`Updated single order in storage: ${key}`);
             }
@@ -312,33 +332,37 @@ export class OrderService {
       description: description,
       returnUrl: returnUrl,
       cancelUrl: cancelUrl,
-      price: Math.round(price) // PayOS requires integer price
+      price: Math.round(price), // PayOS requires integer price
     };
 
     console.log('Creating PayOS order with request:', requestBody);
-    return this.http.post(ORDER_API + 'create', requestBody, httpOptions)
-      .pipe(
-        catchError(error => {
-          console.error('Error creating PayOS order:', error);
-          if (error.error && error.error.message) {
-            return throwError(() => new Error(error.error.message));
-          }
-          return throwError(() => new Error('Failed to create PayOS order. Please try again.'));
-        })
-      );
+    return this.http.post(ORDER_API + 'create', requestBody, httpOptions).pipe(
+      catchError((error) => {
+        console.error('Error creating PayOS order:', error);
+        if (error.error && error.error.message) {
+          return throwError(() => new Error(error.error.message));
+        }
+        return throwError(
+          () => new Error('Failed to create PayOS order. Please try again.')
+        );
+      })
+    );
   }
 
   updateOrderStatus(orderCode: string, status: string): Observable<any> {
     const requestBody = { status: status };
     console.log('Updating order status:', orderCode, status);
-    return this.http.put(ORDER_API + 'update_status/' + orderCode, requestBody, httpOptions)
+    return this.http
+      .put(ORDER_API + 'update_status/' + orderCode, requestBody, httpOptions)
       .pipe(
-        catchError(error => {
+        catchError((error) => {
           console.error('Error updating order status:', error);
           if (error.error && error.error.message) {
             return throwError(() => new Error(error.error.message));
           }
-          return throwError(() => new Error('Failed to update order status. Please try again.'));
+          return throwError(
+            () => new Error('Failed to update order status. Please try again.')
+          );
         })
       );
   }
@@ -346,14 +370,17 @@ export class OrderService {
   // Get order status
   getOrderStatus(orderCode: string): Observable<string> {
     console.log('Getting order status for:', orderCode);
-    return this.http.get<string>(ORDER_API + 'get_status/' + orderCode, httpOptions)
+    return this.http
+      .get<string>(ORDER_API + 'get_status/' + orderCode, httpOptions)
       .pipe(
-        catchError(error => {
+        catchError((error) => {
           console.error('Error getting order status:', error);
           if (error.error && error.error.message) {
             return throwError(() => new Error(error.error.message));
           }
-          return throwError(() => new Error('Failed to get order status. Please try again.'));
+          return throwError(
+            () => new Error('Failed to get order status. Please try again.')
+          );
         })
       );
   }

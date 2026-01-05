@@ -10,13 +10,14 @@ import { NgForm } from '@angular/forms';
   selector: 'app-my-order',
   templateUrl: './my-order.component.html',
   styleUrls: ['./my-order.component.css'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class MyOrderComponent implements OnInit {
   listOrder: Order[] = [];
   showOrderDetails: boolean = false;
   selectedOrder: Order | null = null;
   username: string = '';
+  userId: number | null = null;
 
   // New properties for edit functionality
   showEditOrderDialog: boolean = false;
@@ -29,13 +30,20 @@ export class MyOrderComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private storageService: StorageService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Sử dụng StorageService để lấy thông tin người dùng
     const user = this.storageService.getUser();
     if (user && user.username) {
       this.username = user.username;
+      if (user.id !== undefined && user.id !== null) {
+        this.userId = Number(user.id);
+      } else if (user.userId !== undefined && user.userId !== null) {
+        this.userId = Number(user.userId);
+      } else {
+        this.userId = null;
+      }
       this.getListOrder();
     } else {
       // Nếu không có thông tin đăng nhập, chuyển hướng về trang đăng nhập
@@ -67,18 +75,26 @@ export class MyOrderComponent implements OnInit {
         const userOrders = JSON.parse(userOrdersJson);
         if (userOrders && userOrders.length > 0) {
           // Lọc bỏ các đơn hàng đã hủy
-          this.listOrder = userOrders.filter((order: Order) => !canceledOrders.includes(order.id));
+          this.listOrder = userOrders.filter(
+            (order: Order) => !canceledOrders.includes(order.id)
+          );
 
           // Sắp xếp theo ngày (mới nhất lên đầu)
           this.listOrder.sort((a, b) => {
-            return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+            return (
+              new Date(b.createdDate).getTime() -
+              new Date(a.createdDate).getTime()
+            );
           });
 
           console.log('Using orders from localStorage:', this.listOrder);
 
           // Lưu vào cache để sử dụng sau này
           localStorage.setItem('orders_cache', JSON.stringify(this.listOrder));
-          localStorage.setItem('orders_cache_timestamp', new Date().toISOString());
+          localStorage.setItem(
+            'orders_cache_timestamp',
+            new Date().toISOString()
+          );
 
           // Vẫn gọi API để cập nhật dữ liệu mới nhất
           this.fetchOrdersFromServer(canceledOrders);
@@ -95,26 +111,42 @@ export class MyOrderComponent implements OnInit {
 
   // Tách phương thức gọi API thành một phương thức riêng
   fetchOrdersFromServer(canceledOrders: number[]) {
-    console.log('Fetching orders from server for user:', this.username);
+    console.log('Fetching orders from server for userId:', this.userId);
 
-    this.orderService.getListOrderByUser(this.username).subscribe({
+    if (this.userId === null) {
+      this.getOrdersFromLocalStorage();
+      return;
+    }
+
+    this.orderService.getListOrderByUserId(this.userId).subscribe({
       next: (data: any) => {
         console.log('Server response:', data);
         if (data && Array.isArray(data)) {
           // Filter out canceled orders
-          this.listOrder = data.filter(order => !canceledOrders.includes(order.id));
+          this.listOrder = data.filter(
+            (order) => !canceledOrders.includes(order.id)
+          );
 
           // Sort orders by date (newest first)
           this.listOrder.sort((a, b) => {
-            return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+            return (
+              new Date(b.createdDate).getTime() -
+              new Date(a.createdDate).getTime()
+            );
           });
 
           // Save to localStorage for backup
           localStorage.setItem('orders_cache', JSON.stringify(this.listOrder));
-          localStorage.setItem('orders_cache_timestamp', new Date().toISOString());
+          localStorage.setItem(
+            'orders_cache_timestamp',
+            new Date().toISOString()
+          );
 
           // Cũng lưu vào danh sách đơn hàng của người dùng
-          localStorage.setItem(`orders_${this.username}`, JSON.stringify(this.listOrder));
+          localStorage.setItem(
+            `orders_${this.username}`,
+            JSON.stringify(this.listOrder)
+          );
 
           console.log('Filtered orders from server:', this.listOrder);
         } else {
@@ -125,7 +157,7 @@ export class MyOrderComponent implements OnInit {
       error: (error: any) => {
         console.error('Error fetching orders:', error);
         this.getOrdersFromLocalStorage();
-      }
+      },
     });
   }
 
@@ -155,11 +187,16 @@ export class MyOrderComponent implements OnInit {
           }
 
           // Filter out canceled orders
-          this.listOrder = orders.filter((order: Order) => !canceledOrders.includes(order.id));
+          this.listOrder = orders.filter(
+            (order: Order) => !canceledOrders.includes(order.id)
+          );
 
           // Sort orders by date (newest first)
           this.listOrder.sort((a, b) => {
-            return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+            return (
+              new Date(b.createdDate).getTime() -
+              new Date(a.createdDate).getTime()
+            );
           });
 
           console.log('Using cached orders:', this.listOrder);
@@ -192,7 +229,7 @@ export class MyOrderComponent implements OnInit {
       town: order.town,
       state: order.state,
       country: order.country,
-      note: order.note || ''
+      note: order.note || '',
     };
     this.showEditOrderDialog = true;
   }
@@ -215,7 +252,7 @@ export class MyOrderComponent implements OnInit {
       state: this.editOrderForm.state,
       country: this.editOrderForm.country,
       note: this.editOrderForm.note,
-      username: this.username // Ensure username is included for storage
+      username: this.username, // Ensure username is included for storage
     };
 
     this.orderService.updateOrder(updatedOrder).subscribe({
@@ -226,7 +263,9 @@ export class MyOrderComponent implements OnInit {
           this.showEditOrderDialog = false;
 
           // Update the order in the list
-          const index = this.listOrder.findIndex(order => order.id === updatedOrder.id);
+          const index = this.listOrder.findIndex(
+            (order) => order.id === updatedOrder.id
+          );
           if (index !== -1) {
             this.listOrder[index] = updatedOrder;
           }
@@ -235,7 +274,11 @@ export class MyOrderComponent implements OnInit {
           this.showSuccess('Order updated successfully');
 
           // If details dialog is open, update the selected order there too
-          if (this.showOrderDetails && this.selectedOrder && this.selectedOrder.id === updatedOrder.id) {
+          if (
+            this.showOrderDetails &&
+            this.selectedOrder &&
+            this.selectedOrder.id === updatedOrder.id
+          ) {
             this.selectedOrder = updatedOrder;
           }
         } else {
@@ -246,7 +289,7 @@ export class MyOrderComponent implements OnInit {
         this.submitting = false;
         this.showError('An error occurred while updating the order');
         console.error('Error updating order:', err);
-      }
+      },
     });
   }
 
@@ -267,7 +310,10 @@ export class MyOrderComponent implements OnInit {
 
         if (!canceledOrders.includes(orderId)) {
           canceledOrders.push(orderId);
-          localStorage.setItem('canceled_orders', JSON.stringify(canceledOrders));
+          localStorage.setItem(
+            'canceled_orders',
+            JSON.stringify(canceledOrders)
+          );
         }
 
         // Update the list of canceled orders for admin
@@ -283,17 +329,24 @@ export class MyOrderComponent implements OnInit {
 
         if (!adminCanceledOrders.includes(orderId)) {
           adminCanceledOrders.push(orderId);
-          localStorage.setItem('canceledOrders', JSON.stringify(adminCanceledOrders));
+          localStorage.setItem(
+            'canceledOrders',
+            JSON.stringify(adminCanceledOrders)
+          );
         }
 
         // Remove from all order storages
         this.removeOrderFromAllStorages(orderId);
 
         // Update the list
-        this.listOrder = this.listOrder.filter(order => order.id !== orderId);
-        
+        this.listOrder = this.listOrder.filter((order) => order.id !== orderId);
+
         // Close order details dialog if open
-        if (this.showOrderDetails && this.selectedOrder && this.selectedOrder.id === orderId) {
+        if (
+          this.showOrderDetails &&
+          this.selectedOrder &&
+          this.selectedOrder.id === orderId
+        ) {
           this.showOrderDetails = false;
         }
 
@@ -302,7 +355,7 @@ export class MyOrderComponent implements OnInit {
       error: (error: any) => {
         console.error('Error cancelling order:', error);
         this.showError('Failed to cancel order');
-      }
+      },
     });
   }
 
@@ -312,17 +365,19 @@ export class MyOrderComponent implements OnInit {
     const storageKeys = [
       'orders_cache',
       'orders_all', // admin cache
-      `orders_${this.username}` // user specific cache
+      `orders_${this.username}`, // user specific cache
     ];
 
     // Duyệt qua các key và cập nhật
-    storageKeys.forEach(key => {
+    storageKeys.forEach((key) => {
       const ordersJson = localStorage.getItem(key);
       if (ordersJson) {
         try {
           const orders = JSON.parse(ordersJson);
           if (Array.isArray(orders)) {
-            const updatedOrders = orders.filter((order: any) => order.id !== orderId);
+            const updatedOrders = orders.filter(
+              (order: any) => order.id !== orderId
+            );
             localStorage.setItem(key, JSON.stringify(updatedOrders));
             console.log(`Updated ${key} after cancellation`);
           }
@@ -339,14 +394,26 @@ export class MyOrderComponent implements OnInit {
   }
 
   showSuccess(message: string) {
-    this.messageService.add({ severity: 'success', summary: 'Success', detail: message });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: message,
+    });
   }
 
   showError(message: string) {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: message });
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: message,
+    });
   }
 
   showWarn(message: string) {
-    this.messageService.add({ severity: 'warn', summary: 'Warning', detail: message });
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: message,
+    });
   }
 }

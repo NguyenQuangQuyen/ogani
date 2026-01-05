@@ -116,20 +116,6 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/user")
-    @Operation(summary = "Lấy danh sách đơn hàng của người dùng theo username")
-    public ResponseEntity<?> getListByUser(@RequestParam("username") String username) {
-        try {
-            List<Order> list = orderService.getOrderByUser(username);
-
-            if (list.isEmpty()) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Không tìm thấy đơn hàng cho người dùng: " + username));
-            }
-
-            return ResponseEntity.ok(list);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new MessageResponse("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage()));
-        }
     }
 
     @GetMapping("/user-id/{userId}")
