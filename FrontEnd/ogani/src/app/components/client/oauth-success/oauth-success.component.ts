@@ -46,7 +46,7 @@ export class OAuthSuccessComponent implements OnInit {
                 // Chuyển hướng người dùng đến trang chính
                 setTimeout(() => {
                     this.router.navigate(['/home']);
-                }, 1500);
+                }, 0);
             },
             error: (err) => {
                 console.error('OAuth2 success error:', err);

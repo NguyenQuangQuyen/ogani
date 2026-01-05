@@ -30,7 +30,7 @@ export class MyOrderComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private storageService: StorageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Sử dụng StorageService để lấy thông tin người dùng
@@ -122,18 +122,54 @@ export class MyOrderComponent implements OnInit {
       next: (data: any) => {
         console.log('Server response:', data);
         if (data && Array.isArray(data)) {
+          // Normalize backend orders to UI model
+          const normalizedOrders: Order[] = data.map((o: any) => {
+            const idNum = parseInt(String(o.orderId));
+            const qty = o.quantity ?? 1;
+            const total = o.price ?? 0;
+            const perItemPrice = qty > 0 ? Math.round(total / qty) : total;
+
+            let orderDetails = [];
+            if (o.orderDetails && o.orderDetails.length > 0) {
+              orderDetails = o.orderDetails;
+            } else if (o.productName) {
+              orderDetails = [
+                {
+                  name: o.productName,
+                  price: perItemPrice,
+                  quantity: qty,
+                  subTotal: perItemPrice * qty,
+                },
+              ];
+            }
+
+            return {
+              id: idNum,
+              firstname: o.firstname,
+              lastname: o.lastname,
+              email: o.email,
+              phone: o.phone,
+              address: o.address,
+              town: o.town,
+              state: o.state,
+              country: o.country,
+              postCode: o.postCode,
+              note: o.note,
+              createdDate: new Date(idNum * 1000),
+              totalPrice: total,
+              paymentMethod: o.status === 'PAID' ? 'BANK' : 'COD',
+              status: o.status === 'PAID' ? 'Paid' : (o.status || 'Unpaid'),
+              orderDetails,
+            } as Order;
+          });
+
           // Filter out canceled orders
-          this.listOrder = data.filter(
+          this.listOrder = normalizedOrders.filter(
             (order) => !canceledOrders.includes(order.id)
           );
 
           // Sort orders by date (newest first)
-          this.listOrder.sort((a, b) => {
-            return (
-              new Date(b.createdDate).getTime() -
-              new Date(a.createdDate).getTime()
-            );
-          });
+          this.listOrder.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
 
           // Save to localStorage for backup
           localStorage.setItem('orders_cache', JSON.stringify(this.listOrder));

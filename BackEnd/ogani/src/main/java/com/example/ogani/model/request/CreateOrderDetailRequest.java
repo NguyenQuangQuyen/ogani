@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public class CreateOrderDetailRequest {
 
     @NotBlank(message = "Tên sản phẩm không được để trống.")
-    @Size(min = 5, max = 50, message = "Tên sản phẩm phải từ 5 đến 50 ký tự.")
+    @Size(min = 1, max = 200, message = "Tên sản phẩm phải từ 1 đến 200 ký tự.")
     private String name;
 
     @NotNull(message = "Giá sản phẩm không được để trống.")

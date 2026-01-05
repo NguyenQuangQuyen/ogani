@@ -17,7 +17,5 @@ export class Order {
     status?: string;
     orderDetails?: any[];
     username?: string;
-    paypalOrderId?: string;
-    paypalTransactionId?: string;
-
+    
 }

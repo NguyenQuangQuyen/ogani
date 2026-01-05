@@ -146,4 +146,9 @@ public class OrderServiceImpl implements OrderService {
     public Order getStatusById(String id) {
         return orderRepository.findByOrderId(id);
     }
+
+    @Override
+    public void deleteOrder(Order order) {
+        orderRepository.delete(order);
+    }
 }

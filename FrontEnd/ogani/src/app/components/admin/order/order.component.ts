@@ -37,6 +37,42 @@ export class OrderComponent implements OnInit {
           // Get all orders from the server
           const serverOrders = [...res]; // Create a copy to avoid reference issues
 
+          // Normalize backend orders to UI model
+          const normalizedOrders = serverOrders.map((o: any) => {
+            const idNum = parseInt(String(o.orderId));
+            const qty = o.quantity ?? 1;
+            const total = o.price ?? 0;
+            const perItemPrice = qty > 0 ? Math.round(total / qty) : total;
+            const orderDetails = o.productName
+              ? [
+                {
+                  name: o.productName,
+                  price: perItemPrice,
+                  quantity: qty,
+                  subTotal: perItemPrice * qty,
+                },
+              ]
+              : [];
+            return {
+              id: idNum,
+              firstname: o.firstname,
+              lastname: o.lastname,
+              address: o.address,
+              town: o.town,
+              country: o.country,
+              state: o.state,
+              postCode: o.postCode,
+              email: o.email,
+              phone: o.phone,
+              note: o.note,
+              createdDate: new Date(idNum * 1000),
+              totalPrice: total,
+              paymentMethod: o.status === 'PAID' ? 'BANK' : 'COD',
+              status: o.status === 'PAID' ? 'Paid' : (o.status || 'Unpaid'),
+              orderDetails,
+            };
+          });
+
           console.log('All orders from server:', serverOrders);
 
           // Get canceled orders from localStorage
@@ -44,8 +80,7 @@ export class OrderComponent implements OnInit {
           console.log('Canceled orders from localStorage:', canceledOrders);
 
           // Filter out canceled orders
-          this.listOrder = serverOrders.filter(order => {
-            // Check if the order ID is in the canceledOrders array
+          this.listOrder = normalizedOrders.filter(order => {
             return !canceledOrders.includes(order.id);
           });
 
@@ -55,9 +90,7 @@ export class OrderComponent implements OnInit {
           this.applySavedPaymentStatuses();
 
           // Sort orders by date (newest first)
-          this.listOrder.sort((a, b) => {
-            return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
-          });
+          this.listOrder.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
 
           console.log('Final sorted orders:', this.listOrder);
         } else if (res && typeof res === 'object') {
@@ -67,6 +100,42 @@ export class OrderComponent implements OnInit {
             // Get all orders from the extracted array
             const serverOrders = [...ordersArray]; // Create a copy to avoid reference issues
 
+            // Normalize backend orders to UI model
+            const normalizedOrders = serverOrders.map((o: any) => {
+              const idNum = parseInt(String(o.orderId));
+              const qty = o.quantity ?? 1;
+              const total = o.price ?? 0;
+              const perItemPrice = qty > 0 ? Math.round(total / qty) : total;
+              const orderDetails = o.productName
+                ? [
+                  {
+                    name: o.productName,
+                    price: perItemPrice,
+                    quantity: qty,
+                    subTotal: perItemPrice * qty,
+                  },
+                ]
+                : [];
+              return {
+                id: idNum,
+                firstname: o.firstname,
+                lastname: o.lastname,
+                address: o.address,
+                town: o.town,
+                country: o.country,
+                state: o.state,
+                postCode: o.postCode,
+                email: o.email,
+                phone: o.phone,
+                note: o.note,
+                createdDate: new Date(idNum * 1000),
+                totalPrice: total,
+                paymentMethod: o.status === 'PAID' ? 'BANK' : 'COD',
+                status: o.status === 'PAID' ? 'Paid' : (o.status || 'Unpaid'),
+                orderDetails,
+              };
+            });
+
             console.log('All orders from extracted array:', serverOrders);
 
             // Get canceled orders from localStorage
@@ -74,10 +143,7 @@ export class OrderComponent implements OnInit {
             console.log('Canceled orders from localStorage:', canceledOrders);
 
             // Filter out canceled orders
-            this.listOrder = serverOrders.filter(order => {
-              // Check if the order ID is in the canceledOrders array
-              return !canceledOrders.includes(order.id);
-            });
+            this.listOrder = normalizedOrders.filter(order => !canceledOrders.includes(order.id));
 
             console.log('Orders after filtering canceled ones:', this.listOrder);
 
@@ -85,9 +151,7 @@ export class OrderComponent implements OnInit {
             this.applySavedPaymentStatuses();
 
             // Sort orders by date (newest first)
-            this.listOrder.sort((a, b) => {
-              return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
-            });
+            this.listOrder.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
 
             console.log('Final sorted orders:', this.listOrder);
           } else {
@@ -256,6 +320,55 @@ export class OrderComponent implements OnInit {
       severity: 'warn',
       summary: 'Warning',
       detail: message
+    });
+  }
+
+  cancelOrder(orderId: number) {
+    this.orderService.cancelOrder(orderId).subscribe({
+      next: (response: any) => {
+        const adminCanceledOrdersJson = localStorage.getItem('canceledOrders');
+        let adminCanceledOrders: number[] = [];
+        if (adminCanceledOrdersJson) {
+          try {
+            adminCanceledOrders = JSON.parse(adminCanceledOrdersJson);
+          } catch (e) {
+            console.error('Error parsing admin canceled orders:', e);
+          }
+        }
+
+        if (!adminCanceledOrders.includes(orderId)) {
+          adminCanceledOrders.push(orderId);
+          localStorage.setItem('canceledOrders', JSON.stringify(adminCanceledOrders));
+        }
+
+        // Xóa khỏi danh sách hiện tại
+        this.listOrder = this.listOrder.filter(order => order.id !== orderId);
+
+        // Đóng dialog chi tiết nếu đang mở chính đơn này
+        if (this.showOrderDetails && this.selectedOrder && this.selectedOrder.id === orderId) {
+          this.showOrderDetails = false;
+        }
+
+        // Cập nhật cache admin
+        localStorage.setItem('orders_all', JSON.stringify(this.listOrder));
+
+        // Thông báo dashboard cập nhật
+        this.dashboardService.notifyOrdersUpdated();
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Order cancelled and deleted successfully'
+        });
+      },
+      error: (error: any) => {
+        console.error('Error cancelling order:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to cancel order'
+        });
+      }
     });
   }
 }

@@ -214,7 +214,7 @@ export class ShopComponent implements OnInit {
       severity: 'success',
       summary: 'Success',
       detail: `${item.name} has been added to your cart!`,
-      life: 3000
+      life: 500
     });
   }
 

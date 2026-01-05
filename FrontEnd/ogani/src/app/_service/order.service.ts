@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Order } from '../_class/order';
 import { OrderDetail } from '../_class/order-detail';
 
@@ -14,7 +14,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class OrderService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getListOrder(): Observable<any> {
     return this.http.get(ORDER_API + 'getall', httpOptions);
@@ -129,7 +129,8 @@ export class OrderService {
     email: string,
     note: string,
     orderDetails: OrderDetail[],
-    username: string
+    username: string,
+    userId: string
   ): Observable<any> {
     // Validate phone number (10-15 digits)
     const formattedPhone = String(phone || '').replace(/\D/g, '');
@@ -167,17 +168,18 @@ export class OrderService {
         quantity: item.quantity,
       })),
       username: username.trim(),
+      userId: userId ? parseInt(userId) : null,
     };
 
-    console.log('Sending order request to backend:', orderRequest);
-    return this.http.post(ORDER_API + 'create', orderRequest, httpOptions).pipe(
+    console.log('Sending COD order request to backend:', orderRequest);
+    return this.http.post(ORDER_API + 'create_cod', orderRequest, httpOptions).pipe(
       catchError((error) => {
-        console.error('Error creating order:', error);
+        console.error('Error creating COD order:', error);
         if (error.error && error.error.message) {
           return throwError(() => new Error(error.error.message));
         }
         return throwError(
-          () => new Error('Failed to create order. Please try again.')
+          () => new Error('Failed to create COD order. Please try again.')
         );
       })
     );
@@ -185,74 +187,43 @@ export class OrderService {
 
   // Thêm phương thức cancelOrder
   cancelOrder(orderId: number): Observable<any> {
-    console.log('Cancelling order:', orderId);
-    // Trong thực tế, bạn sẽ gọi API để hủy đơn hàng
-    // Nhưng vì chúng ta đang xử lý trực tiếp trong component, nên chỉ trả về một Observable rỗng
-    return of({ success: true });
+    console.log('Cancelling order via backend:', orderId);
+    return this.http.delete(ORDER_API + 'delete/' + String(orderId), httpOptions).pipe(
+      map((data) => ({ success: true, data })),
+      catchError((error) => {
+        console.error('Error deleting order via backend:', error);
+        return of({ success: false, message: 'Failed to cancel order' });
+      })
+    );
   }
 
   // Thêm phương thức updateOrder
   updateOrder(order: Order): Observable<any> {
-    console.log('Updating order:', order);
+    console.log('Updating order via backend:', order);
 
-    // Gửi request đến backend để cập nhật đơn hàng
-    // Trong trường hợp thực tế, sẽ có API endpoint để cập nhật đơn hàng
-    // Ví dụ: return this.http.put(ORDER_API + 'update/' + order.id, order, httpOptions);
+    const requestBody = {
+      firstname: order.firstname,
+      lastname: order.lastname,
+      country: order.country,
+      address: order.address,
+      town: order.town,
+      state: order.state,
+      postCode: String(order.postCode ?? ''),
+      email: order.email,
+      phone: String(order.phone ?? ''),
+      note: order.note ?? '',
+    };
 
-    // Hiện tại, chúng ta sẽ cập nhật trực tiếp vào localStorage và trả về kết quả thành công
-    try {
-      // Cập nhật order trong localStorage của user
-      const ordersJson = localStorage.getItem(
-        `orders_${order.username || 'all'}`
+    const orderCode = String(order.id);
+    return this.http
+      .put(ORDER_API + 'update/' + orderCode, requestBody, httpOptions)
+      .pipe(
+        map((data) => ({ success: true, data })),
+        catchError((error) => {
+          console.error('Error updating order via backend:', error);
+          return of({ success: false, message: 'Failed to update order' });
+        })
       );
-      if (ordersJson) {
-        const orders = JSON.parse(ordersJson);
-        const index = orders.findIndex((o: Order) => o.id === order.id);
-        if (index !== -1) {
-          orders[index] = order;
-          localStorage.setItem(
-            `orders_${order.username || 'all'}`,
-            JSON.stringify(orders)
-          );
-        }
-      }
-
-      // Cập nhật trong cache chung
-      const cacheJson = localStorage.getItem('orders_cache');
-      if (cacheJson) {
-        const cache = JSON.parse(cacheJson);
-        const cacheIndex = cache.findIndex((o: Order) => o.id === order.id);
-        if (cacheIndex !== -1) {
-          cache[cacheIndex] = order;
-          localStorage.setItem('orders_cache', JSON.stringify(cache));
-        }
-      }
-
-      // Cập nhật trong danh sách đơn hàng của admin
-      const adminOrdersJson = localStorage.getItem('orders_all');
-      if (adminOrdersJson) {
-        const adminOrders = JSON.parse(adminOrdersJson);
-        const adminIndex = adminOrders.findIndex(
-          (o: Order) => o.id === order.id
-        );
-        if (adminIndex !== -1) {
-          adminOrders[adminIndex] = order;
-          localStorage.setItem('orders_all', JSON.stringify(adminOrders));
-        }
-      }
-
-      // Đồng bộ thay đổi với tất cả các bộ nhớ cache có thể
-      this.syncOrderAcrossAllStorage(order);
-
-      return of({
-        success: true,
-        message: 'Order updated successfully',
-        data: order,
-      });
-    } catch (e) {
-      console.error('Error updating order in localStorage:', e);
-      return of({ success: false, message: 'Failed to update order' });
-    }
   }
 
   // Phương thức mới để đồng bộ hóa đơn hàng trong tất cả các lưu trữ
@@ -312,7 +283,8 @@ export class OrderService {
     returnUrl: string,
     cancelUrl: string,
     price: number,
-    productId: number | null
+    productId: number | null,
+    orderDetails: OrderDetail[] = []
   ): Observable<any> {
     const requestBody = {
       userId: userId ? parseInt(userId) : null,
@@ -333,6 +305,11 @@ export class OrderService {
       returnUrl: returnUrl,
       cancelUrl: cancelUrl,
       price: Math.round(price), // PayOS requires integer price
+      orderDetails: orderDetails.map((item) => ({
+        name: item.name,
+        price: typeof item.price === 'number' ? item.price : parseInt(String(item.price)),
+        quantity: item.quantity,
+      })),
     };
 
     console.log('Creating PayOS order with request:', requestBody);

@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateOrderRequest {
 
+    private Long userId;
+
     @NotBlank(message = "Username is required.")
     private String username;
 

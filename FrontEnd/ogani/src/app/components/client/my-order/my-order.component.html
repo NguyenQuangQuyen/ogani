@@ -53,8 +53,9 @@
                     <td>
                         <span *ngIf="order.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery</span>
                         <span *ngIf="order.paymentMethod === 'BANK'" class="badge bg-info">Bank Transfer</span>
-                        <span *ngIf="order.paymentMethod === 'PAYPAL'" class="badge bg-primary">PayPal</span>
-                        <span *ngIf="order.paymentMethod !== 'COD' && order.paymentMethod !== 'PAYPAL' && order.paymentMethod !== 'BANK'" class="badge bg-secondary">{{order.paymentMethod || 'Unknown'}}</span>
+                        <span
+                            *ngIf="order.paymentMethod !== 'COD' && order.paymentMethod !== 'BANK'"
+                            class="badge bg-secondary">{{order.paymentMethod || 'Unknown'}}</span>
                     </td>
                     <td>
                         <div class="d-flex gap-2">
@@ -92,14 +93,16 @@
                 <div class="col-md-6">
                     <p><strong>Address:</strong> {{selectedOrder.address}}, {{selectedOrder.town}}</p>
                     <p><strong>Country:</strong> {{selectedOrder.country}}</p>
-                    <p><strong>Payment Method:</strong> 
-                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery (COD)</span>
+                    <p><strong>Payment Method:</strong>
+                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery
+                            (COD)</span>
                         <span *ngIf="selectedOrder.paymentMethod === 'BANK'" class="badge bg-info">Bank Transfer</span>
-                        <span *ngIf="selectedOrder.paymentMethod === 'PAYPAL'" class="badge bg-primary">PayPal</span>
-                        <span *ngIf="selectedOrder.paymentMethod !== 'COD' && selectedOrder.paymentMethod !== 'PAYPAL' && selectedOrder.paymentMethod !== 'BANK'" class="badge bg-secondary">{{selectedOrder.paymentMethod || 'Unknown'}}</span>
+                        <span
+                            *ngIf="selectedOrder.paymentMethod !== 'COD' && selectedOrder.paymentMethod !== 'BANK'"
+                            class="badge bg-secondary">{{selectedOrder.paymentMethod || 'Unknown'}}</span>
                     </p>
                     <p><strong>Order Notes:</strong> {{selectedOrder.note}}</p>
-                    <p *ngIf="selectedOrder.paymentMethod === 'PAYPAL'"><strong>PayPal Transaction ID:</strong> {{selectedOrder.paypalTransactionId || 'N/A'}}</p>
+                    
                 </div>
             </div>
 
@@ -133,17 +136,13 @@
         </div>
     </div>
     <div class="p-dialog-footer mt-3">
-        <button pButton pRipple type="button" label="Cancel Order" icon="pi pi-ban" 
-                class="p-button-danger" 
-                *ngIf="selectedOrder && selectedOrder.status !== 'Canceled'"
-                (click)="cancelOrder(selectedOrder.id)"></button>
-        <button pButton pRipple type="button" label="Edit" icon="pi pi-pencil" 
-                class="p-button-warning" 
-                *ngIf="selectedOrder"
-                (click)="editOrder(selectedOrder)"></button>
-        <button pButton pRipple type="button" label="Close" icon="pi pi-times" 
-                class="p-button-secondary" 
-                (click)="showOrderDetails=false"></button>
+        <button pButton pRipple type="button" label="Cancel Order" icon="pi pi-ban" class="p-button-danger"
+            *ngIf="selectedOrder && selectedOrder.status !== 'Canceled'"
+            (click)="cancelOrder(selectedOrder.id)"></button>
+        <button pButton pRipple type="button" label="Edit" icon="pi pi-pencil" class="p-button-warning"
+            *ngIf="selectedOrder" (click)="editOrder(selectedOrder)"></button>
+        <button pButton pRipple type="button" label="Close" icon="pi pi-times" class="p-button-secondary"
+            (click)="showOrderDetails=false"></button>
     </div>
 </p-dialog>
 

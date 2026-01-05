@@ -32,4 +32,5 @@ public interface OrderService {
 
     Order saveOrder(Order order);
     Order getStatusById(String id);
+    void deleteOrder(Order order);
 }

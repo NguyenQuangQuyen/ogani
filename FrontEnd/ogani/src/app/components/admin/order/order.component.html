@@ -1,9 +1,10 @@
 <div class="card">
     <p-toast></p-toast>
     <p-table #dt [value]="listOrder" [rows]="10" [paginator]="true"
-        [globalFilterFields]="['firstname','lastname','address']" [tableStyle]="{'min-width': '75rem'}"
-        [rowHover]="true" dataKey="id" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
-        [showCurrentPageReport]="true" [showFirstLastIcon]="true" [showPageLinks]="true">
+        [globalFilterFields]="['id','firstname','lastname','address','town','country','state','postCode','email','phone','note','status','paymentMethod','totalPrice']"
+        [tableStyle]="{'min-width': '75rem'}" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders" [showCurrentPageReport]="true"
+        [showFirstLastIcon]="true" [showPageLinks]="true">
         <ng-template pTemplate="caption">
             <div class="flex align-items-center justify-content-between">
                 <h5 class="m-0">Order Management</h5>
@@ -38,8 +39,8 @@
                 <td>
                     <span *ngIf="order.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery</span>
                     <span *ngIf="order.paymentMethod === 'BANK'" class="badge bg-info">Bank Transfer</span>
-                    <span *ngIf="order.paymentMethod === 'PAYPAL'" class="badge bg-primary">PayPal</span>
-                    <span *ngIf="order.paymentMethod !== 'COD' && order.paymentMethod !== 'PAYPAL' && order.paymentMethod !== 'BANK'" class="badge bg-secondary">{{order.paymentMethod || 'Unknown'}}</span>
+                    <span *ngIf="order.paymentMethod !== 'COD' && order.paymentMethod !== 'BANK'"
+                        class="badge bg-secondary">{{order.paymentMethod || 'Unknown'}}</span>
                 </td>
                 <td>
                     <span class="badge"
@@ -51,6 +52,8 @@
                     <div class="d-flex gap-2">
                         <button pButton type="button" label="View Details" icon="pi pi-eye"
                             class="p-button-info p-button-sm" (click)="viewOrderDetails(order)"></button>
+                        <button pButton type="button" label="Cancel" icon="pi pi-times"
+                            class="p-button-danger p-button-sm" (click)="cancelOrder(order.id)"></button>
                     </div>
                 </td>
             </tr>
@@ -78,14 +81,15 @@
                 <div class="col-md-6">
                     <p><strong>Address:</strong> {{selectedOrder.address}}, {{selectedOrder.town}}</p>
                     <p><strong>Country:</strong> {{selectedOrder.country}}</p>
-                    <p><strong>Payment Method:</strong> 
-                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery (COD)</span>
+                    <p><strong>Payment Method:</strong>
+                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery
+                            (COD)</span>
                         <span *ngIf="selectedOrder.paymentMethod === 'BANK'" class="badge bg-info">Bank Transfer</span>
-                        <span *ngIf="selectedOrder.paymentMethod === 'PAYPAL'" class="badge bg-primary">PayPal</span>
-                        <span *ngIf="selectedOrder.paymentMethod !== 'COD' && selectedOrder.paymentMethod !== 'PAYPAL' && selectedOrder.paymentMethod !== 'BANK'" class="badge bg-secondary">{{selectedOrder.paymentMethod || 'Unknown'}}</span>
+                        <span *ngIf="selectedOrder.paymentMethod !== 'COD' && selectedOrder.paymentMethod !== 'BANK'"
+                            class="badge bg-secondary">{{selectedOrder.paymentMethod || 'Unknown'}}</span>
                     </p>
                     <p><strong>Order Notes:</strong> {{selectedOrder.country}}</p>
-                    <p *ngIf="selectedOrder.paymentMethod === 'PAYPAL'"><strong>PayPal Transaction ID:</strong> {{selectedOrder.paypalTransactionId || 'N/A'}}</p>
+
                 </div>
             </div>
 

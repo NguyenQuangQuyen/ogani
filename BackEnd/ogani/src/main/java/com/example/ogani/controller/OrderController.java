@@ -2,10 +2,14 @@ package com.example.ogani.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import com.example.ogani.entity.Order;
+import com.example.ogani.entity.OrderDetail;
 import com.example.ogani.model.request.CreatePaymentLinkRequestBody;
+import com.example.ogani.model.request.CreateOrderRequest;
 import com.example.ogani.model.request.UpdateStatusRequest;
+import com.example.ogani.model.request.UpdateOrderRequest;
 import com.example.ogani.model.response.MessageResponse;
 import com.example.ogani.model.response.PayOSResponse;
 import com.example.ogani.service.OrderService;
@@ -55,13 +59,13 @@ public class OrderController {
 
     @PostMapping(path = "/create")
     public PayOSResponse<CreatePaymentLinkResponse> createPaymentLink(
-            @RequestBody CreatePaymentLinkRequestBody RequestBody) {
+            @RequestBody CreatePaymentLinkRequestBody requestBody) {
         try {
-            final String productName = RequestBody.getProductName();
-            final String description = RequestBody.getDescription();
-            final String returnUrl = RequestBody.getReturnUrl();
-            final String cancelUrl = RequestBody.getCancelUrl();
-            final Long price = RequestBody.getPrice();
+            final String productName = requestBody.getProductName();
+            final String description = requestBody.getDescription();
+            final String returnUrl = requestBody.getReturnUrl();
+            final String cancelUrl = requestBody.getCancelUrl();
+            final Long price = requestBody.getPrice();
             long orderCode = System.currentTimeMillis() / 1000;
             PaymentLinkItem item =
                     PaymentLinkItem.builder().name(productName).quantity(1).price(price).build();
@@ -79,23 +83,41 @@ public class OrderController {
             CreatePaymentLinkResponse data = payOS.paymentRequests().create(paymentData);
             Order order = new Order();
             order.setOrderId(String.valueOf(orderCode));
-            order.setUserId(RequestBody.getUserId());
-            order.setUsername(RequestBody.getUsername());
-            order.setProductId(RequestBody.getProductId());
-            order.setProductName(RequestBody.getProductName());
-            order.setPrice(RequestBody.getPrice());
+            
+            List<OrderDetail> details = new ArrayList<>();
+            if (requestBody.getOrderDetails() != null && !requestBody.getOrderDetails().isEmpty()) {
+                for (var detailRequest : requestBody.getOrderDetails()) {
+                    long itemPrice = detailRequest.getPrice() != null ? detailRequest.getPrice() : 0L;
+                    int qty = detailRequest.getQuantity() != null ? detailRequest.getQuantity() : 0;
+                    
+                    OrderDetail detail = new OrderDetail();
+                    detail.setName(detailRequest.getName());
+                    detail.setPrice(itemPrice);
+                    detail.setQuantity(qty);
+                    detail.setSubTotal(itemPrice * qty);
+                    detail.setOrder(order);
+                    details.add(detail);
+                }
+            }
+            order.setOrderDetails(details);
+
+            order.setUserId(requestBody.getUserId());
+            order.setUsername(requestBody.getUsername());
+            order.setProductId(requestBody.getProductId());
+            order.setProductName(requestBody.getProductName());
+            order.setPrice(requestBody.getPrice());
             order.setQuantity(1);
-            order.setFirstname(RequestBody.getFirstname());
-            order.setLastname(RequestBody.getLastname());
-            order.setCountry(RequestBody.getCountry());
-            order.setState(RequestBody.getState());
-            order.setAddress(RequestBody.getAddress());
-            order.setPhone(RequestBody.getPhone());
-            order.setEmail(RequestBody.getEmail());
-            order.setTown(RequestBody.getTown());
-            order.setPostCode(RequestBody.getPostCode() != null ? RequestBody.getPostCode() : "");
-            order.setNote(RequestBody.getNote());
-            order.setPrice(RequestBody.getPrice());
+            order.setFirstname(requestBody.getFirstname());
+            order.setLastname(requestBody.getLastname());
+            order.setCountry(requestBody.getCountry());
+            order.setState(requestBody.getState());
+            order.setAddress(requestBody.getAddress());
+            order.setPhone(requestBody.getPhone());
+            order.setEmail(requestBody.getEmail());
+            order.setTown(requestBody.getTown());
+            order.setPostCode(requestBody.getPostCode() != null ? requestBody.getPostCode() : "");
+            order.setNote(requestBody.getNote());
+            order.setPrice(requestBody.getPrice());
             order.setStatus(String.valueOf(data.getStatus()));
             orderService.saveOrder(order);
             return PayOSResponse.success(data);
@@ -116,7 +138,7 @@ public class OrderController {
         }
     }
 
-    }
+    
 
     @GetMapping("/user-id/{userId}")
     @Operation(summary = "Lấy danh sách đơn hàng của người dùng theo user_id")
@@ -266,5 +288,126 @@ public class OrderController {
         }
         order.setStatus(request.getStatus());
         return orderService.saveOrder(order);
+    }
+
+    @PutMapping("/update/{order_id}")
+    @Operation(summary = "Cập nhật thông tin đơn hàng theo order_id")
+    public ResponseEntity<?> updateOrder(
+            @PathVariable("order_id") String orderId,
+            @RequestBody UpdateOrderRequest request) {
+        try {
+            Order order = orderService.getStatusById(orderId);
+            if (order == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new MessageResponse("Không tìm thấy đơn hàng với order_id = " + orderId));
+            }
+
+            order.setFirstname(request.getFirstname());
+            order.setLastname(request.getLastname());
+            order.setCountry(request.getCountry());
+            order.setAddress(request.getAddress());
+            order.setTown(request.getTown());
+            order.setState(request.getState());
+            order.setPostCode(request.getPostCode() != null ? request.getPostCode() : "");
+            order.setEmail(request.getEmail());
+            order.setPhone(request.getPhone());
+            order.setNote(request.getNote());
+
+            Order saved = orderService.saveOrder(order);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new MessageResponse("Lỗi khi cập nhật đơn hàng: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping(path = "/create_cod")
+    @Operation(summary = "Tạo đơn hàng COD (mặc định UNPAID)")
+    public ResponseEntity<?> createCodOrder(@RequestBody CreateOrderRequest request) {
+        try {
+            long orderCode = System.currentTimeMillis() / 1000;
+            Order order = new Order();
+            order.setOrderId(String.valueOf(orderCode));
+
+            long totalPrice = 0L;
+            int totalQuantity = 0;
+            String productName;
+            List<OrderDetail> details = new ArrayList<>();
+
+            if (request.getOrderDetails() != null && !request.getOrderDetails().isEmpty()) {
+                // Liệt kê chi tiết tên các sản phẩm
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < request.getOrderDetails().size(); i++) {
+                    var item = request.getOrderDetails().get(i);
+                    if (i > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(item.getName());
+                    
+                    long price = item.getPrice() != null ? item.getPrice() : 0L;
+                    int qty = item.getQuantity() != null ? item.getQuantity() : 0;
+                    
+                    OrderDetail detail = new OrderDetail();
+                    detail.setName(item.getName());
+                    detail.setPrice(price);
+                    detail.setQuantity(qty);
+                    detail.setSubTotal(price * qty);
+                    detail.setOrder(order);
+                    details.add(detail);
+                    
+                    totalPrice += price * qty;
+                    totalQuantity += qty;
+                }
+                productName = sb.toString();
+                
+                // Giới hạn độ dài chuỗi để tránh lỗi database (thường là 255 ký tự)
+                if (productName.length() > 250) {
+                    productName = productName.substring(0, 247) + "...";
+                }
+            } else {
+                productName = "Order";
+            }
+
+            order.setUserId(request.getUserId());
+            order.setUsername(request.getUsername());
+            order.setFirstname(request.getFirstname());
+            order.setLastname(request.getLastname());
+            order.setCountry(request.getCountry());
+            order.setState(request.getState());
+            order.setAddress(request.getAddress());
+            order.setPhone(request.getPhone());
+            order.setEmail(request.getEmail());
+            order.setTown(request.getTown());
+            order.setPostCode(request.getPostCode() != null ? request.getPostCode() : "");
+            order.setNote(request.getNote());
+
+            order.setProductName(productName);
+            order.setPrice(totalPrice);
+            order.setQuantity(totalQuantity > 0 ? totalQuantity : 1);
+            order.setStatus("UNPAID");
+            
+            order.setOrderDetails(details);
+
+            Order saved = orderService.saveOrder(order);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Lỗi khi tạo đơn COD: " + e.getMessage()));
+        }
+    }
+
+    @DeleteMapping(path = "/delete/{order_id}")
+    @Operation(summary = "Xóa hoàn toàn đơn hàng theo order_id")
+    public ResponseEntity<?> deleteOrder(@PathVariable("order_id") String orderId) {
+        try {
+            Order order = orderService.getStatusById(orderId);
+            if (order == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new MessageResponse("Không tìm thấy đơn hàng với order_id = " + orderId));
+            }
+            orderService.deleteOrder(order);
+            return ResponseEntity.ok(new MessageResponse("Đã xóa đơn hàng " + orderId + " thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Lỗi khi xóa đơn hàng: " + e.getMessage()));
+        }
     }
 }
