@@ -1,55 +1,68 @@
-<div class="chat-wrapper">
-  <div class="chat-header">
-    <div class="chat-title">AI Chat</div>
-    <div class="chat-subtitle">Hỏi tôi bất cứ điều gì về sản phẩm, đơn hàng, v.v.</div>
-  </div>
-
-  <div class="chat-body">
-    <div
-      *ngFor="let msg of messages"
-      class="message-row"
-      [ngClass]="{ 'from-user': msg.from === 'user', 'from-bot': msg.from === 'bot' }"
-    >
-      <div class="avatar" *ngIf="msg.from === 'bot'">
-        <span>AI</span>
-      </div>
-      <div class="bubble" [ngClass]="{ 'bubble-user': msg.from === 'user', 'bubble-bot': msg.from === 'bot' }">
-        <div class="text">
-          {{ msg.text }}
-        </div>
-      </div>
-      <div class="avatar user-avatar" *ngIf="msg.from === 'user'">
-        <span>U</span>
-      </div>
+<div class="main-container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" (click)="createNewChat()">
+        <span>+</span> Cuộc trò chuyện mới
+      </button>
     </div>
-
-    <div class="message-row from-bot" *ngIf="isLoading">
-      <div class="avatar">
-        <span>AI</span>
-      </div>
-      <div class="bubble bubble-bot">
-        <div class="typing-indicator">
-          <span></span>
-          <span></span>
-          <span></span>
+    <div class="session-list">
+      <div *ngFor="let session of sessions" class="session-item" [class.active]="session.id === currentSessionId"
+        (click)="selectSession(session)">
+        <div class="session-icon">💬</div>
+        <div class="session-info">
+          <div class="session-title">{{ session.title || 'Cuộc trò chuyện mới' }}</div>
+          <div class="session-date">{{ session.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
         </div>
+        <button class="delete-session-btn" (click)="deleteSession(session, $event)">×</button>
       </div>
     </div>
   </div>
 
-  <div class="chat-footer">
-    <input
-      type="text"
-      [(ngModel)]="input"
-      (keyup.enter)="send()"
-      placeholder="Nhập câu hỏi của bạn..."
-      [disabled]="isLoading"
-    />
-    <button (click)="send()" [disabled]="isLoading || !input.trim()">
-      <span *ngIf="!isLoading">Gửi</span>
-      <span *ngIf="isLoading">Đang gửi...</span>
-    </button>
+  <!-- Chat Area -->
+  <div class="chat-wrapper">
+    <div class="chat-header">
+      <div class="chat-title">AI Chat</div>
+      <div class="chat-subtitle">Hỏi tôi bất cứ điều gì về sản phẩm, đơn hàng, v.v.</div>
+    </div>
+
+    <div class="chat-body" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+      <div *ngFor="let msg of messages" class="message-row"
+        [ngClass]="{ 'from-user': msg.sender === 'user', 'from-bot': msg.sender === 'bot' }">
+        <div class="avatar" *ngIf="msg.sender === 'bot'">
+          <span>AI</span>
+        </div>
+        <div class="bubble" [ngClass]="{ 'bubble-user': msg.sender === 'user', 'bubble-bot': msg.sender === 'bot' }">
+          <div class="text">
+            {{ msg.content }}
+          </div>
+        </div>
+        <div class="avatar user-avatar" *ngIf="msg.sender === 'user'">
+          <span>U</span>
+        </div>
+      </div>
+
+      <div class="message-row from-bot" *ngIf="isLoading">
+        <div class="avatar">
+          <span>AI</span>
+        </div>
+        <div class="bubble bubble-bot">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" [(ngModel)]="input" (keyup.enter)="send()" placeholder="Nhập câu hỏi của bạn..."
+        [disabled]="isLoading" />
+      <button (click)="send(); $event.stopPropagation()" [disabled]="isLoading || !input.trim()">
+        <span *ngIf="!isLoading">Gửi</span>
+        <span *ngIf="isLoading">...</span>
+      </button>
+    </div>
   </div>
 </div>
-
-

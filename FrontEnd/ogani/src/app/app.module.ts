@@ -41,6 +41,7 @@ import { ContactComponent } from './components/client/contact/contact.component'
 import { AboutComponent } from './components/client/about/about.component';
 import { ChatBotComponent } from './components/client/chat-bot/chat-bot.component';
 import { CheckboxModule } from 'primeng/checkbox';
+import { httpInterceptorProviders } from './_helpers/http.interceptor';
 import { OAuthSuccessComponent } from './components/client/oauth-success/oauth-success.component';
 import { PayosReturnComponent } from './components/client/payos-return/payos-return.component';
 
@@ -160,10 +161,11 @@ registerLocaleData(localeFr, 'vi');
     CheckboxModule, // THÊM DÒNG NÀY
   ],
   providers: [
+    httpInterceptorProviders,
     MessageService,
     { provide: LOCALE_ID, useValue: 'vi' },
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'VNĐ' },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

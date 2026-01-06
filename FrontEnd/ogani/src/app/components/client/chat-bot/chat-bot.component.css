@@ -1,32 +1,171 @@
-.chat-wrapper {
+:host {
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-container {
+  display: flex;
+  width: 900px;
+  height: 600px;
+  margin: 40px auto;
+  background: #020617;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: #0f172a;
+  border-right: 1px solid rgba(34, 197, 94, 0.2);
   display: flex;
   flex-direction: column;
-  height: 480px;
-  max-width: 480px;
-  margin: 0 auto;
-  border-radius: 16px;
-  /* Nền tổng thể: đen xám đậm */
-  background: #020617;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.6);
+  /* Quan trọng: Chiều cao phải khớp với main-container */
+  height: 600px; 
+  /* Ngăn không cho sidebar phình to ra ngoài */
+  overflow: hidden; 
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.new-chat-btn {
+  width: 100%;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.35);
+  white-space: nowrap;          /* giữ 1 dòng */
+  overflow: hidden;             /* ẩn phần tràn */
+  text-overflow: ellipsis;      /* hiển thị ... khi tràn */
+  line-height: 1;               /* tránh wrap do line-height */
+}
+
+.new-chat-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(34, 197, 94, 0.45);
+}
+
+.session-list {
+  /* Chiếm toàn bộ phần còn lại của sidebar sau khi trừ header */
+  flex: 1; 
+  /* Kích hoạt thanh cuộn dọc */
+  overflow-y: auto !important; 
+  /* Ngăn thanh cuộn ngang */
+  overflow-x: hidden; 
+  padding: 12px;
+  scroll-behavior: smooth;
+  /* Fix lỗi Flexbox khiến thanh cuộn biến mất */
+  min-height: 0; 
+  display: block; 
+  /* Vùng đệm cuối cùng để cuộn được hết các thẻ cuối */
+  padding-bottom: 40px; 
+}
+.session-item {
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: background 0.2s;
+  color: #94a3b8;
+  position: relative;
+}
+
+.delete-session-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 0 4px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.session-item:hover .delete-session-btn {
+  opacity: 1;
+}
+
+.delete-session-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.session-item:hover {
+  background: rgba(34, 197, 94, 0.1);
+  color: #e2e8f0;
+}
+
+.session-item.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.session-icon {
+  font-size: 18px;
+}
+
+.session-info {
+  flex: 1;
   overflow: hidden;
-  border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.session-title {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.session-date {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Chat Area */
+.chat-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #020617;
 }
 
 .chat-header {
-  padding: 16px 20px;
-  /* Xanh lá cây -> Đen */
+  padding: 16px 24px;
+  /* Xanh lá cây -> Đen như theme cũ */
   background: linear-gradient(135deg, #22c55e, #020617);
-  color: #ffffff;
+  border-bottom: 1px solid rgba(34, 197, 94, 0.4);
 }
 
 .chat-title {
+  font-size: 18px;
   font-weight: 700;
-  font-size: 16px;
+  color: #ffffff;
 }
 
 .chat-subtitle {
   font-size: 12px;
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.85);
   margin-top: 4px;
 }
 
@@ -34,88 +173,105 @@
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  /* Nền body: đen pha xanh lá rất nhẹ */
+  /* Nền body: đen pha xanh lá rất nhẹ như cũ */
   background: radial-gradient(circle at top left, #022c22, #020617);
 }
 
+/* Scrollbar styling */
+.chat-body::-webkit-scrollbar,
+.session-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-thumb,
+.session-list::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.5);
+  border-radius: 3px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover,
+.session-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.8);
+}
+
+/* Existing Message Styles (Updated for better look) */
 .message-row {
   display: flex;
   align-items: flex-end;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .message-row.from-user {
   justify-content: flex-end;
 }
 
-.message-row.from-bot {
-  justify-content: flex-start;
-}
-
 .avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  /* Logo AI: nền xanh lá trên nền đen */
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-right: 8px;
+  font-weight: bold;
+  color: white;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.message-row.from-bot .avatar {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.6);
 }
 
 .user-avatar {
-  background: linear-gradient(135deg, #15803d, #16a34a);
-  margin-left: 8px;
   margin-right: 0;
+  margin-left: 12px;
+  /* Màu user avatar về xanh lá như theme cũ */
+  background: linear-gradient(135deg, #15803d, #16a34a);
   box-shadow: 0 4px 12px rgba(21, 128, 61, 0.6);
 }
 
 .bubble {
-  max-width: 75%;
-  padding: 10px 14px;
+  max-width: 70%;
+  padding: 12px 16px;
   border-radius: 16px;
   font-size: 14px;
   line-height: 1.45;
+  color: #e2e8f0;
   position: relative;
 }
 
 .bubble-bot {
-  /* Bong bóng bot: xám rất đậm, viền xanh lá */
+  /* Bong bóng bot theo theme cũ */
   background: #020617;
   border: 1px solid rgba(34, 197, 94, 0.5);
   border-bottom-left-radius: 4px;
 }
 
 .bubble-user {
-  /* Bong bóng user: xanh lá đậm -> gần đen */
+  /* Bong bóng user theo theme cũ */
   background: linear-gradient(135deg, #16a34a, #052e16);
   color: #ffffff;
   border-bottom-right-radius: 4px;
-}
-
-.text {
-  white-space: pre-wrap;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
 }
 
 .chat-footer {
-  display: flex;
-  align-items: center;
   padding: 10px 12px;
-  border-top: 1px solid rgba(34, 197, 94, 0.4);
   background: #020617;
+  border-top: 1px solid rgba(34, 197, 94, 0.4);
+  display: flex;
   gap: 8px;
 }
 
 .chat-footer input {
   flex: 1;
+  padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid rgba(55, 65, 81, 0.9);
-  padding: 8px 14px;
+  background: #020617;
+  color: #ffffff;
   font-size: 14px;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -124,12 +280,12 @@
 .chat-footer input:focus {
   border-color: #22c55e;
   box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
+  background: #020617;
 }
 
 .chat-footer button {
   border-radius: 999px;
   border: none;
-  /* Nút gửi: xanh lá -> đen */
   background: linear-gradient(135deg, #22c55e, #052e16);
   color: #ffffff;
   padding: 8px 16px;
@@ -155,40 +311,25 @@
   box-shadow: 0 10px 24px rgba(34, 197, 94, 0.7);
 }
 
+/* Typing Indicator */
 .typing-indicator {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
   gap: 4px;
+  padding: 4px;
 }
 
 .typing-indicator span {
   width: 6px;
   height: 6px;
-  border-radius: 999px;
-  /* Chấm typing: xanh lá xám */
   background: #16a34a;
-  animation: typingBounce 1s infinite ease-in-out;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
 }
 
-.typing-indicator span:nth-child(2) {
-  animation-delay: 0.15s;
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
 }
-
-.typing-indicator span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-@keyframes typingBounce {
-  0%,
-  80%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.6;
-  }
-  40% {
-    transform: translateY(-4px);
-    opacity: 1;
-  }
-}
-
-

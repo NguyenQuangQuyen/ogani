@@ -13,6 +13,16 @@ export class StorageService {
   clean(): void {
     window.sessionStorage.clear();
 
+    // Remove chat keys
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('chat_unsaved_')) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+
     // Xóa dữ liệu ảnh đại diện lưu trong localStorage nếu có
     localStorage.removeItem('userProfileImage');
     console.log('Cleaned all user data from storage including profile image');
