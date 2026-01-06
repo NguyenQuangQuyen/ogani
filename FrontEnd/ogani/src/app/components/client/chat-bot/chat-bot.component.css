@@ -24,13 +24,16 @@
   flex-direction: column;
   /* Quan trọng: Chiều cao phải khớp với main-container */
   height: 600px; 
+  max-height: 600px;
   /* Ngăn không cho sidebar phình to ra ngoài */
   overflow: hidden; 
+  position: relative;
 }
 
 .sidebar-header {
   padding: 20px;
   border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+  flex-shrink: 0;
 }
 
 .new-chat-btn {
@@ -61,19 +64,16 @@
 }
 
 .session-list {
-  /* Chiếm toàn bộ phần còn lại của sidebar sau khi trừ header */
-  flex: 1; 
-  /* Kích hoạt thanh cuộn dọc */
+  height: calc(600px - 40px);
+  max-height: calc(600px - 40px);
   overflow-y: auto !important; 
-  /* Ngăn thanh cuộn ngang */
-  overflow-x: hidden; 
+  overflow-x: hidden !important; 
   padding: 12px;
   scroll-behavior: smooth;
-  /* Fix lỗi Flexbox khiến thanh cuộn biến mất */
-  min-height: 0; 
-  display: block; 
   /* Vùng đệm cuối cùng để cuộn được hết các thẻ cuối */
   padding-bottom: 40px; 
+  /* Đảm bảo box-sizing đúng */
+  box-sizing: border-box;
 }
 .session-item {
   padding: 12px;
