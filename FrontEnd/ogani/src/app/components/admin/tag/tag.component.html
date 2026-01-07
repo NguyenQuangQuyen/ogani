@@ -24,17 +24,17 @@
     <p-table [value]="listTag" [rows]="5" [paginator]="true">
         <ng-template pTemplate="header">
             <tr>
-                <th>Name</th>
-                <th>Enable</th>
-                <th>Action</th>
+                <th>Tên Tag</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-tag>
             <tr> 
                 <td>{{tag.name}}</td>
                 <td>
-                    <button pButton type="button" class="p-button-info" (click)="enableTag(tag.id)" *ngIf="tag.enable">Enabled</button>
-                    <button pButton type="button" class="p-button-warning" (click)="enableTag(tag.id)" *ngIf="!tag.enable">Disabled</button>
+                    <button pButton type="button" class="p-button-info" (click)="enableTag(tag.id)" *ngIf="tag.enable">Kích hoạt</button>
+                    <button pButton type="button" class="p-button-warning" (click)="enableTag(tag.id)" *ngIf="!tag.enable">Vô hiệu hóa</button>
                 </td>
                 <td>
                     <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-primary"></button>
@@ -45,8 +45,8 @@
                             <span class="ml-2">Bạn có chắc xóa <span></span> ?</span>
                         </div>
                         <div class="flex justify-content-end mt-3">
-                            <p-button label="Yes" icon="pi pi-check" (click)="deleteTag()" class="mr-2" ></p-button>
-                            <p-button label="No" icon="pi pi-times" (click)="deleteForm=false"></p-button>
+                            <p-button label="Xóa" icon="pi pi-check" (click)="deleteTag()" class="mr-2" ></p-button>
+                            <p-button label="Hủy" icon="pi pi-times" (click)="deleteForm=false"></p-button>
                         </div>
                     </p-dialog>
                 </td>

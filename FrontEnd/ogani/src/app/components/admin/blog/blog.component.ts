@@ -20,8 +20,8 @@ export class BlogComponent implements OnInit {
   username: any;
   selectedTags: any[] = [];
   statusOptions: any[] = [
-    { name: 'Active', value: 1 },
-    { name: 'Inactive', value: 0 }
+    { name: 'Hoạt động', value: 1 },
+    { name: 'Không hoạt động', value: 0 }
   ];
 
   onUpdate: boolean = false;
@@ -75,26 +75,26 @@ export class BlogComponent implements OnInit {
             if (res && res.id) {
               this.image = res;
               this.imageChoosen = res;
-              this.showSuccess("Image uploaded and selected successfully");
+              this.showSuccess("Hình ảnh đã được tải lên và chọn thành công");
               this.showImage = false;
               this.getListImage();
             } else {
-              this.showWarn("Upload successful but no image information received");
+              this.showWarn("Tải lên hình ảnh thành công nhưng không có thông tin hình ảnh");
               this.getListImage();
             }
           },
           error: (err) => {
-            console.error('Upload error:', err);
+            console.error('Lỗi tải lên hình ảnh:', err);
             if (err.error) {
-              console.error('Server error details:', err.error);
+              console.error('Chi tiết lỗi từ server:', err.error);
             }
-            this.showError("Could not upload image: " + (err.error?.message || err.message || "Unknown error"));
+            this.showError("Không thể tải lên hình ảnh: " + (err.error?.message || err.message || "Lỗi không xác định"));
             this.currentFile = undefined;
           }
         });
       }
     } else {
-      this.showWarn("Please select an image file");
+      this.showWarn("Vui lòng chọn tệp hình ảnh");
     }
   }
 
@@ -145,19 +145,19 @@ export class BlogComponent implements OnInit {
     this.imageService.getList().subscribe({
       next: res => {
         // Show loading message
-        this.messageService.add({ severity: 'info', summary: 'Notification', detail: 'Loading image list...' });
+        this.messageService.add({ severity: 'info', summary: 'Thông báo', detail: 'Đang tải danh sách hình ảnh...' });
 
         // Check if there are any images
         if (!res || (Array.isArray(res) && res.length === 0)) {
-          this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No images in library' });
+          this.messageService.add({ severity: 'warn', summary: 'Cảnh báo', detail: 'Không có hình ảnh trong thư viện' });
           this.listImage = [];
           return;
         }
 
         // Check response data type
         if (!Array.isArray(res)) {
-          console.error('Invalid response format for images:', res);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid image data format' });
+          console.error('Dữ liệu hình ảnh không có định dạng hợp lệ:', res);
+          this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Dữ liệu hình ảnh không có định dạng hợp lệ' });
           this.listImage = [];
           return;
         }
@@ -176,14 +176,14 @@ export class BlogComponent implements OnInit {
         // Show number of images loaded
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: `Loaded ${this.listImage.length} images from library`
+          summary: 'Thành công',
+          detail: `Đã tải ${this.listImage.length} hình ảnh từ thư viện`
         });
       },
       error: err => {
-        console.error('Error fetching images:', err);
-        const errorMessage = err.error?.message || err.message || "Unknown error";
-        this.showError("Could not load image list: " + errorMessage);
+        console.error('Lỗi tải hình ảnh:', err);
+        const errorMessage = err.error?.message || err.message || "Lỗi không xác định";
+        this.showError("Không thể tải danh sách hình ảnh: " + errorMessage);
         this.listImage = [];
       }
     });
@@ -216,11 +216,11 @@ export class BlogComponent implements OnInit {
     const { title, description, content, imageId, tags } = this.blogForm;
     this.blogService.createBlog(title, description, content, imageId, tags, this.username).subscribe({
       next: (res: any) => {
-        this.showSuccess("Blog created successfully");
+        this.showSuccess("Blog đã được tạo thành công");
         this.showForm = false;
         this.getList();
       }, error: (err: any) => {
-        this.showError("Could not create blog: " + (err.error?.message || err.message || "Unknown error"));
+        this.showError("Không thể tạo bài viết: " + (err.error?.message || err.message || "Lỗi không xác định"));
       }
     })
   }
@@ -231,11 +231,11 @@ export class BlogComponent implements OnInit {
     const { id, title, description, content, imageId, tags } = this.blogForm;
     this.blogService.updateBLog(id, title, description, content, imageId, tags).subscribe({
       next: (res: any) => {
-        this.showSuccess("Blog updated successfully");
+        this.showSuccess("Blog đã được cập nhật thành công");
         this.showForm = false;
         this.getList();
       }, error: (err: any) => {
-        this.showError("Could not update blog: " + (err.error?.message || err.message || "Unknown error"));
+        this.showError("Không thể cập nhật blog: " + (err.error?.message || err.message || "Lỗi không xác định"));
       }
     })
   }
@@ -243,11 +243,11 @@ export class BlogComponent implements OnInit {
   deleteBlog() {
     this.blogService.deleleBlog(this.blogForm.id).subscribe({
       next: (res: any) => {
-        this.showSuccess("Blog deleted successfully");
+        this.showSuccess("Blog đã được xóa thành công");
         this.onDelete = false;
         this.getList();
       }, error: (err: any) => {
-        this.showError("Could not delete blog: " + (err.error?.message || err.message || "Unknown error"));
+        this.showError("Không thể xóa blog: " + (err.error?.message || err.message || "Lỗi không xác định"));
       }
     })
   }

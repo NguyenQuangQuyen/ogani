@@ -366,7 +366,7 @@ export class CheckoutComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Order placed successfully!',
+            detail: 'Đơn hàng đã được đặt thành công!',
           });
 
           setTimeout(() => {

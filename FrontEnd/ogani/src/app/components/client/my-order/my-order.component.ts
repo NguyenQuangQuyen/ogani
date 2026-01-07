@@ -426,7 +426,7 @@ export class MyOrderComponent implements OnInit {
 
   refreshOrders() {
     this.getListOrder();
-    this.showSuccess('Orders refreshed');
+    this.showSuccess('Đơn hàng đã được làm mới');
   }
 
   showSuccess(message: string) {

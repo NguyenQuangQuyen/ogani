@@ -4,7 +4,7 @@
       <button
         pButton
         pRipple
-        label="Add Blog"
+        label="Thêm Bài Viết"
         icon="pi pi-plus"
         class="p-button-success mr-2"
         (click)="showNew()"
@@ -21,12 +21,12 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [rowHover]="true"
     dataKey="id"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} mục"
     [showCurrentPageReport]="true"
   >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
-        <h5 class="m-0">Manage Blog</h5>
+        <h5 class="m-0">Quản Lý Bài Viết</h5>
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input
@@ -43,17 +43,17 @@
         <th>
           <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         </th>
-        <th>Image</th>
+        <th>Ảnh</th>
         <th pSortableColumn="name" style="min-width: 10rem">
-          Title <p-sortIcon field="name"></p-sortIcon>
+          Tiêu đề <p-sortIcon field="name"></p-sortIcon>
         </th>
         <th pSortableColumn="price" style="min-width: 15rem">
-          Description <p-sortIcon field="price"></p-sortIcon>
+          Mô tả <p-sortIcon field="price"></p-sortIcon>
         </th>
         <th pSortableColumn="category" style="min-width: 15rem">
-          Content <p-sortIcon field="category"></p-sortIcon>
+          Nội dung <p-sortIcon field="category"></p-sortIcon>
         </th>
-        <th style="min-width: 10rem">Action</th>
+        <th style="min-width: 10rem">Hành Động</th>
         <th></th>
       </tr>
     </ng-template>
@@ -111,14 +111,14 @@
 <p-dialog
   [(visible)]="showForm"
   [style]="{ width: '30vw' }"
-  header="Product Details"
+  header="Chi Tiết Bài Viết"
   [modal]="true"
   styleClass="p-fluid"
 >
   <ng-template pTemplate="content">
     <!-- <img [src]="'assets/showcase/images/demo/product/' + product.image" [alt]="product.image" class="product-image" *ngIf="product.image"> -->
     <div class="field">
-      <label class="font-bold mb-2 block">Title</label>
+      <label class="font-bold mb-2 block">Tiêu đề</label>
       <input
         type="text"
         pInputText
@@ -129,7 +129,7 @@
       />
     </div>
     <div class="field">
-      <label class="font-bold mb-2 block">Content</label>
+      <label class="font-bold mb-2 block">Nội dung</label>
       <textarea
         pInputTextarea
         class="w-full"
@@ -140,7 +140,7 @@
       ></textarea>
     </div>
     <div class="field">
-      <label class="font-bold mb-2 block">Description</label>
+      <label class="font-bold mb-2 block">Mô tả</label>
       <textarea
         pInputTextarea
         class="w-full"
@@ -151,7 +151,7 @@
       ></textarea>
     </div>
     <div class="field">
-      <label class="font-bold mb-2 block">Status</label>
+      <label class="font-bold mb-2 block">Trạng Thái</label>
       <p-dropdown
         [options]="statusOptions"
         [(ngModel)]="blogForm.status"
@@ -163,7 +163,7 @@
     </div>
 
     <div class="field">
-      <label class="font-bold mb-2 block">Tag</label>
+      <label class="font-bold mb-2 block">Thẻ</label>
       <p-multiSelect
         [options]="listTag"
         [(ngModel)]="selectedTags"
@@ -175,7 +175,7 @@
     </div>
 
     <div class="field">
-      <label class="font-bold mb-2 block">Blog Image</label>
+      <label class="font-bold mb-2 block">Hình Ảnh</label>
       <div class="flex flex-column gap-2">
         <div class="flex align-items-center gap-2">
           <input
@@ -188,12 +188,12 @@
           <button
             pButton
             (click)="file.click()"
-            label="Upload from computer"
+            label="Tải ảnh lên máy tính"
             icon="pi pi-upload"
             class="p-button-primary w-auto"
           ></button>
           <span class="text-sm text-primary font-italic"
-            >*Image will be automatically selected after upload</span
+            >*Ảnh sẽ được chọn tự động sau khi tải lên</span
           >
         </div>
         <p-divider></p-divider>
@@ -203,7 +203,7 @@
           class="p-button-outlined p-button-secondary w-auto"
           (click)="onChooseImage()"
         >
-          Choose from image library
+          Chọn ảnh từ thư viện
         </button>
       </div>
 
@@ -232,7 +232,7 @@
               class="p-button-primary w-auto"
             ></button>
             <span class="ml-2 text-sm text-gray-500"
-              >*Image will be automatically selected after upload</span
+              >*Hình ảnh sẽ được chọn tự động sau khi tải lên</span
             >
           </div>
           <div>
@@ -246,10 +246,10 @@
           </div>
         </div>
         <p-divider align="left">
-          <span class="font-bold">Image Library</span>
+          <span class="font-bold">Thư viện hình ảnh</span>
         </p-divider>
         <p class="text-sm text-blue-500 mb-2">
-          Tip: Double-click on an image to select it quickly
+          Mẹo: Nhấp đúp vào hình ảnh để chọn nhanh
         </p>
         <div class="grid">
           <div
@@ -259,8 +259,7 @@
             <div class="image-container w-full h-full relative">
               <img
                 [src]="
-                  'http://localhost:8080/api/image/file/' +
-                  (image.name || '')
+                  'http://localhost:8080/api/image/file/' + (image.name || '')
                 "
                 alt="Image"
                 class="w-full h-full p-2 border-1"
@@ -275,12 +274,10 @@
         </div>
       </p-dialog>
       <div class="mt-3" *ngIf="image != null">
-        <p class="font-bold">Selected Image:</p>
+        <p class="font-bold">Hình Ảnh Chọn:</p>
         <div class="product-image" style="max-width: 200px">
           <img
-            [src]="
-              'http://localhost:8080/api/image/file/' + (image.name || '')
-            "
+            [src]="'http://localhost:8080/api/image/file/' + (image.name || '')"
             alt="Selected image"
             class="w-full h-full border-1 border-primary border-round"
             onerror="this.src='assets/image/cat-1.jpg'; this.classList.add('error-image')"
@@ -300,10 +297,10 @@
 
   <ng-template pTemplate="footer">
     <button type="submit" pButton *ngIf="!onUpdate" (click)="createBlog()">
-      Create
+      Tạo mới
     </button>
     <button type="submit" pButton *ngIf="onUpdate" (click)="updateBlog()">
-      Update
+      Cập nhật
     </button>
     <button
       pButton
@@ -311,13 +308,13 @@
       class="p-button-danger ml-3"
       (click)="showForm = false"
     >
-      Cancel
+      Hủy
     </button>
   </ng-template>
 </p-dialog>
 
 <p-dialog
-  header="Confirm"
+  header="Xác nhận xóa"
   [(visible)]="onDelete"
   [style]="{ width: '30vw' }"
   [modal]="true"
@@ -326,19 +323,19 @@
   <div>
     <i class="pi pi pi-exclamation-triangle"></i>
     <span class="ml-2"
-      >Are you sure you want to delete <span>{{ blogForm.title }}</span
+      >Bạn có chắc chắn muốn xóa bài viết <span>{{ blogForm.title }}</span
       >?</span
     >
   </div>
   <div class="flex justify-content-end mt-3">
     <p-button
-      label="Yes"
+      label="Xóa"
       icon="pi pi-check"
       class="mr-2"
       (click)="deleteBlog()"
     ></p-button>
     <p-button
-      label="No"
+      label="Hủy"
       icon="pi pi-times"
       (click)="onDelete = false"
     ></p-button>

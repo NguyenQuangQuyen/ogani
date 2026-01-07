@@ -71,7 +71,7 @@ export class CategoryComponent implements OnInit {
     this.categoryService.createCategory(name).subscribe({
       next: res => {
         this.getListCategory();
-        this.showSuccess("Category created successfully!");
+        this.showSuccess("Danh mục đã được tạo thành công!");
         this.displayForm = false;
       }, error: err => {
         this.showError(err.message);
@@ -111,7 +111,7 @@ export class CategoryComponent implements OnInit {
     this.categoryService.deleteCategory(id).subscribe({
       next: res => {
         this.getListCategory();
-        this.showWarn("Category deleted successfully!");
+        this.showWarn("Danh mục đã được xóa thành công!");
         this.deleteForm = false;
       }, error: err => {
         this.showError(err.message);

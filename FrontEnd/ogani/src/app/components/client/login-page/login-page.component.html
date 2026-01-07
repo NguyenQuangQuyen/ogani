@@ -118,17 +118,17 @@
 		</div>
 	</div>
 	<ng-template pTemplate="footer">
-		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Cancel"
+		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Hủy"
 			(click)="closeForgotPasswordDialog()" class="p-button-text"></button>
-		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Continue"
+		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Tiếp tục"
 			(click)="verifyForgotPasswordInfo()" class="p-button-primary"></button>
 
-		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Back" (click)="forgotPasswordStep = 1"
+		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Quay lại" (click)="forgotPasswordStep = 1"
 			class="p-button-text"></button>
-		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Reset password" (click)="resetPassword()"
+		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Cập nhật mật khẩu" (click)="resetPassword()"
 			class="p-button-primary"></button>
 
-		<button *ngIf="forgotPasswordStep === 3" pButton type="button" label="Login now"
+		<button *ngIf="forgotPasswordStep === 3" pButton type="button" label="Đăng nhập ngay"
 			(click)="closeForgotPasswordAndLogin()" class="p-button-success"></button>
 	</ng-template>
 </p-dialog>

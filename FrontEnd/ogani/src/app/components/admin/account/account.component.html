@@ -3,18 +3,18 @@
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">User Management</h1>
+        <h1 class="h3 mb-0 text-gray-800">Quản lý người dùng</h1>
     </div>
 
     <!-- Content Row -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách người dùng</h6>
         </div>
         <div class="card-body">
             <p-table #dt [value]="users" styleClass="p-datatable-sm" [rows]="10" [paginator]="true"
                 [globalFilterFields]="['username', 'email']" [rowHover]="true" dataKey="id"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} mục"
                 [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]">
                 <ng-template pTemplate="caption">
                     <div class="table-header d-flex justify-content-between">
@@ -29,10 +29,10 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="username">Username <p-sortIcon field="username"></p-sortIcon></th>
+                        <th pSortableColumn="username">Tên đăng nhập <p-sortIcon field="username"></p-sortIcon></th>
                         <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-                        <th>Roles</th>
-                        <th style="width: 120px;">Actions</th>
+                        <th>Vai trò</th>
+                        <th style="width: 120px;">Hành động</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-user>
@@ -50,20 +50,20 @@
                         </td>
                         <td>
                             <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm mr-2"
-                                (click)="openEditDialog(user)" pTooltip="Edit Role"></button>
+                                (click)="openEditDialog(user)" pTooltip="Chỉnh sửa vai trò"></button>
                             <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm"
-                                (click)="confirmDelete(user)" pTooltip="Delete Account"></button>
+                                (click)="confirmDelete(user)" pTooltip="Xóa tài khoản"></button>
                         </td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="4" class="text-center">No users found.</td>
+                        <td colspan="4" class="text-center">Không tìm thấy người dùng nào.</td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="paginatorleft">
-                    <div>Showing {{dt.first + 1}} to {{dt.first + dt.rows > dt.totalRecords ? dt.totalRecords : dt.first
-                        + dt.rows}} of {{dt.totalRecords}} entries</div>
+                    <div>Hiển thị {{dt.first + 1}} đến {{dt.first + dt.rows > dt.totalRecords ? dt.totalRecords : dt.first
+                        + dt.rows}} của {{dt.totalRecords}} mục</div>
                 </ng-template>
             </p-table>
         </div>
@@ -71,11 +71,11 @@
 </div>
 
 <!-- Edit Role Dialog -->
-<p-dialog header="Edit User Role" [(visible)]="displayEditDialog" [modal]="true" [style]="{width: '550px'}"
+<p-dialog header="Chỉnh Sửa Vai Trò Người Dùng" [(visible)]="displayEditDialog" [modal]="true" [style]="{width: '550px'}"
     [draggable]="false" [resizable]="false" styleClass="p-fluid">
     <div *ngIf="selectedUser" class="edit-user-form">
         <div class="field mb-3">
-            <label for="username">Username</label>
+            <label for="username">Tên đăng nhập</label>
             <input type="text" pInputText id="username" [(ngModel)]="selectedUser.username" readonly class="w-100" />
         </div>
         <div class="field mb-3" *ngIf="selectedUser.email">
@@ -104,24 +104,24 @@
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+        <button pButton pRipple label="Hủy" icon="pi pi-times" class="p-button-text"
             (click)="displayEditDialog = false"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveUserRole()"
+        <button pButton pRipple label="Lưu" icon="pi pi-check" class="p-button-text" (click)="saveUserRole()"
             [disabled]="!selectedRoles || selectedRoles.length === 0"></button>
     </ng-template>
 </p-dialog>
 
 <!-- Delete User Confirmation Dialog -->
-<p-dialog header="Confirm Deletion" [(visible)]="displayDeleteDialog" [modal]="true" [style]="{width: '450px'}"
+<p-dialog header="Xác nhận xóa" [(visible)]="displayDeleteDialog" [modal]="true" [style]="{width: '450px'}"
     [draggable]="false" [resizable]="false">
     <div *ngIf="selectedUser" class="confirm-delete">
-        <p>Are you sure you want to delete the account <strong>{{selectedUser.username}}</strong>?</p>
-        <p class="text-danger">Note: This action cannot be undone.</p>
+        <p>Bạn có chắc chắn muốn xóa tài khoản <strong>{{selectedUser.username}}</strong>?</p>
+        <p class="text-danger">Lưu ý: Điều này không thể hoàn tác.</p>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="No" icon="pi pi-times" class="p-button-text"
+        <button pButton pRipple label="Hủy" icon="pi pi-times" class="p-button-text"    
             (click)="displayDeleteDialog = false"></button>
-        <button pButton pRipple label="Yes, delete account" icon="pi pi-trash" class="p-button-text p-button-danger"
+        <button pButton pRipple label="Xóa Tài Khoản" icon="pi pi-trash" class="p-button-text p-button-danger"
             (click)="deleteUser()"></button>
     </ng-template>
 </p-dialog>

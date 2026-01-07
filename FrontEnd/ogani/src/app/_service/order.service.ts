@@ -14,7 +14,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class OrderService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getListOrder(): Observable<any> {
     return this.http.get(ORDER_API + 'getall', httpOptions);
@@ -172,29 +172,33 @@ export class OrderService {
     };
 
     console.log('Sending COD order request to backend:', orderRequest);
-    return this.http.post(ORDER_API + 'create_cod', orderRequest, httpOptions).pipe(
-      catchError((error) => {
-        console.error('Error creating COD order:', error);
-        if (error.error && error.error.message) {
-          return throwError(() => new Error(error.error.message));
-        }
-        return throwError(
-          () => new Error('Failed to create COD order. Please try again.')
-        );
-      })
-    );
+    return this.http
+      .post(ORDER_API + 'create_cod', orderRequest, httpOptions)
+      .pipe(
+        catchError((error) => {
+          console.error('Error creating COD order:', error);
+          if (error.error && error.error.message) {
+            return throwError(() => new Error(error.error.message));
+          }
+          return throwError(
+            () => new Error('Failed to create COD order. Please try again.')
+          );
+        })
+      );
   }
 
   // Thêm phương thức cancelOrder
   cancelOrder(orderId: number): Observable<any> {
     console.log('Cancelling order via backend:', orderId);
-    return this.http.delete(ORDER_API + 'delete/' + String(orderId), httpOptions).pipe(
-      map((data) => ({ success: true, data })),
-      catchError((error) => {
-        console.error('Error deleting order via backend:', error);
-        return of({ success: false, message: 'Failed to cancel order' });
-      })
-    );
+    return this.http
+      .delete(ORDER_API + 'delete/' + String(orderId), httpOptions)
+      .pipe(
+        map((data) => ({ success: true, data })),
+        catchError((error) => {
+          console.error('Error deleting order via backend:', error);
+          return of({ success: false, message: 'Failed to cancel order' });
+        })
+      );
   }
 
   // Thêm phương thức updateOrder
@@ -307,7 +311,10 @@ export class OrderService {
       price: Math.round(price), // PayOS requires integer price
       orderDetails: orderDetails.map((item) => ({
         name: item.name,
-        price: typeof item.price === 'number' ? item.price : parseInt(String(item.price)),
+        price:
+          typeof item.price === 'number'
+            ? item.price
+            : parseInt(String(item.price)),
         quantity: item.quantity,
       })),
     };

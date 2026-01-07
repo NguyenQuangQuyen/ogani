@@ -295,7 +295,7 @@ export class OrderComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
-      detail: 'Orders refreshed successfully'
+      detail: 'Đơn hàng đã được làm mới thành công'
     });
   }
 
@@ -358,7 +358,7 @@ export class OrderComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Order cancelled and deleted successfully'
+          detail: 'Đơn hàng đã được hủy và xóa thành công'
         });
       },
       error: (error: any) => {

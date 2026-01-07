@@ -3,10 +3,10 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="breadcrumb__text">
-                    <h2>My order</h2>
+                    <h2>Đơn hàng của tôi</h2>
                     <div class="breadcrumb__option">
-                        <a routerLink="/">Home</a>
-                        <span>My order</span>
+                        <a routerLink="/">Trang chủ</a>
+                        <span>Đơn hàng của tôi</span>
                     </div>
                 </div>
             </div>
@@ -20,11 +20,11 @@
         <p-table #dt [value]="listOrder" [rows]="10" [paginator]="true"
             [globalFilterFields]="['firstname','lastname','address']" [tableStyle]="{'min-width': '75rem'}"
             [rowHover]="true" dataKey="id"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
+            currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} đơn hàng"
             [showCurrentPageReport]="true" [showFirstLastIcon]="true" [showPageLinks]="true">
             <ng-template pTemplate="caption">
                 <div class="flex align-items-center justify-content-between">
-                    <h5 class="m-0">My Orders</h5>
+                    <h5 class="m-0">Đơn hàng của tôi</h5>
                     <div class="flex align-items-center gap-2">
                         <button pButton pRipple icon="pi pi-refresh" class="p-button-rounded p-button-info p-button-sm"
                             (click)="refreshOrders()" pTooltip="Refresh orders"></button>
@@ -38,11 +38,11 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                    <th>Total</th>
-                    <th>Payment Method</th>
-                    <th>Actions</th>
+                    <th>Mã đơn hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng cộng</th>
+                    <th>Phương thức thanh toán</th>
+                    <th>Hành động</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-order>
@@ -51,19 +51,20 @@
                     <td>{{order.createdDate | date:'dd/MM/yyyy HH:mm'}}</td>
                     <td>{{order.totalPrice | currency:'VND':'symbol':'1.0-0'}}</td>
                     <td>
-                        <span *ngIf="order.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery</span>
-                        <span *ngIf="order.paymentMethod === 'BANK'" class="badge bg-info">Bank Transfer</span>
+                        <span *ngIf="order.paymentMethod === 'COD'" class="badge bg-warning">Thanh toán khi nhận hàng</span>
+                        <span *ngIf="order.paymentMethod === 'BANK'" class="badge bg-info">Chuyển khoản ngân hàng</span>
                         <span
                             *ngIf="order.paymentMethod !== 'COD' && order.paymentMethod !== 'BANK'"
                             class="badge bg-secondary">{{order.paymentMethod || 'Unknown'}}</span>
                     </td>
                     <td>
                         <div class="d-flex gap-2">
-                            <button pButton type="button" label="View Details" icon="pi pi-eye"
+                            <button pButton type="button" label="Xem chi tiết" icon="pi pi-eye"
                                 class="p-button-info p-button-sm" (click)="viewOrderDetails(order)"></button>
-                            <button pButton type="button" label="Edit Order" icon="pi pi-pencil"
+                            <button pButton type="button" label="Chỉnh sửa" icon="pi pi-pencil"
                                 class="p-button-warning p-button-sm" (click)="editOrder(order)"></button>
-                            <button pButton type="button" label="Cancel Order" class="p-button-danger p-button-sm"
+                            <button pButton type="button" label="Hủy" icon="pi pi-times"
+                                class="p-button-danger p-button-sm"
                                 (click)="cancelOrder(order.id)"></button>
                         </div>
                     </td>
@@ -72,7 +73,7 @@
             <ng-template pTemplate="emptymessage">
                 <tr>
                     <td colspan="5" class="text-center p-4">
-                        <p class="mt-3">You don't have any orders yet</p>
+                        <p class="mt-3">Bạn không có đơn hàng nào cả</p>
                     </td>
                 </tr>
             </ng-template>
@@ -80,41 +81,40 @@
     </div>
 </div>
 
-<p-dialog header="Order Details" [(visible)]="showOrderDetails" [style]="{width: '70vw'}" [modal]="true">
+<p-dialog header="Chi tiết đơn hàng" [(visible)]="showOrderDetails" [style]="{width: '70vw'}" [modal]="true">
     <div *ngIf="selectedOrder">
         <div class="order-details p-3">
-            <h5>Order Information #{{selectedOrder.id}}</h5>
+            <h5>Thông tin đơn hàng #{{selectedOrder.id}}</h5>
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>Customer:</strong> {{selectedOrder.firstname}} {{selectedOrder.lastname}}</p>
-                    <p><strong>Phone:</strong> {{selectedOrder.phone}}</p>
+                    <p><strong>Khách hàng:</strong> {{selectedOrder.firstname}} {{selectedOrder.lastname}}</p>
+                    <p><strong>Số điện thoại:</strong> {{selectedOrder.phone}}</p>
                     <p><strong>Email:</strong> {{selectedOrder.email}}</p>
                 </div>
                 <div class="col-md-6">
-                    <p><strong>Address:</strong> {{selectedOrder.address}}, {{selectedOrder.town}}</p>
-                    <p><strong>Country:</strong> {{selectedOrder.country}}</p>
-                    <p><strong>Payment Method:</strong>
-                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Cash on Delivery
-                            (COD)</span>
-                        <span *ngIf="selectedOrder.paymentMethod === 'BANK'" class="badge bg-info">Bank Transfer</span>
+                    <p><strong>Địa chỉ:</strong> {{selectedOrder.address}}, {{selectedOrder.town}}</p>
+                    <p><strong>Quốc gia:</strong> {{selectedOrder.country}}</p>
+                    <p><strong>Phương thức thanh toán:</strong>
+                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Thanh toán khi nhận hàng (COD)</span>
+                        <span *ngIf="selectedOrder.paymentMethod === 'BANK'" class="badge bg-info">Chuyển khoản ngân hàng (BANK)</span>
                         <span
                             *ngIf="selectedOrder.paymentMethod !== 'COD' && selectedOrder.paymentMethod !== 'BANK'"
                             class="badge bg-secondary">{{selectedOrder.paymentMethod || 'Unknown'}}</span>
                     </p>
-                    <p><strong>Order Notes:</strong> {{selectedOrder.note}}</p>
+                    <p><strong>Ghi chú đơn hàng:</strong> {{selectedOrder.note}}</p>
                     
                 </div>
             </div>
 
-            <h5 class="mt-4">Products</h5>
+            <h5 class="mt-4">Sản phẩm</h5>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Product Name</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Subtotal</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng cộng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,7 +127,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
                             <td><strong>{{selectedOrder.totalPrice | currency:'VND':'symbol':'1.0-0'}}</strong></td>
                         </tr>
                     </tfoot>
@@ -136,34 +136,34 @@
         </div>
     </div>
     <div class="p-dialog-footer mt-3">
-        <button pButton pRipple type="button" label="Cancel Order" icon="pi pi-ban" class="p-button-danger"
+        <button pButton pRipple type="button" label="Hủy Đơn Hàng" icon="pi pi-ban" class="p-button-danger"
             *ngIf="selectedOrder && selectedOrder.status !== 'Canceled'"
             (click)="cancelOrder(selectedOrder.id)"></button>
-        <button pButton pRipple type="button" label="Edit" icon="pi pi-pencil" class="p-button-warning"
+        <button pButton pRipple type="button" label="Chỉnh Sửa" icon="pi pi-pencil" class="p-button-warning"
             *ngIf="selectedOrder" (click)="editOrder(selectedOrder)"></button>
-        <button pButton pRipple type="button" label="Close" icon="pi pi-times" class="p-button-secondary"
+        <button pButton pRipple type="button" label="Đóng" icon="pi pi-times" class="p-button-secondary"
             (click)="showOrderDetails=false"></button>
     </div>
 </p-dialog>
 
-<p-dialog header="Edit Order" [(visible)]="showEditOrderDialog" [style]="{width: '60vw'}" [modal]="true">
+<p-dialog header="Chỉnh Sửa Đơn Hàng" [(visible)]="showEditOrderDialog" [style]="{width: '60vw'}" [modal]="true">
     <form #editForm="ngForm" (ngSubmit)="saveOrderChanges()">
         <div class="p-fluid p-formgrid p-grid">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="firstname" class="form-label">First Name <span class="text-danger">*</span></label>
+                    <label for="firstname" class="form-label">Họ <span class="text-danger">*</span></label>
                     <input type="text" pInputText id="firstname" name="firstname" [(ngModel)]="editOrderForm.firstname"
                         required class="form-control" #firstname="ngModel">
                     <small *ngIf="firstname.invalid && (firstname.dirty || firstname.touched)" class="p-error">
-                        First name is required
+                        Họ là bắt buộc
                     </small>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="lastname" class="form-label">Last Name <span class="text-danger">*</span></label>
+                    <label for="lastname" class="form-label">Tên <span class="text-danger">*</span></label>
                     <input type="text" pInputText id="lastname" name="lastname" [(ngModel)]="editOrderForm.lastname"
                         required class="form-control" #lastname="ngModel">
                     <small *ngIf="lastname.invalid && (lastname.dirty || lastname.touched)" class="p-error">
-                        Last name is required
+                        Tên là bắt buộc
                     </small>
                 </div>
             </div>
@@ -179,56 +179,56 @@
                     </small>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                    <label for="phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
                     <input type="text" pInputText id="phone" name="phone" [(ngModel)]="editOrderForm.phone" required
                         class="form-control" #phone="ngModel">
                     <small *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="p-error">
-                        Phone number is required
+                        Số điện thoại là bắt buộc
                     </small>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                    <label for="address" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
                     <input type="text" pInputText id="address" name="address" [(ngModel)]="editOrderForm.address"
                         required class="form-control" #address="ngModel">
                     <small *ngIf="address.invalid && (address.dirty || address.touched)" class="p-error">
-                        Address is required
+                        Địa chỉ là bắt buộc
                     </small>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="town" class="form-label">Town/City <span class="text-danger">*</span></label>
+                    <label for="town" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
                     <input type="text" pInputText id="town" name="town" [(ngModel)]="editOrderForm.town" required
                         class="form-control" #town="ngModel">
                     <small *ngIf="town.invalid && (town.dirty || town.touched)" class="p-error">
-                        Town/City is required
+                        Tỉnh/Thành phố là bắt buộc
                     </small>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="state" class="form-label">State <span class="text-danger">*</span></label>
+                    <label for="state" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
                     <input type="text" pInputText id="state" name="state" [(ngModel)]="editOrderForm.state" required
                         class="form-control" #state="ngModel">
                     <small *ngIf="state.invalid && (state.dirty || state.touched)" class="p-error">
-                        State is required
+                        Quận/Huyện là bắt buộc
                     </small>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
+                    <label for="country" class="form-label"> Quốc gia <span class="text-danger">*</span></label>
                     <input type="text" pInputText id="country" name="country" [(ngModel)]="editOrderForm.country"
                         required class="form-control" #country="ngModel">
                     <small *ngIf="country.invalid && (country.dirty || country.touched)" class="p-error">
-                        Country is required
+                        Quốc gia là bắt buộc
                     </small>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <label for="note" class="form-label">Order Notes</label>
+                    <label for="note" class="form-label">Ghi chú đơn hàng</label>
                     <textarea pInputTextarea id="note" name="note" [(ngModel)]="editOrderForm.note" class="form-control"
                         rows="3"></textarea>
                 </div>
@@ -236,9 +236,9 @@
         </div>
 
         <div class="p-dialog-footer mt-3">
-            <button pButton pRipple type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary"
+            <button pButton pRipple type="button" label="Hủy" icon="pi pi-times" class="p-button-secondary"
                 (click)="showEditOrderDialog=false"></button>
-            <button pButton pRipple type="submit" label="Save Changes" icon="pi pi-check" class="p-button-success"
+            <button pButton pRipple type="submit" label="Lưu thay đổi" icon="pi pi-check" class="p-button-success"
                 [disabled]="editForm.invalid || submitting"></button>
         </div>
     </form>

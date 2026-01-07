@@ -4,20 +4,16 @@ import { Observable, of, Subject } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
-
   items: any[] = [];
 
   totalPrice = 0;
 
   total = 0;
 
-  constructor(
-    private messageService: MessageService
-  ) { }
-
+  constructor(private messageService: MessageService) {}
 
   saveCart(): void {
     localStorage.setItem('cart_items', JSON.stringify(this.items));
@@ -33,7 +29,7 @@ export class CartService {
       this.items.push(item);
       isNewProduct = true;
     } else {
-      this.items.forEach(res => {
+      this.items.forEach((res) => {
         if (res.id == item.id) {
           res.quantity += quantity;
           res.subTotal = res.quantity * res.price;
@@ -50,31 +46,29 @@ export class CartService {
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
-        detail: `${item.name} has been added to your cart!`,
-        life: 1000
+        detail: `${item.name} đã được thêm vào giỏ hàng của bạn!`,
+        life: 1500,
       });
     } else {
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
-        detail: `Added ${quantity} more ${item.name} to your cart!`,
-        life: 3000
+        detail: `${quantity} ${item.name} đã được thêm vào giỏ hàng của bạn!`,
+        life: 3000,
       });
     }
   }
 
-
   updateCart(item: any, quantity: number) {
-    this.items.forEach(res => {
+    this.items.forEach((res) => {
       if (res.id == item.id) {
         res.quantity = quantity;
         res.subTotal = res.quantity * res.price;
       }
-    })
+    });
     this.saveCart();
     this.getTotalPrice();
   }
-
 
   productInCart(item: any): boolean {
     return this.items.findIndex((x: any) => x.id == item.id) > -1;
@@ -82,7 +76,6 @@ export class CartService {
   loadCart(): void {
     this.items = JSON.parse(localStorage.getItem('cart_items') as any) || [];
     this.getTotalPrice();
-
   }
 
   getItems() {
@@ -98,15 +91,13 @@ export class CartService {
     return this.items;
   }
 
-
-
   getTotalPrice() {
     this.totalPrice = 0;
     this.total = 0;
-    this.items.forEach(res => {
+    this.items.forEach((res) => {
       this.totalPrice += res.subTotal;
       this.total = this.totalPrice;
-    })
+    });
     return this.totalPrice;
   }
 
@@ -124,5 +115,4 @@ export class CartService {
     this.getTotalPrice();
     localStorage.removeItem('cart_items');
   }
-
 }

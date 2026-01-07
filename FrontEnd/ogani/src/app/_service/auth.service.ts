@@ -6,15 +6,14 @@ const AUTH_API = 'http://localhost:8080/api/auth/';
 const USER_API = 'http://localhost:8080/api/user/';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   register(username: string, email: string, password: string): Observable<any> {
     return this.http.post(
@@ -44,7 +43,7 @@ export class AuthService {
     return this.http.post(
       AUTH_API + 'google-signin',
       {
-        idToken
+        idToken,
       },
       httpOptions
     );
@@ -54,12 +53,12 @@ export class AuthService {
   getOAuth2UserInfo(): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      Accept: 'application/json',
     });
 
     return this.http.get(AUTH_API + 'current-user', {
       headers: headers,
-      withCredentials: true
+      withCredentials: true,
     });
   }
 
@@ -69,10 +68,14 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    return this.http.post(AUTH_API + 'logout', {}, {
-      headers: httpOptions.headers,
-      withCredentials: true
-    });
+    return this.http.post(
+      AUTH_API + 'logout',
+      {},
+      {
+        headers: httpOptions.headers,
+        withCredentials: true,
+      }
+    );
   }
 
   // Phương thức quên mật khẩu (gửi yêu cầu đặt lại)
@@ -80,7 +83,7 @@ export class AuthService {
     return this.http.post(
       AUTH_API + 'forgot-password',
       {
-        email
+        email,
       },
       httpOptions
     );
@@ -92,20 +95,24 @@ export class AuthService {
       AUTH_API + 'verify-email',
       {
         username,
-        email
+        email,
       },
       httpOptions
     );
   }
 
   // Đặt lại mật khẩu mới
-  resetPassword(username: string, email: string, newPassword: string): Observable<any> {
+  resetPassword(
+    username: string,
+    email: string,
+    newPassword: string
+  ): Observable<any> {
     return this.http.post(
       AUTH_API + 'reset-password',
       {
         username,
         email,
-        newPassword
+        newPassword,
       },
       httpOptions
     );

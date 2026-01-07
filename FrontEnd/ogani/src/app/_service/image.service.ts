@@ -1,19 +1,22 @@
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
 
-const IMAGE_API = "http://localhost:8080/api/image/";
+const IMAGE_API = 'http://localhost:8080/api/image/';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ImageService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Upload image to server
@@ -22,20 +25,26 @@ export class ImageService {
    */
   upload(file: File): Observable<any> {
     // Log file information before upload
-    console.log('Preparing to upload file:', file.name, 'size:', file.size, 'type:', file.type);
+    console.log(
+      'Preparing to upload file:',
+      file.name,
+      'size:',
+      file.size,
+      'type:',
+      file.type
+    );
 
     // Create FormData object to send file
     const formData = new FormData();
     formData.append('file', file);
 
     // Call new API to upload image
-    return this.http.post(IMAGE_API + 'upload', formData)
-      .pipe(
-        catchError(error => {
-          console.error('Error uploading image:', error);
-          return this.handleError(error);
-        })
-      );
+    return this.http.post(IMAGE_API + 'upload', formData).pipe(
+      catchError((error) => {
+        console.error('Error uploading image:', error);
+        return this.handleError(error);
+      })
+    );
   }
 
   /**
@@ -43,10 +52,9 @@ export class ImageService {
    * @returns Observable containing list of images
    */
   getList(): Observable<any> {
-    return this.http.get(IMAGE_API, httpOptions)
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http
+      .get(IMAGE_API, httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   /**
@@ -62,8 +70,9 @@ export class ImageService {
       errorMessage = `Client error: ${error.error.message}`;
     } else {
       // Server-side error
-      errorMessage = `Error code: ${error.status}, ` +
-        `Content: ${error.error?.message || error.message || "Unknown error"}`;
+      errorMessage =
+        `Error code: ${error.status}, ` +
+        `Content: ${error.error?.message || error.message || 'Unknown error'}`;
     }
 
     console.error('ImageService error details:', errorMessage);

@@ -23,17 +23,17 @@
     <p-table [value]="listCategory" [rows]="5" [paginator]="true">
         <ng-template pTemplate="header">
             <tr>
-                <th>Name</th>
-                <th>Enable</th>
-                <th>Action</th>
+                <th>Tên danh mục</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-category>
             <tr> 
                 <td>{{category.name}}</td>
                 <td>
-                    <button pButton type="button" class="p-button-info" (click)="enableCategory(category.id)" *ngIf="category.enable">Enabled</button>
-                    <button pButton type="button" class="p-button-warning" (click)="enableCategory(category.id)" *ngIf="!category.enable">Disabled</button>
+                    <button pButton type="button" class="p-button-info" (click)="enableCategory(category.id)" *ngIf="category.enable">Kích hoạt</button>
+                    <button pButton type="button" class="p-button-warning" (click)="enableCategory(category.id)" *ngIf="!category.enable">Vô hiệu hóa</button>
                 </td>
                 <td>
                     <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-primary" (click)="onUpdateForm(category.id,category.name)"></button>
@@ -44,8 +44,8 @@
                             <span class="ml-2">Bạn có chắc xóa <span>{{categoryForm.name}}</span> ?</span>
                         </div>
                         <div class="flex justify-content-end mt-3">
-                            <p-button label="Yes" icon="pi pi-check" class="mr-2" (click)="deleteCategory()"></p-button>
-                            <p-button label="No" icon="pi pi-times" (click)="deleteForm=false"></p-button>
+                            <p-button label="Xóa" icon="pi pi-check" class="mr-2" (click)="deleteCategory()"></p-button>
+                            <p-button label="Hủy" icon="pi pi-times" (click)="deleteForm=false"></p-button>
                         </div>
                     </p-dialog>
                 </td>

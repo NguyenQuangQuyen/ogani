@@ -6,26 +6,26 @@
         <div class="card-body text-center">
             <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
                 animationDuration=".5s"></p-progressSpinner>
-            <h3>Processing payment...</h3>
-            <p>Please wait while we verify your payment.</p>
+            <h3>Xử lý thanh toán...</h3>
+            <p>Vui lòng chờ trong khi chúng tôi xác minh thanh toán của bạn.</p>
         </div>
     </div>
 
     <div class="card" *ngIf="success && !loading">
         <div class="card-body text-center">
             <i class="pi pi-check-circle" style="font-size: 4rem; color: #4caf50;"></i>
-            <h3>Payment Successful!</h3>
+            <h3>Thanh toán thành công!</h3>
             <p>{{ successMessage }}</p>
-            <p>You will be redirected to your orders page shortly.</p>
+            <p>Bạn sẽ được chuyển hướng đến trang đơn hàng trong vài giây.</p>
         </div>
     </div>
 
     <div class="card" *ngIf="error && !loading">
         <div class="card-body text-center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f44336;"></i>
-            <h3>Payment {{ errorMessage.includes('cancelled') ? 'Cancelled' : 'Error' }}</h3>
+            <h3>Thanh toán {{ errorMessage.includes('cancelled') ? 'Hủy' : 'Lỗi' }}</h3>    
             <p>{{ errorMessage }}</p>
-            <p>You will be redirected to checkout page.</p>
+            <p>Bạn sẽ được chuyển hướng đến trang thanh toán trong vài giây.</p>
         </div>
     </div>
 </div>

@@ -123,10 +123,11 @@
             <ul>
               <li>
                 <i class="fa fa-envelope"></i>
-                <span *ngIf="!isLoggedIn">Hello Guest</span>
-                <span *ngIf="isLoggedIn">Hello {{ username }}</span>
+                <span *ngIf="!isLoggedIn">Chào mừng bạn đến với Ogani</span>
+                <span *ngIf="isLoggedIn"
+                  >Chào mừng {{ username }} đã đến với Ogani</span
+                >
               </li>
-              <li>Free Shipping for all Order of 2.000.000 VNĐ</li>
             </ul>
           </div>
         </div>
@@ -144,17 +145,57 @@
       </div>
       <div class="col-lg-6">
         <nav class="header__menu">
-          <ul>
+          <ul
+            class="d-flex list-unstyled gap-3 mb-0 align-items-center justify-content-center"
+          >
             <li class="active">
-              <a href="javascript:void(0)" routerLink="/home">HOME</a>
+              <a
+                class="text-decoration-none text-dark fw-bold text-uppercase text-nowrap small"
+                href="javascript:void(0)"
+                routerLink="/home"
+              >
+                Trang Chủ
+              </a>
             </li>
-            <li><a href="javascript:void(0)" routerLink="/">ABOUT</a></li>
+
             <li>
-              <a href="javascript:void(0)" routerLink="/products">SHOP</a>
+              <a
+                class="text-decoration-none text-dark fw-bold text-uppercase text-nowrap small"
+                href="javascript:void(0)"
+                routerLink="/"
+              >
+                Giới Thiệu
+              </a>
             </li>
-            <li><a href="javascript:void(0)" routerLink="/blog">BLOG</a></li>
+
             <li>
-              <a href="javascript:void(0)" routerLink="/contact">CONTACT</a>
+              <a
+                class="text-decoration-none text-dark fw-bold text-uppercase text-nowrap small"
+                href="javascript:void(0)"
+                routerLink="/products"
+              >
+                Sản Phẩm
+              </a>
+            </li>
+
+            <li>
+              <a
+                class="text-decoration-none text-dark fw-bold text-uppercase text-nowrap small"
+                href="javascript:void(0)"
+                routerLink="/blog"
+              >
+                Blog
+              </a>
+            </li>
+
+            <li>
+              <a
+                class="text-decoration-none text-dark fw-bold text-uppercase text-nowrap small"
+                href="javascript:void(0)"
+                routerLink="/contact"
+              >
+                Liên Hệ
+              </a>
             </li>
           </ul>
         </nav>
@@ -277,7 +318,7 @@
                   </ul>
                   <p-divider></p-divider>
                   <div class="text-center">
-                    <strong>Total: </strong
+                    <strong>Tổng cộng:</strong
                     ><span class="ml-2">{{
                       cartService.getTotalPrice() | currency
                     }}</span>
@@ -287,7 +328,7 @@
                     <button
                       pButton
                       pRipple
-                      label="GO TO CART"
+                      label="Xem giỏ hàng"
                       class="w-full p-button-warning"
                       routerLink="cart"
                     ></button>
@@ -316,7 +357,7 @@
                     routerLink="/user"
                   >
                     <fa-icon [icon]="userIcon"></fa-icon>
-                    Profile
+                    Thông tin cá nhân
                   </a>
                   <a
                     class="dropdown-item"
@@ -324,24 +365,24 @@
                     routerLink="my-order"
                   >
                     <fa-icon [icon]="bag"></fa-icon>
-                    My Orders
+                    Lịch sử mua hàng
                   </a>
-                  <a
+                  <!-- <a
                     *ngIf="isAdmin()"
                     class="dropdown-item"
                     href="javascript:void(0)"
                     routerLink="/admin"
                   >
                     <fa-icon [icon]="adminIcon"></fa-icon>
-                    Admin Dashboard
-                  </a>
+                    Admin Dashboar
+                  </a> -->
                   <div class="dropdown-divider"></div>
                   <a
                     class="dropdown-item"
                     (click)="logout(); profile.toggle($event)"
                   >
                     <fa-icon [icon]="logoutIcon"></fa-icon>
-                    Logout
+                    Đăng xuất
                   </a>
                 </div>
               </p-overlayPanel>
@@ -350,7 +391,7 @@
               <a
                 href="javascript:void(0)"
                 (click)="navigateToAdmin()"
-                pTooltip="Admin Dashboard"
+                pTooltip="Trang quản trị"
                 tooltipPosition="bottom"
                 ><fa-icon [icon]="adminIcon"></fa-icon
               ></a>
@@ -375,7 +416,7 @@
             style="cursor: pointer"
           >
             <fa-icon [icon]="bars"></fa-icon>
-            <span>All departments</span>
+            <span>Danh mục</span>
           </div>
           <ul
             *ngIf="showDepartment"
@@ -389,37 +430,34 @@
             <li
               *ngIf="!listCategoryEnabled || listCategoryEnabled.length === 0"
             >
-              <span style="color: #999">No categories available</span>
+              <span style="color: #999">Không có danh mục nào</span>
             </li>
           </ul>
         </div>
       </div>
       <div class="col-lg-9">
-        <div class="hero__search">
-          <div class="hero__search__form">
+        <div class="hero__search d-flex align-items-center">
+          <div class="hero__search__form" style="margin-bottom: 0">
             <form action="#">
-              <div class="hero__search__categories">
-                All Categories
-                <span class="arrow_carrot-down"></span>
-              </div>
               <input
                 type="text"
-                placeholder="Enter product name you want to search"
+                placeholder="Nhập tên sản phẩm muốn tìm kiếm sản phẩm"
                 [(ngModel)]="keyword"
                 name="keyword"
               />
               <button class="site-btn" routerLink="/search/{{ keyword }}">
-                SEARCH
+                TÌM KIẾM
               </button>
             </form>
           </div>
-          <div class="hero__search__phone">
+
+          <div class="hero__search__phone ms-4">
             <div class="hero__search__phone__icon">
               <fa-icon [icon]="phone"></fa-icon>
             </div>
             <div class="hero__search__phone__text">
-              <h5>+84 974 580 133</h5>
-              <span>24/7 Support</span>
+              <h5>0974 580 133</h5>
+              <span> Hỗ Trợ 24/7</span>
             </div>
           </div>
         </div>
@@ -449,26 +487,30 @@
       </div>
       <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
         <div class="footer__widget">
-          <h6>Useful Links</h6>
+          <h6>Liên Kết</h6>
           <ul>
-            <li><a href="javascript:void(0)" routerLink="/">About Us</a></li>
             <li>
-              <a href="javascript:void(0)" routerLink="/products">Shop</a>
+              <a href="javascript:void(0)" routerLink="/">Về Chúng Tôi</a>
             </li>
-            <li><a href="javascript:void(0)" routerLink="/cart">Cart</a></li>
             <li>
-              <a href="javascript:void(0)" routerLink="/checkout">Checkout</a>
+              <a href="javascript:void(0)" routerLink="/products">Sản Phẩm</a>
             </li>
-            <li><a href="javascript:void(0)" routerLink="/blog">News</a></li>
             <li>
-              <a href="javascript:void(0)" routerLink="/contact">Contact</a>
+              <a href="javascript:void(0)" routerLink="/cart">Giỏ Hàng</a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" routerLink="/checkout">Thanh Toán</a>
+            </li>
+            <li><a href="javascript:void(0)" routerLink="/blog">Tin Tức</a></li>
+            <li>
+              <a href="javascript:void(0)" routerLink="/contact">Liên Hệ</a>
             </li>
           </ul>
         </div>
       </div>
       <div class="col-lg-4 col-md-12">
         <div class="footer__widget">
-          <h6>Follow Us</h6>
+          <h6>Theo Dõi Chúng Tôi</h6>
           <p>
             Hãy theo dõi chúng tôi trên mạng xã hội để cập nhật các chương trình
             mới nhất.

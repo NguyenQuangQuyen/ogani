@@ -1,22 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faHeart, faRetweet, faShoppingBag, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHeart,
+  faRetweet,
+  faShoppingBag,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons';
 import { MessageService } from 'primeng/api';
 import { CartService } from 'src/app/_service/cart.service';
 import { CategoryService } from 'src/app/_service/category.service';
 import { ProductService } from 'src/app/_service/product.service';
 import { WishlistService } from 'src/app/_service/wishlist.service';
 
-
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css'],
-  providers: [MessageService]
-
+  providers: [MessageService],
 })
 export class ShopComponent implements OnInit {
-
   heart = faHeart;
   bag = faShoppingBag;
   retweet = faRetweet;
@@ -39,9 +41,9 @@ export class ShopComponent implements OnInit {
     private route: ActivatedRoute,
     public cartService: CartService,
     public wishlistService: WishlistService,
-    private messageService: MessageService) {
+    private messageService: MessageService
+  ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-
   }
 
   ngOnInit(): void {
@@ -69,73 +71,81 @@ export class ShopComponent implements OnInit {
 
   getAllProducts() {
     this.productService.getListProduct().subscribe({
-      next: res => {
+      next: (res) => {
         this.listProduct = res;
       },
-      error: err => {
+      error: (err) => {
         console.log(err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Could not load product list'
+          detail: 'Could not load product list',
         });
-      }
+      },
     });
   }
 
   getListProductByCategory() {
     this.productService.getListByCategory(this.id).subscribe({
-      next: res => {
+      next: (res) => {
         this.listProduct = res;
         // Tìm tên danh mục theo ID
         if (this.listCategory && this.listCategory.length > 0) {
-          const category = this.listCategory.find((cat: any) => cat.id === this.id);
+          const category = this.listCategory.find(
+            (cat: any) => cat.id === this.id
+          );
           if (category) {
             this.currentCategory = category.name;
           }
         }
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   getListCategoryEnabled() {
     this.categoryService.getListCategoryEnabled().subscribe({
-      next: res => {
+      next: (res) => {
         this.listCategory = res;
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   getNewestProduct() {
     this.productService.getListProductNewest(4).subscribe({
-      next: res => {
+      next: (res) => {
         this.listProductNewest = res;
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   getListProductByPriceRange() {
     if (this.id) {
       // Nếu có ID danh mục, lọc sản phẩm theo danh mục và khoảng giá
-      this.productService.getListByPriceRange(this.id, this.rangeValues[0], this.rangeValues[1]).subscribe({
-        next: res => {
-          this.listProduct = res;
-          console.log(this.listProduct);
-        }, error: err => {
-          console.log(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Could not filter products by price range'
-          });
-        }
-      });
+      this.productService
+        .getListByPriceRange(this.id, this.rangeValues[0], this.rangeValues[1])
+        .subscribe({
+          next: (res) => {
+            this.listProduct = res;
+            console.log(this.listProduct);
+          },
+          error: (err) => {
+            console.log(err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Could not filter products by price range',
+            });
+          },
+        });
     } else {
       // Nếu không có ID danh mục, lọc tất cả sản phẩm theo khoảng giá
       this.getAllProductsByPriceRange();
@@ -145,7 +155,7 @@ export class ShopComponent implements OnInit {
   getAllProductsByPriceRange() {
     // Lấy tất cả sản phẩm và lọc trên client
     this.productService.getListProduct().subscribe({
-      next: res => {
+      next: (res) => {
         // Lọc sản phẩm theo khoảng giá trên client
         const min = this.rangeValues[0];
         const max = this.rangeValues[1];
@@ -156,31 +166,34 @@ export class ShopComponent implements OnInit {
           return price >= min && price <= max;
         });
 
-        console.log('Tất cả sản phẩm trong khoảng giá (lọc client):', this.listProduct);
+        console.log(
+          'Tất cả sản phẩm trong khoảng giá (lọc client):',
+          this.listProduct
+        );
 
         // Hiển thị thông báo tùy thuộc vào kết quả
         if (this.listProduct.length === 0) {
           this.messageService.add({
             severity: 'info',
             summary: 'Thông báo',
-            detail: `Không tìm thấy sản phẩm nào trong khoảng giá từ ${min.toLocaleString()} VNĐ đến ${max.toLocaleString()} VNĐ`
+            detail: `Không tìm thấy sản phẩm nào trong khoảng giá từ ${min.toLocaleString()} VNĐ đến ${max.toLocaleString()} VNĐ`,
           });
         } else {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: `Đã tìm thấy ${this.listProduct.length} sản phẩm trong khoảng giá đã chọn`
+            detail: `Đã tìm thấy ${this.listProduct.length} sản phẩm trong khoảng giá đã chọn`,
           });
         }
       },
-      error: err => {
+      error: (err) => {
         console.log(err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Could not filter all products by price range'
+          detail: 'Could not filter all products by price range',
         });
-      }
+      },
     });
   }
 
@@ -213,8 +226,8 @@ export class ShopComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
-      detail: `${item.name} has been added to your cart!`,
-      life: 500
+      detail: `${item.name} đã được thêm vào giỏ hàng của bạn!`,
+      life: 1500,
     });
   }
 
@@ -241,8 +254,7 @@ export class ShopComponent implements OnInit {
     this.messageService.add({
       severity: 'info',
       summary: 'Đặt lại',
-      detail: 'Đã xóa bộ lọc giá và hiển thị tất cả sản phẩm'
+      detail: 'Đã xóa bộ lọc giá và hiển thị tất cả sản phẩm',
     });
   }
-
 }

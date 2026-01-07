@@ -2,34 +2,51 @@ import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const USER_API = "http://localhost:8080/api/user/";
+const USER_API = 'http://localhost:8080/api/user/';
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-
-
-  constructor(private http: HttpClient) { }
-  ngOnInit(): void {
-
-  }
+  constructor(private http: HttpClient) {}
+  ngOnInit(): void {}
 
   getUser(username: string): Observable<any> {
     let params = new HttpParams();
     params = params.append('username', username);
-    return this.http.get(USER_API, { params: params })
+    return this.http.get(USER_API, { params: params });
   }
 
-  updateProfile(username: string, firstname: string, lastname: string, email: string, country: string, state: string, address: string, phone: string): Observable<any> {
-    return this.http.put(USER_API + 'update', { username, firstname, lastname, email, country, state, address, phone }, httpOptions);
+  updateProfile(
+    username: string,
+    firstname: string,
+    lastname: string,
+    email: string,
+    country: string,
+    state: string,
+    address: string,
+    phone: string
+  ): Observable<any> {
+    return this.http.put(
+      USER_API + 'update',
+      { username, firstname, lastname, email, country, state, address, phone },
+      httpOptions
+    );
   }
 
-  changePassword(username: string, oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(USER_API + 'password', { username, oldPassword, newPassword }, httpOptions);
+  changePassword(
+    username: string,
+    oldPassword: string,
+    newPassword: string
+  ): Observable<any> {
+    return this.http.put(
+      USER_API + 'password',
+      { username, oldPassword, newPassword },
+      httpOptions
+    );
   }
 
   // Lấy danh sách tất cả người dùng
@@ -49,13 +66,23 @@ export class UserService {
     console.log('Sending delete request for user:', username);
     // Thêm timestamp để ngăn cache
     const timestamp = new Date().getTime();
-    return this.http.delete(`${USER_API}${username}?t=${timestamp}`, httpOptions);
+    return this.http.delete(
+      `${USER_API}${username}?t=${timestamp}`,
+      httpOptions
+    );
   }
 
   // Upload ảnh đại diện
   uploadProfileImage(username: string, imageFile: File): Observable<any> {
     // Log thông tin file trước khi upload
-    console.log('Preparing to upload profile image:', imageFile.name, 'size:', imageFile.size, 'type:', imageFile.type);
+    console.log(
+      'Preparing to upload profile image:',
+      imageFile.name,
+      'size:',
+      imageFile.size,
+      'type:',
+      imageFile.type
+    );
 
     const formData = new FormData();
     formData.append('file', imageFile);

@@ -25,11 +25,11 @@ export class StorageService {
 
     // Xóa dữ liệu ảnh đại diện lưu trong localStorage nếu có
     localStorage.removeItem('userProfileImage');
-    console.log('Cleaned all user data from storage including profile image');
+    console.log('Đã xóa toàn bộ dữ liệu người dùng khỏi storage bao gồm ảnh đại diện');
   }
 
   saveUser(user: any): void {
-    console.log('Saving user to storage:', user);
+    console.log('Lưu thông tin người dùng vào storage:', user);
     window.sessionStorage.removeItem(USER_KEY);
     window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
 
@@ -48,7 +48,7 @@ export class StorageService {
         googleImageUrl = googleImageUrl.substring(0, googleImageUrl.indexOf('?'));
       }
 
-      console.log('Saving Google profile image URL to storage:', googleImageUrl);
+      console.log('Lưu URL ảnh đại diện từ Google OAuth vào storage:', googleImageUrl);
       localStorage.setItem('userProfileImage', googleImageUrl);
 
       // Lưu thêm vào user object để đồng bộ

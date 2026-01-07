@@ -104,11 +104,11 @@ export class AccountComponent implements OnInit {
         if (needTokenRefresh) {
           // Hiển thị thông báo gợi ý đăng xuất và đăng nhập lại
           this.confirmationService.confirm({
-            message: 'You have updated your own roles. Do you want to logout and login again to apply changes?',
-            header: 'Confirmation',
+            message: 'Bạn đã cập nhật vai trò của chính mình. Có muốn đăng xuất và đăng nhập lại để áp dụng thay đổi không?',
+            header: 'Xác nhận',
             icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Yes, logout now',
-            rejectLabel: 'No, I\'ll do it later',
+            acceptLabel: 'Có, đăng xuất ngay',
+            rejectLabel: 'Không, tôi sẽ làm sau',
             accept: () => {
               // Logic đăng xuất ở đây (có thể chuyển đến trang login)
               window.location.href = '/login'; // Hoặc sử dụng AuthService.logout()

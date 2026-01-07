@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { faHeart, faRetweet, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHeart,
+  faRetweet,
+  faShoppingBag,
+} from '@fortawesome/free-solid-svg-icons';
 import { MessageService } from 'primeng/api';
 import { CartService } from 'src/app/_service/cart.service';
 import { CategoryService } from 'src/app/_service/category.service';
@@ -11,12 +15,9 @@ import { WishlistService } from 'src/app/_service/wishlist.service';
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
-  providers: [MessageService]
-
+  providers: [MessageService],
 })
 export class SearchComponent implements OnInit {
-
-
   heart = faHeart;
   bag = faShoppingBag;
   retweet = faRetweet;
@@ -38,7 +39,8 @@ export class SearchComponent implements OnInit {
     private productService: ProductService,
     private cartService: CartService,
     private messageService: MessageService,
-    private wishlistService: WishlistService) {
+    private wishlistService: WishlistService
+  ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
@@ -57,35 +59,38 @@ export class SearchComponent implements OnInit {
     this.isFilteringByPrice = false;
 
     this.productService.searchProduct(this.keyword).subscribe({
-      next: res => {
+      next: (res) => {
         this.listProduct = res;
         this.isLoading = false;
         console.log(this.listProduct);
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
         this.isLoading = false;
-      }
-    })
+      },
+    });
   }
 
   getListCategoryEnabled() {
     this.categoryService.getListCategoryEnabled().subscribe({
-      next: res => {
+      next: (res) => {
         this.listCategory = res;
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   getNewestProduct() {
     this.productService.getListProductNewest(4).subscribe({
-      next: res => {
+      next: (res) => {
         this.listProductNewest = res;
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   getListProductByPriceRange() {
@@ -93,36 +98,43 @@ export class SearchComponent implements OnInit {
     this.isLoading = true;
     this.isFilteringByPrice = true;
 
-    this.productService.searchProductByPriceRange(this.keyword, this.rangeValues[0], this.rangeValues[1]).subscribe({
-      next: res => {
-        this.listProduct = res;
-        this.isLoading = false;
-        console.log('Sản phẩm theo khoảng giá:', this.listProduct);
+    this.productService
+      .searchProductByPriceRange(
+        this.keyword,
+        this.rangeValues[0],
+        this.rangeValues[1]
+      )
+      .subscribe({
+        next: (res) => {
+          this.listProduct = res;
+          this.isLoading = false;
+          console.log('Sản phẩm theo khoảng giá:', this.listProduct);
 
-        if (this.listProduct && this.listProduct.length === 0) {
+          if (this.listProduct && this.listProduct.length === 0) {
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Notification',
+              detail: `No product found in the price range from ${this.rangeValues[0].toLocaleString()} VNĐ to ${this.rangeValues[1].toLocaleString()} VNĐ`,
+            });
+          } else if (this.listProduct && this.listProduct.length > 0) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Found ${this.listProduct.length} products in the selected price range`,
+            });
+          }
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error('Error when filtering by price:', err);
           this.messageService.add({
-            severity: 'info',
-            summary: 'Notification',
-            detail: `No product found in the price range from ${this.rangeValues[0].toLocaleString()} VNĐ to ${this.rangeValues[1].toLocaleString()} VNĐ`
+            severity: 'error',
+            summary: 'Error',
+            detail:
+              'Could not search products by price range. Please try again later.',
           });
-        } else if (this.listProduct && this.listProduct.length > 0) {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: `Found ${this.listProduct.length} products in the selected price range`
-          });
-        }
-      },
-      error: err => {
-        this.isLoading = false;
-        console.error('Error when filtering by price:', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Could not search products by price range. Please try again later.'
-        });
-      }
-    });
+        },
+      });
   }
 
   addToCart(item: any) {
@@ -133,8 +145,8 @@ export class SearchComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
-      detail: `${item.name} has been added to your cart!`,
-      life: 500
+      detail: `${item.name} đã được thêm vào giỏ hàng của bạn!`,
+      life: 1500,
     });
   }
 
@@ -164,7 +176,7 @@ export class SearchComponent implements OnInit {
     this.messageService.add({
       severity: 'info',
       summary: 'Reset',
-      detail: 'Reset price filter and display all products'
+      detail: 'Reset price filter and display all products',
     });
   }
 

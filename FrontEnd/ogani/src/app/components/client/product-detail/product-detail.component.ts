@@ -1,6 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faBars, faHeart, faPhone, faRetweet, faShoppingBag, faStar, faStarHalf } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBars,
+  faHeart,
+  faPhone,
+  faRetweet,
+  faShoppingBag,
+  faStar,
+  faStarHalf,
+} from '@fortawesome/free-solid-svg-icons';
 import { MessageService } from 'primeng/api';
 import { CartService } from 'src/app/_service/cart.service';
 import { ProductService } from 'src/app/_service/product.service';
@@ -10,8 +18,7 @@ import { WishlistService } from 'src/app/_service/wishlist.service';
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css'],
-  providers: [MessageService]
-
+  providers: [MessageService],
 })
 export class ProductDetailComponent implements OnInit {
   heart = faHeart;
@@ -29,9 +36,15 @@ export class ProductDetailComponent implements OnInit {
   listRelatedProduct: any[] = [];
   quantity: number = 1;
 
-  constructor(private productService: ProductService, private router: Router, private route: ActivatedRoute, public cartService: CartService, public wishlistService: WishlistService, private messageService: MessageService) {
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private route: ActivatedRoute,
+    public cartService: CartService,
+    public wishlistService: WishlistService,
+    private messageService: MessageService
+  ) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-
   }
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
@@ -42,34 +55,35 @@ export class ProductDetailComponent implements OnInit {
     this.showDepartment = !this.showDepartment;
   }
 
-
   getProduct() {
     this.productService.getProdct(this.id).subscribe({
-      next: res => {
+      next: (res) => {
         this.product = res;
         this.getListRelatedProduct();
-      }, error: err => {
+      },
+      error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
-
-
   getListRelatedProduct() {
-    this.productService.getListRelatedProduct(this.product.category.id).subscribe({
-      next: res => {
-        this.listRelatedProduct = res;
-      }, error: err => {
-        console.log(err);
-      }
-    })
+    this.productService
+      .getListRelatedProduct(this.product.category.id)
+      .subscribe({
+        next: (res) => {
+          this.listRelatedProduct = res;
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 
   addToCart(item: any) {
     this.cartService.getItems();
     this.cartService.addToCart(item, 1);
-    this.showSuccess(`${item.name} has been added to your cart!`);
+    this.showSuccess(`${item.name} đã được thêm vào giỏ hàng của bạn!`);
   }
 
   addCart(item: any) {
@@ -81,7 +95,7 @@ export class ProductDetailComponent implements OnInit {
   addToWishList(item: any) {
     if (!this.wishlistService.productInWishList(item)) {
       this.wishlistService.addToWishList(item);
-      this.showSuccess("Add To Wishlist Successfully!")
+      this.showSuccess('Add To Wishlist Successfully!');
     }
   }
 
@@ -95,13 +109,25 @@ export class ProductDetailComponent implements OnInit {
   }
 
   showSuccess(text: string) {
-    this.messageService.add({ severity: 'success', summary: 'Success', detail: text });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: text,
+    });
   }
   showError(text: string) {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: text });
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: text,
+    });
   }
 
   showWarn(text: string) {
-    this.messageService.add({ severity: 'warn', summary: 'Warn', detail: text });
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Warn',
+      detail: text,
+    });
   }
 }
