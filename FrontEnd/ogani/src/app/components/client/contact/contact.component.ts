@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { ContactService } from 'src/app/_service/contact.service';
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class ContactComponent implements OnInit {
-
   contactForm = {
     name: '',
     email: '',
-    message: ''
+    message: '',
   };
 
   // Mảng chứa các liên kết mạng xã hội
@@ -22,28 +22,28 @@ export class ContactComponent implements OnInit {
       url: 'https://www.facebook.com/quyen.quy.35380/',
       icon: 'fa fa-facebook',
       label: 'Facebook',
-      logoSrc: 'assets/image/facebook-logo.png' // Đường dẫn đến logo Facebook
+      logoSrc: 'assets/image/facebook-logo.png', // Đường dẫn đến logo Facebook
     },
     {
       name: 'instagram',
       url: 'https://www.instagram.com/quyenquy053/',
       icon: 'fa fa-instagram',
       label: 'Instagram',
-      logoSrc: 'assets/image/instagram-logo.png' // Đường dẫn đến logo Instagram
+      logoSrc: 'assets/image/instagram-logo.png', // Đường dẫn đến logo Instagram
     },
     {
       name: 'youtube',
       url: 'https://www.youtube.com/@Matcha-Turtle-203',
       icon: 'fa fa-youtube-play',
       label: 'YouTube',
-      logoSrc: 'assets/image/youtube-logo.png' // Đường dẫn đến logo YouTube
+      logoSrc: 'assets/image/youtube-logo.png', // Đường dẫn đến logo YouTube
     },
     {
       name: 'tiktok',
       url: 'https://www.tiktok.com/@user708j53dnqe?lang=vi-VN',
       icon: 'fa fa-music', // Font Awesome 5 không có biểu tượng tiktok, dùng biểu tượng music thay thế
       label: 'TikTok',
-      logoSrc: 'assets/image/tiktok-logo.png' // Đường dẫn đến logo TikTok
+      logoSrc: 'assets/image/tiktok-logo.png', // Đường dẫn đến logo TikTok
     },
     // {
     //   name: 'zalo',
@@ -54,10 +54,12 @@ export class ContactComponent implements OnInit {
     // }
   ];
 
-  constructor(private messageService: MessageService) { }
+  constructor(
+    private messageService: MessageService,
+    private contactService: ContactService
+  ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   sendMessage(): void {
     // Kiểm tra form
@@ -83,18 +85,23 @@ export class ContactComponent implements OnInit {
       return;
     }
 
-    // Trong thực tế, đây là nơi gửi dữ liệu đến backend
-    // this.contactService.sendMessage(this.contactForm).subscribe({...})
-
-    // Hiển thị thông báo thành công
-    this.showSuccess('Tin nhắn của bạn đã được gửi thành công!');
-
-    // Reset form
-    this.contactForm = {
-      name: '',
-      email: '',
-      message: ''
-    };
+    // Gửi dữ liệu đến backend
+    this.contactService.sendMessage(this.contactForm).subscribe({
+      next: (res) => {
+        // Hiển thị thông báo thành công
+        this.showSuccess('Tin nhắn của bạn đã được gửi thành công!');
+        // Reset form
+        this.contactForm = {
+          name: '',
+          email: '',
+          message: '',
+        };
+      },
+      error: (err) => {
+        console.error(err);
+        this.showError('Gửi tin nhắn thất bại, vui lòng thử lại sau!');
+      },
+    });
   }
 
   showSuccess(text: string) {
@@ -102,7 +109,7 @@ export class ContactComponent implements OnInit {
       severity: 'success',
       summary: 'Thành công',
       detail: text,
-      life: 5000 // Hiển thị trong 5 giây
+      life: 5000, // Hiển thị trong 5 giây
     });
   }
 
@@ -111,7 +118,7 @@ export class ContactComponent implements OnInit {
       severity: 'error',
       summary: 'Lỗi',
       detail: text,
-      life: 5000 // Hiển thị trong 5 giây
+      life: 5000, // Hiển thị trong 5 giây
     });
   }
 }

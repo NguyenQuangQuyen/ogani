@@ -172,7 +172,7 @@ export class IndexComponent implements OnInit {
 
         if (!this.listCategoryEnabled || this.listCategoryEnabled.length === 0) {
           console.warn('No categories available');
-          this.showWarn('No categories available. Please add categories in the admin page.');
+          this.showWarn('Không có danh mục nào được kích hoạt. Vui lòng kích hoạt danh mục trong trang quản trị.');
         }
       }, error: err => {
         console.error('Error loading categories:', err);
