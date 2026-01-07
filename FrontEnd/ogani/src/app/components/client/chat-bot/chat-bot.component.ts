@@ -9,9 +9,9 @@ import { switchMap, catchError, map } from 'rxjs/operators';
 const STORAGE_KEY_PREFIX = 'chat_unsaved_';
 
 @Component({
-    selector: 'app-chat-bot',
-    templateUrl: './chat-bot.component.html',
-    styleUrls: ['./chat-bot.component.css'],
+  selector: 'app-chat-bot',
+  templateUrl: './chat-bot.component.html',
+  styleUrls: ['./chat-bot.component.css']
 })
 export class ChatBotComponent implements OnInit, OnDestroy {
     sessions: ChatSession[] = [];
@@ -20,6 +20,7 @@ export class ChatBotComponent implements OnInit, OnDestroy {
     input = '';
     isLoading = false;
     username = '';
+    isSidebarVisible = false; // For mobile sidebar toggle
 
     constructor(
         private aiChatService: AiChatService,
@@ -39,6 +40,14 @@ export class ChatBotComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+    }
+
+    toggleSidebar(): void {
+        this.isSidebarVisible = !this.isSidebarVisible;
+    }
+
+    closeSidebar(): void {
+        this.isSidebarVisible = false;
     }
 
     @HostListener('window:beforeunload', ['$event'])

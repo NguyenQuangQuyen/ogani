@@ -1,6 +1,9 @@
 <div class="main-container">
+  <!-- Backdrop overlay for mobile -->
+  <div class="sidebar-backdrop" [class.show]="isSidebarVisible" (click)="closeSidebar()"></div>
+
   <!-- Sidebar -->
-  <div class="sidebar">
+  <div class="sidebar" [class.show]="isSidebarVisible">
     <div class="sidebar-header">
       <button class="new-chat-btn" (click)="createNewChat()">
         <span>+</span> Cuộc trò chuyện mới
@@ -22,8 +25,17 @@
   <!-- Chat Area -->
   <div class="chat-wrapper">
     <div class="chat-header">
-      <div class="chat-title">AI Chat</div>
-      <div class="chat-subtitle">Hỏi tôi bất cứ điều gì về sản phẩm, đơn hàng, v.v.</div>
+      <div class="chat-header-content">
+        <button class="sidebar-toggle" (click)="toggleSidebar()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="chat-header-text">
+          <div class="chat-title">AI Chat</div>
+          <div class="chat-subtitle">Hỏi tôi bất cứ điều gì về sản phẩm, đơn hàng, v.v.</div>
+        </div>
+      </div>
     </div>
 
     <div class="chat-body" #scrollMe [scrollTop]="scrollMe.scrollHeight">

@@ -402,10 +402,70 @@
         </div>
       </div>
     </div>
-    <div class="humberger__open">
+    <div class="humberger__open" (click)="toggleMobileMenu()">
       <i class="fa fa-bars"></i>
     </div>
   </div>
+  
+  <!-- Mobile Menu Wrapper -->
+  <div class="humberger__menu__wrapper" [ngClass]="{'show__humberger__menu__wrapper': showMobileMenu}">
+    <div class="humberger__menu__logo">
+      <a href="javascript:void(0)" routerLink="/home" (click)="closeMobileMenu()">
+        <img src="assets/image/logo.png" alt="Ogani Logo">
+      </a>
+    </div>
+    <div class="humberger__menu__close" (click)="closeMobileMenu()">
+      <i class="fa fa-times"></i>
+    </div>
+    <nav class="humberger__menu__nav">
+      <ul>
+        <li>
+          <a routerLink="/home" routerLinkActive="active-tab" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">
+            Trang Chủ
+          </a>
+        </li>
+        <li>
+          <a routerLink="/" routerLinkActive="active-tab" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">
+            Giới Thiệu
+          </a>
+        </li>
+        <li>
+          <a routerLink="/products" routerLinkActive="active-tab" (click)="closeMobileMenu()">
+            Sản Phẩm
+          </a>
+        </li>
+        <li>
+          <a routerLink="/blog" routerLinkActive="active-tab" (click)="closeMobileMenu()">
+            Blog
+          </a>
+        </li>
+        <li>
+          <a routerLink="/contact" routerLinkActive="active-tab" (click)="closeMobileMenu()">
+            Liên Hệ
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="humberger__menu__cart" *ngIf="isLoggedIn">
+      <ul>
+        <li>
+          <a href="javascript:void(0)" (click)="closeMobileMenu()">
+            <fa-icon [icon]="heart"></fa-icon>
+            <span>{{wishlistService.items.length}}</span>
+          </a>
+        </li>
+        <li>
+          <a href="javascript:void(0)" (click)="closeMobileMenu()">
+            <fa-icon [icon]="bag"></fa-icon>
+            <span>{{cartService.items.length}}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Mobile Menu Overlay -->
+  <div class="humberger__menu__overlay" [ngClass]="{'active': showMobileMenu}" (click)="closeMobileMenu()"></div>
 </header>
 <section class="hero">
   <div class="container">

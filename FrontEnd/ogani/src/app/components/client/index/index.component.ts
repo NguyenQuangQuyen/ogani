@@ -32,6 +32,8 @@ export class IndexComponent implements OnInit {
   searchIcon = faSearch;
 
   showDepartment = false;
+  showMobileMenu = false; 
+  
 
 
 
@@ -162,6 +164,23 @@ export class IndexComponent implements OnInit {
   showDepartmentClick() {
     this.showDepartment = !this.showDepartment;
     console.log("Toggled departments menu, now:", this.showDepartment ? "SHOWN" : "HIDDEN");
+  }
+
+  toggleMobileMenu() {
+    this.showMobileMenu = !this.showMobileMenu;
+    console.log("Toggled mobile menu, now:", this.showMobileMenu ? "SHOWN" : "HIDDEN");
+    
+    // Add/remove class to body to prevent scrolling when menu is open
+    if (this.showMobileMenu) {
+      document.body.classList.add('over_hid');
+    } else {
+      document.body.classList.remove('over_hid');
+    }
+  }
+
+  closeMobileMenu() {
+    this.showMobileMenu = false;
+    document.body.classList.remove('over_hid');
   }
 
   getCategoryEnbled() {

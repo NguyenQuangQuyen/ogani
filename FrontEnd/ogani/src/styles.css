@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import "/src/assets/css/sb-admin-2.css";
 @import "/src/assets/css/style.css";
+@import "/src/assets/css/responsive-primeng.css";
 @import '~primeicons/primeicons.css';
 
 

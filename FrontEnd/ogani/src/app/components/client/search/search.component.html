@@ -177,11 +177,11 @@
           >
             <div class="alert alert-warning">
               <span *ngIf="!isFilteringByPrice"
-                >No products found with keyword "{{ keyword }}".</span
+                >Không có sản phẩm nào với từ khóa là: "{{ keyword }}".</span
               >
               <span *ngIf="isFilteringByPrice"
-                >No products found with keyword "{{ keyword }}" in price range
-                from {{ rangeValues[0] | currency : "VND" : "" }} VNĐ to
+                >Không có sản phẩm nào với từ khóa là: "{{ keyword }}" trong khoảng giá từ
+                {{ rangeValues[0] | currency : "VND" : "" }} VNĐ đến
                 {{ rangeValues[1] | currency : "VND" : "" }} VNĐ.</span
               >
             </div>
