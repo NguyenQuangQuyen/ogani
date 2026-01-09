@@ -19,6 +19,15 @@ export class AiChatService {
         });
     }
 
+    /**
+     * Gọi chatbot mới với database integration
+     */
+    chat(prompt: string): Observable<any> {
+        return this.http.post(`${environment.apiUrl}/ai-prompt/chat`, prompt, {
+            responseType: 'json',
+        });
+    }
+
     createSession(): Observable<ChatSession> {
         return this.http.post<ChatSession>(`${this.baseUrl}/sessions`, {});
     }

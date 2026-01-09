@@ -233,12 +233,13 @@ export class ChatBotComponent implements OnInit, OnDestroy {
     }
 
     callAi(prompt: string): void {
-        this.aiChatService.ask(prompt).subscribe({
+        this.aiChatService.chat(prompt).subscribe({
             next: (response) => {
+                // response có cấu trúc: { message: string, hasData: boolean, intent: string }
                 const botMsg: ChatMessage = {
                     id: -(Date.now() + 1),
                     sender: 'bot',
-                    content: response,
+                    content: response.message || response, // Fallback nếu response là string
                     createdAt: new Date().toISOString()
                 };
                 this.animateBotResponse(botMsg);
