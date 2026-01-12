@@ -35,7 +35,7 @@
                 <td>{{order.id}}</td>
                 <td>{{order.createdDate | date:'dd/MM/yyyy HH:mm'}}</td>
                 <td>{{order.firstname}} {{order.lastname}}</td>
-                <td>{{order.totalPrice | currency:'VND':'symbol':'1.0-0'}}</td>
+                <td>{{order.totalPrice | vndCurrency}}</td>
                 <td>
                     <span *ngIf="order.paymentMethod === 'COD'" class="badge bg-warning">Thanh toán khi nhận hàng</span>
                     <span *ngIf="order.paymentMethod === 'BANK'" class="badge bg-info">Chuyển khoản ngân hàng</span>
@@ -107,15 +107,15 @@
                     <tbody>
                         <tr *ngFor="let item of selectedOrder.orderDetails">
                             <td>{{item.name}}</td>
-                            <td>{{item.price | currency:'VND':'symbol':'1.0-0'}}</td>
+                            <td>{{item.price | vndCurrency}}</td>
                             <td>{{item.quantity}}</td>
-                            <td>{{item.subTotal | currency:'VND':'symbol':'1.0-0'}}</td>
+                            <td>{{item.subTotal | vndCurrency}}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
-                            <td><strong>{{selectedOrder.totalPrice | currency:'VND':'symbol':'1.0-0'}}</strong></td>
+                            <td><strong>{{selectedOrder.totalPrice | vndCurrency}}</strong></td>
                         </tr>
                     </tfoot>
                 </table>

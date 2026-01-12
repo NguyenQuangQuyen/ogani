@@ -48,7 +48,7 @@
                     <img *ngIf="!product.images || product.images.length === 0" src="assets/image/cat-1.jpg"
                         [alt]="product.name" width="100" class="shadow-4" />
                 </td>
-                <td>{{product.price | currency:'VND':''}} VNĐ</td>
+                <td>{{product.price | vndCurrency}}</td>
                 <td>{{product.category.name}}</td>
                 <td>
                     <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"

@@ -64,7 +64,7 @@
             <span>(18 reviews)</span>
           </div>
           <div class="product__details__price">
-            {{ product.price | currency }}
+            {{ product.price | vndCurrency }}
           </div>
           <p>{{ product.description }}</p>
           <div class="product__details__quantity">
@@ -236,7 +236,7 @@
             <h6>
               <a href="javascript:void(0)">{{ product.name }}</a>
             </h6>
-            <h5>{{ product.price | currency }}</h5>
+            <h5>{{ product.price | vndCurrency }}</h5>
           </div>
         </div>
       </div>

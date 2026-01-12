@@ -305,7 +305,7 @@
                         <a href="javascript:void(0)">{{ product.name }}</a>
                         <div>
                           <span>{{ product.quantity }} x </span
-                          >{{ product.price | currency }}
+                          >{{ product.price | vndCurrency }}
                         </div>
                       </div>
                       <button
@@ -322,7 +322,7 @@
                   <div class="text-center">
                     <strong>Tổng cộng:</strong
                     ><span class="ml-2">{{
-                      cartService.getTotalPrice() | currency
+                      cartService.getTotalPrice() | vndCurrency
                     }}</span>
                   </div>
                   <p-divider></p-divider>

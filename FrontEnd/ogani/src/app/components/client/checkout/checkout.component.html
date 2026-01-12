@@ -32,6 +32,7 @@
                   <p>Họ<span>*</span></p>
                   <input
                     type="text"
+                    placeholder="Nhập họ"
                     [(ngModel)]="orderForm.firstname"
                     name="firstname"
                   />
@@ -42,6 +43,7 @@
                   <p>Tên<span>*</span></p>
                   <input
                     type="text"
+                    placeholder="Nhập tên"
                     [(ngModel)]="orderForm.lastname"
                     name="lastname"
                   />
@@ -52,6 +54,7 @@
               <p>Quốc gia<span>*</span></p>
               <input
                 type="text"
+                placeholder="Nhập quốc gia"
                 [(ngModel)]="orderForm.country"
                 name="country"
               />
@@ -60,18 +63,28 @@
               <p>Địa chỉ<span>*</span></p>
               <input
                 type="text"
-                placeholder="Street Address"
+                placeholder="Nhập địa chỉ"
                 [(ngModel)]="orderForm.address"
                 name="address"
               />
             </div>
             <div class="checkout__input">
-              <p>Thành phố<span>*</span></p>
-              <input type="text" [(ngModel)]="orderForm.town" name="town" />
+              <p>Thị trấn/thành phố<span>*</span></p>
+              <input
+                type="text"
+                placeholder="Nhập thị trấn/thành phố"
+                [(ngModel)]="orderForm.town"
+                name="town"
+              />
             </div>
             <div class="checkout__input">
-              <p>Quốc gia<span>*</span></p>
-              <input type="text" [(ngModel)]="orderForm.state" name="state" />
+              <p>Quốc gia/Tiểu bang<span>*</span></p>
+              <input
+                type="text"
+                placeholder="Nhập quốc gia/tiểu bang"
+                [(ngModel)]="orderForm.state"
+                name="state"
+              />
             </div>
             <div class="row">
               <div class="col-lg-6">
@@ -86,7 +99,7 @@
                     type="text"
                     [(ngModel)]="orderForm.phone"
                     name="phone"
-                    placeholder="Enter phone number from 10-15 digits"
+                    placeholder="Nhập số điện thoại"
                   />
                 </div>
               </div>
@@ -118,7 +131,7 @@
               <p>Ghi chú<span>*</span></p>
               <input
                 type="text"
-                placeholder="Notes about your order, e.g. special notes for delivery."
+                placeholder="Nhập ghi chú"
                 [(ngModel)]="orderForm.note"
                 name="note"
               />
@@ -128,19 +141,19 @@
             <div class="checkout__order">
               <h4>Đơn hàng của bạn</h4>
               <div class="checkout__order__products">
-                Sản phẩm <span>Total</span>
+                Sản phẩm <span>Tổng tiền</span>
               </div>
               <ul>
                 <li *ngFor="let item of cartService.items">
-                  {{ item.name }} <span>{{ item.subTotal | currency }}</span>
+                  {{ item.name }} <span>{{ item.subTotal | vndCurrency }}</span>
                 </li>
               </ul>
               <div class="checkout__order__subtotal">
-                Subtotal <span>{{ cartService.totalPrice | currency }}</span>
+                Tổng tiền <span>{{ cartService.totalPrice | vndCurrency }}</span>
               </div>
-              <div class="checkout__order__sale">Sale <span>0%</span></div>
+              <div class="checkout__order__sale">Giảm <span>0%</span></div>
               <div class="checkout__order__total">
-                Total <span>{{ cartService.total | currency }}</span>
+                Tổng <span>{{ cartService.total | vndCurrency }}</span>
               </div>
               <p>Vui lòng chọn phương thức thanh toán bên dưới:</p>
               <div class="payment-methods">

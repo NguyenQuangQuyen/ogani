@@ -58,7 +58,7 @@
                                 </div>
                             </span>
                             <span *ngIf="!isLoading">
-                                {{statistics?.totalRevenue | currency:'VND':'symbol':'1.0-0':'vi'}}
+                                {{statistics?.totalRevenue | vndCurrency}}
                             </span>
                         </div>
                     </div>
@@ -160,7 +160,7 @@
                                     <tbody>
                                         <tr *ngFor="let item of statistics?.monthlySales">
                                             <td>{{item.month}}</td>
-                                            <td>{{item.revenue | currency:'VND':'symbol':'1.0-0':'vi'}}</td>
+                                            <td>{{item.revenue | vndCurrency}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -251,7 +251,7 @@
                                 <td>{{order.id}}</td>
                                 <td>{{order.firstname}} {{order.lastname}}</td>
                                 <td>{{order.createdDate | date:'dd/MM/yyyy'}}</td>
-                                <td>{{order.totalPrice | currency:'VND':'symbol':'1.0-0':'vi'}}</td>
+                                <td>{{order.totalPrice | vndCurrency}}</td>
                                 <td>
                                     <span class="badge" [ngClass]="{
                                         'badge-success': order.status === 'Paid' || order.status === 'PAID' || order.status === 'COMPLETED' || order.status === 'Completed' || order.status === 'DELIVERED' || order.status === 'Delivered',

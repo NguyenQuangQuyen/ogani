@@ -12,6 +12,10 @@ import { DEFAULT_CURRENCY_CODE } from '@angular/core';
 // Routing
 import { AppRoutingModule } from './app-routing.module';
 
+// Pipes
+import { VndCurrencyPipe } from './pipes/vnd-currency.pipe';
+
+
 // Component chính
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
@@ -115,6 +119,7 @@ registerLocaleData(localeFr, 'vi');
     OAuthSuccessComponent,
     PayosReturnComponent,
     ChatBotComponent,
+    VndCurrencyPipe,
   ],
   imports: [
     BrowserModule,
