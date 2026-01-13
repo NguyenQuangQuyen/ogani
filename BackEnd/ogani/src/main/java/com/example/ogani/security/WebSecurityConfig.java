@@ -75,7 +75,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5361"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", 
                 "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "X-XSRF-TOKEN"));
@@ -120,7 +120,7 @@ public class WebSecurityConfig {
                         // Xử lý khi đăng nhập OAuth2 thất bại hoặc bị hủy
                         System.out.println("OAuth2 login failed: " + exception.getMessage());
                         // Chuyển hướng về trang đăng nhập của frontend
-                        response.sendRedirect("http://localhost:4200/login");
+                        response.sendRedirect("http://localhost:5361/login");
                     })
                     .successHandler((request, response, authentication) -> {
                         // Lưu thông tin xác thực vào SecurityContextHolder
@@ -134,7 +134,7 @@ public class WebSecurityConfig {
                         }
                         
                         // Chuyển hướng người dùng đã đăng nhập về trang frontend
-                        response.sendRedirect("http://localhost:4200/login/oauth2/success");
+                        response.sendRedirect("http://localhost:5361/login/oauth2/success");
                     })
                 )
                 .authenticationProvider(authenticationProvider()) // Cấu hình Provider

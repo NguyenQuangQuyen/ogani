@@ -38,7 +38,7 @@ import com.example.ogani.exception.NotFoundException;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowedHeaders = "*", methods = {})
+@CrossOrigin(origins = "http://localhost:5361", maxAge = 3600, allowedHeaders = "*", methods = {})
 public class UserController {
 
     @Autowired
@@ -262,7 +262,7 @@ public class UserController {
             // Trả về URL của ảnh đại diện và hướng dẫn cách hiển thị
             Map<String, String> response = new HashMap<>();
             response.put("imageUrl", imageUrl);
-            response.put("fullUrl", "http://localhost:8080" + imageUrl);
+            response.put("fullUrl", "http://hgr0a62zxby.sn.mynetname.net:2003" + imageUrl);
             response.put("message", "Sử dụng fullUrl để hiển thị ảnh hoặc thêm baseUrl vào imageUrl");
             
             return ResponseEntity.ok(response);

@@ -15,7 +15,7 @@ export class ProfileComponent implements OnInit {
   profileImageUrl: string | null = null;
   selectedFile: File | null = null;
   timestamp = Date.now();
-  backendUrl = 'http://localhost:8080';
+  backendUrl = 'http://hgr0a62zxby.sn.mynetname.net:2003';
 
   changePassword: boolean = false;
   confirmPassword: string = '';
