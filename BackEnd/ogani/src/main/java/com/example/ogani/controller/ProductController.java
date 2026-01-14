@@ -157,5 +157,32 @@ public class ProductController {
         return ResponseEntity.ok(new MessageResponse("Product is d  elete"));
     }
 
+    // ==================== Stock Management Endpoints ====================
+
+    @GetMapping("/stock/{id}")
+    @Operation(summary="Lấy số lượng tồn kho của sản phẩm theo id")
+    public ResponseEntity<?> getAvailableStock(@PathVariable long id) {
+        try {
+            int stock = productService.getAvailableStock(id);
+            return ResponseEntity.ok(java.util.Map.of("productId", id, "quantity", stock));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new MessageResponse("Không tìm thấy sản phẩm: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/check-stock")
+    @Operation(summary="Kiểm tra tồn kho cho danh sách sản phẩm")
+    public ResponseEntity<?> checkStock(@RequestBody java.util.List<com.example.ogani.model.request.CreateOrderDetailRequest> items) {
+        try {
+            productService.validateStock(items);
+            return ResponseEntity.ok(new MessageResponse("Tồn kho đủ cho tất cả sản phẩm"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Lỗi kiểm tra tồn kho: " + e.getMessage()));
+        }
+    }
 
 }

@@ -4,6 +4,8 @@ import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { OrderService } from './order.service';
 
+const API_URL = 'http://localhost:8080/api/order/';
+
 export interface DashboardStatistics {
   totalSoldProducts: number;
   totalRevenue: number;
@@ -34,7 +36,7 @@ export interface DashboardStatistics {
 export class DashboardService {
   // Event emitter để thông báo khi có thay đổi dữ liệu đơn hàng
   public ordersChanged = new EventEmitter<void>();
-  
+
   private cachedStatistics: DashboardStatistics | null = null;
   private lastFetchTime: number = 0;
   private cacheExpiryTime: number = 5 * 60 * 1000; // 5 phút
@@ -45,44 +47,50 @@ export class DashboardService {
   ) { }
 
   /**
-   * Get dashboard statistics from orders
+   * Get dashboard statistics from API (queries order_details table directly)
    */
   getDashboardStatistics(): Observable<DashboardStatistics> {
-    console.log('Fetching fresh data for dashboard');
-    
-    // Luôn ưu tiên lấy dữ liệu từ localStorage trước vì API đang gặp lỗi 500
-    const localStorageData = this.getOrdersFromLocalStorage();
-    
-    if (localStorageData && localStorageData.length > 0) {
-      console.log('Found orders in localStorage:', localStorageData.length);
-      const statistics = this.processOrdersData(localStorageData);
-      this.cachedStatistics = statistics;
-      this.lastFetchTime = new Date().getTime();
-      
-      // Lưu thống kê vào localStorage để sử dụng offline
-      localStorage.setItem('dashboard_statistics', JSON.stringify(statistics));
-      
-      return of(statistics);
-    }
-    
-    // Nếu không có dữ liệu trong localStorage, thử gọi API
-    return this.orderService.getListOrder().pipe(
-      map(orders => {
-        console.log('API data received from OrderService:', orders);
-        const statistics = this.processOrdersData(orders);
+    console.log('Fetching dashboard statistics from API');
+
+    // Gọi API endpoint mới để lấy statistics từ database
+    return this.http.get<any>(API_URL + 'statistics').pipe(
+      map(response => {
+        console.log('Statistics API response:', response);
+
+        const statistics: DashboardStatistics = {
+          totalSoldProducts: response.totalSoldProducts || 0,
+          totalRevenue: response.totalRevenue || response.totalRevenueFromPaid || 0,
+          bestSellingProduct: {
+            name: response.bestSellingProductName || '',
+            quantity: response.bestSellingProductQuantity || 0
+          },
+          monthlySales: [],
+          productSalesDistribution: (response.productSalesDistribution || [])
+            .map((item: any) => ({
+              name: item.name || '',
+              quantity: item.quantity || 0,
+              percentage: item.percentage || 0
+            }))
+            .sort((a: any, b: any) => b.quantity - a.quantity)
+            .slice(0, 5),
+          recentOrders: (response.recentOrders || []).slice(0, 5),
+          orderStatusCounts: {
+            total: response.orderStatusCounts?.total || 0,
+            paid: response.orderStatusCounts?.paid || 0,
+            unpaid: response.orderStatusCounts?.unpaid || 0
+          }
+        };
+
         this.cachedStatistics = statistics;
         this.lastFetchTime = new Date().getTime();
-        
-        // Lưu thống kê vào localStorage để sử dụng offline
         localStorage.setItem('dashboard_statistics', JSON.stringify(statistics));
-        
+
         return statistics;
       }),
       catchError(error => {
-        console.error('Error fetching orders from API:', error);
-        
-        // Nếu không có dữ liệu trong localStorage và API lỗi, thử lấy từ cache
-        console.log('No orders found in localStorage, checking dashboard cache');
+        console.error('Error fetching statistics from API:', error);
+
+        // Fallback: Thử lấy từ cache
         const cachedStatsJson = localStorage.getItem('dashboard_statistics');
         if (cachedStatsJson) {
           try {
@@ -93,7 +101,7 @@ export class DashboardService {
             console.error('Error parsing cached dashboard statistics:', e);
           }
         }
-        
+
         // Nếu không có cache, trả về thống kê trống
         console.log('No cached statistics found, returning empty statistics');
         return of(this.getEmptyStatistics());
@@ -110,7 +118,7 @@ export class DashboardService {
     this.cachedStatistics = null;
     this.lastFetchTime = 0;
     localStorage.removeItem('dashboard_statistics');
-    
+
     // Emit event để các component khác biết và cập nhật
     this.ordersChanged.emit();
   }
@@ -127,7 +135,7 @@ export class DashboardService {
         console.log('Raw orders from localStorage:', orders);
         return orders;
       }
-      
+
       // Nếu không có 'orders_all', thử lấy từ OrderService
       return this.orderService.getOrdersFromLocalStorage('all');
     } catch (error) {
@@ -159,7 +167,7 @@ export class DashboardService {
     let totalRevenue = 0;
     paidOrders.forEach(order => {
       let orderTotal = 0;
-      
+
       // Thử chuyển đổi totalPrice từ nhiều định dạng khác nhau
       if (typeof order.totalPrice === 'number') {
         orderTotal = order.totalPrice;
@@ -168,7 +176,7 @@ export class DashboardService {
         const cleanedPrice = order.totalPrice.replace(/[^\d.]/g, '');
         orderTotal = parseFloat(cleanedPrice) || 0;
       }
-      
+
       console.log(`Order ${order.id} total: ${orderTotal} (original: ${order.totalPrice})`);
       totalRevenue += orderTotal;
     });
@@ -185,16 +193,16 @@ export class DashboardService {
       if (order.orderDetails && Array.isArray(order.orderDetails)) {
         order.orderDetails.forEach((detail: any) => {
           let quantity = 0;
-          
+
           // Thử chuyển đổi quantity từ nhiều định dạng khác nhau
           if (typeof detail.quantity === 'number') {
             quantity = detail.quantity;
           } else if (typeof detail.quantity === 'string') {
             quantity = parseInt(detail.quantity) || 0;
           }
-          
+
           totalProducts += quantity;
-          
+
           const productName = detail.name || 'Unknown Product';
           const currentQuantity = productMap.get(productName) || 0;
           productMap.set(productName, currentQuantity + quantity);
@@ -216,7 +224,6 @@ export class DashboardService {
     // Tính doanh thu theo tháng - chỉ từ đơn hàng đã thanh toán
     const monthlySales = this.calculateMonthlySales(paidOrders);
 
-    // Tính phân phối sản phẩm - top 4 sản phẩm bán chạy
     const productSalesDistribution = this.calculateProductDistribution(productMap, totalProducts);
 
     // Lấy 5 đơn hàng gần nhất
@@ -241,18 +248,18 @@ export class DashboardService {
    */
   private calculateMonthlySales(orders: any[]): { month: string, revenue: number }[] {
     const monthlyData = new Map<string, number>();
-    
+
     // Khởi tạo tất cả các tháng
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     months.forEach(month => monthlyData.set(month, 0));
-    
+
     // Tính doanh thu theo tháng
     orders.forEach(order => {
       if (order.createdDate) {
         const date = new Date(order.createdDate);
         const month = months[date.getMonth()];
         const revenue = monthlyData.get(month) || 0;
-        
+
         // Xử lý totalPrice tương tự như trong processOrdersData
         let orderTotal = 0;
         if (typeof order.totalPrice === 'number') {
@@ -261,7 +268,7 @@ export class DashboardService {
           const cleanedPrice = order.totalPrice.replace(/[^\d.]/g, '');
           orderTotal = parseFloat(cleanedPrice) || 0;
         }
-        
+
         monthlyData.set(month, revenue + orderTotal);
       }
     });
@@ -278,7 +285,7 @@ export class DashboardService {
    */
   private calculateProductDistribution(productMap: Map<string, number>, totalProducts: number): any[] {
     if (totalProducts === 0) return [];
-    
+
     const distribution = Array.from(productMap.entries())
       .map(([name, quantity]) => ({
         name,
@@ -286,8 +293,8 @@ export class DashboardService {
         percentage: Math.round((quantity / totalProducts) * 100) // Làm tròn phần trăm
       }))
       .sort((a, b) => b.quantity - a.quantity)
-      .slice(0, 4); // Lấy top 4 sản phẩm
-    
+      .slice(0, 5); // Lấy top 5 sản phẩm
+
     return distribution;
   }
 
@@ -313,7 +320,7 @@ export class DashboardService {
       const status = String(order.status || '').toUpperCase();
       return status === 'PAID' || status === 'COMPLETED' || status === 'DELIVERED';
     }).length;
-    
+
     const unpaid = orders.filter(order => {
       const status = String(order.status || '').toUpperCase();
       return status === 'UNPAID' || status === 'PENDING';
@@ -352,10 +359,10 @@ export class DashboardService {
     // Xóa cache
     this.cachedStatistics = null;
     this.lastFetchTime = 0;
-    
+
     // Xóa cache trong localStorage để đảm bảo lấy dữ liệu mới nhất
     localStorage.removeItem('dashboard_statistics');
-    
+
     // Lấy dữ liệu mới
     return this.getDashboardStatistics();
   }

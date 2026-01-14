@@ -15,7 +15,7 @@
             </div>
             <div class="p-field mt-3">
                 <button type="submit" pButton (click)="createTag()" *ngIf="!onUpdate" >Tạo mới</button>
-                <button type="submit" pButton *ngIf="onUpdate" >Cập nhật</button>
+                <button type="submit" pButton (click)="updateTag()" *ngIf="onUpdate" >Cập nhật</button>
                 <button pButton type="button" class="p-button-danger ml-3" (click)="displayForm=false">Hủy</button>
             </div>
         </form>
@@ -29,7 +29,7 @@
                 <th>Thao tác</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-tag>
+                <ng-template pTemplate="body" let-tag>
             <tr> 
                 <td>{{tag.name}}</td>
                 <td>
@@ -37,7 +37,7 @@
                     <button pButton type="button" class="p-button-warning" (click)="enableTag(tag.id)" *ngIf="!tag.enable">Vô hiệu hóa</button>
                 </td>
                 <td>
-                    <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-primary"></button>
+                    <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-primary" (click)="onUpdateForm(tag.id,tag.name)"></button>
                     <button pButton type="button" icon="pi pi-trash" (click)="onDelete(tag.id,tag.name)" class="p-button-rounded p-button-danger ml-2"></button>
                     <p-dialog header="Xác nhận" [(visible)]="deleteForm" [style]="{width :'30vw'}" [modal]="true" [transitionOptions]="'.3s'">
                         <div>

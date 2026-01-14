@@ -212,25 +212,25 @@ export class LoginPageComponent implements OnInit {
   resetPassword(): void {
     // Kiểm tra mật khẩu mới đã nhập chưa
     if (!this.newPassword || this.newPassword.trim() === '') {
-      this.showError('Please enter your new password!');
+      this.showError('Vui lòng nhập mật khẩu mới!');
       return;
     }
 
     // Kiểm tra xác nhận mật khẩu đã nhập chưa
     if (!this.confirmPassword || this.confirmPassword.trim() === '') {
-      this.showError('Please confirm your new password!');
+      this.showError('Vui lòng xác nhận mật khẩu mới!');
       return;
     }
 
     // Kiểm tra mật khẩu mới và xác nhận mật khẩu có khớp nhau không
     if (this.newPassword !== this.confirmPassword) {
-      this.showError('Confirmation password does not match with new password!');
+      this.showError('Xác nhận mật khẩu không khớp với mật khẩu mới!');
       return;
     }
 
     // Kiểm tra độ dài mật khẩu
     if (this.newPassword.length < 6) {
-      this.showError('Password must be at least 6 characters!');
+      this.showError('Mật khẩu phải có ít nhất 6 ký tự');
       return;
     }
 
@@ -260,7 +260,7 @@ export class LoginPageComponent implements OnInit {
       severity: 'success',
       summary: 'Success',
       detail: text,
-      life: 3000
+      life: 1500
     });
   }
 
@@ -269,7 +269,7 @@ export class LoginPageComponent implements OnInit {
       severity: 'error',
       summary: 'Error',
       detail: text,
-      life: 5000
+      life: 1500
     });
   }
 
@@ -278,7 +278,7 @@ export class LoginPageComponent implements OnInit {
       severity: 'warn',
       summary: 'Warning',
       detail: text,
-      life: 5000
+      life: 1500
     });
   }
 
@@ -299,13 +299,13 @@ export class LoginPageComponent implements OnInit {
   validateLoginForm(): boolean {
     // Kiểm tra username đã nhập chưa
     if (!this.loginForm.username || this.loginForm.username.trim() === '') {
-      this.showError('Please enter your username!');
+      this.showError('Vui lòng nhập tên đăng nhập!');
       return false;
     }
 
     // Kiểm tra password đã nhập chưa
     if (!this.loginForm.password || this.loginForm.password.trim() === '') {
-      this.showError('Please enter your password!');
+      this.showError('Vui lòng nhập mật khẩu!');
       return false;
     }
 
@@ -316,31 +316,31 @@ export class LoginPageComponent implements OnInit {
   validateRegisterForm(): boolean {
     // Kiểm tra username đã nhập chưa
     if (!this.registerForm.username || this.registerForm.username.trim() === '') {
-      this.showError('Please enter your username!');
+      this.showError('Vui lòng nhập tên đăng nhập!');
       return false;
     }
 
     // Kiểm tra email đã nhập chưa
     if (!this.registerForm.email || this.registerForm.email.trim() === '') {
-      this.showError('Please enter your email!');
+      this.showError('Vui lòng nhập email!');
       return false;
     }
 
     // Kiểm tra định dạng email
     if (!this.isValidEmail(this.registerForm.email)) {
-      this.showError('Invalid email format!');
+      this.showError('Email không hợp lệ!');
       return false;
     }
 
     // Kiểm tra password đã nhập chưa
     if (!this.registerForm.password || this.registerForm.password.trim() === '') {
-      this.showError('Please enter your password!');
+      this.showError('Vui lòng nhập mật khẩu!');
       return false;
     }
 
     // Kiểm tra độ dài mật khẩu
     if (this.registerForm.password.length < 6) {
-      this.showError('Password must be at least 6 characters!');
+      this.showError('Mật khẩu phải có ít nhất 6 ký tự!');
       return false;
     }
 

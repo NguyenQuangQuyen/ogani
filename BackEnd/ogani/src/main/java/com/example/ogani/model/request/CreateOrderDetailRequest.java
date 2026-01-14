@@ -19,15 +19,19 @@ public class CreateOrderDetailRequest {
     @Min(value = 1, message = "Số lượng sản phẩm phải lớn hơn hoặc bằng 1.")
     private Integer quantity;
 
+    // ID sản phẩm để kiểm tra và trừ tồn kho
+    private Long productId;
+
     // Constructor không tham số
     public CreateOrderDetailRequest() {
     }
 
     // Constructor đầy đủ tham số
-    public CreateOrderDetailRequest(String name, Long price, Integer quantity) {
+    public CreateOrderDetailRequest(String name, Long price, Integer quantity, Long productId) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+        this.productId = productId;
     }
 
     // Getter và Setter cho name
@@ -63,5 +67,14 @@ public class CreateOrderDetailRequest {
             return price * quantity;
         }
         return 0L;
+    }
+
+    // Getter và Setter cho productId
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

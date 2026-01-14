@@ -138,7 +138,7 @@ export class UserDetailComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Information updated successfully',
+            detail: 'Thông tin đã được cập nhật thành công',
           });
         },
         error: (err) => {
@@ -146,7 +146,7 @@ export class UserDetailComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Could not update information',
+            detail: 'Không thể cập nhật thông tin',
           });
         },
       });
@@ -161,7 +161,7 @@ export class UserDetailComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Please select an image file',
+          detail: 'Vui lòng chọn tệp hình ảnh',
         });
         return;
       }
@@ -171,7 +171,7 @@ export class UserDetailComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'File size exceeds the maximum limit (5MB)',
+          detail: 'Kích thước tệp vượt quá giới hạn tối đa (5MB)',
         });
         return;
       }
@@ -188,7 +188,7 @@ export class UserDetailComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Thông báo',
-        detail: 'Uploading image...',
+        detail: 'Đang tải hình ảnh lên...',
       });
 
       // Log thông tin file trước khi upload
@@ -217,7 +217,7 @@ export class UserDetailComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Profile picture updated successfully',
+              detail: 'Hình ảnh hồ sơ đã được cập nhật thành công',
             });
 
             // Cập nhật URL ảnh đại diện

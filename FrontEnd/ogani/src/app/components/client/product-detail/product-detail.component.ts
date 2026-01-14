@@ -82,14 +82,26 @@ export class ProductDetailComponent implements OnInit {
 
   addToCart(item: any) {
     this.cartService.getItems();
-    this.cartService.addToCart(item, 1);
-    this.showSuccess(`${item.name} đã được thêm vào giỏ hàng của bạn!`);
+    const success = this.cartService.addToCart(item, 1);
+
+    if (success) {
+      this.showSuccess(`${item.name} đã được thêm vào giỏ hàng của bạn!`);
+    } else {
+      // Hiển thị thông báo hết hàng từ component (vì MessageService khác instance)
+      this.showWarn(`Cửa hàng đã hết sản phẩm "${item.name}"!`);
+    }
   }
 
   addCart(item: any) {
     this.cartService.getItems();
-    this.cartService.addToCart(item, this.quantity);
-    this.showSuccess(`Added ${this.quantity} ${item.name} to your cart!`);
+    const success = this.cartService.addToCart(item, this.quantity);
+
+    if (success) {
+      this.showSuccess(`Đã thêm ${this.quantity} ${item.name} vào giỏ hàng của bạn!`);
+    } else {
+      // Hiển thị thông báo hết hàng từ component
+      this.showWarn(`Số lượng sản phẩm "${item.name}" trong kho không đủ!`);
+    }
   }
 
   addToWishList(item: any) {

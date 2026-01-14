@@ -1,27 +1,27 @@
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form (submit)="$event.preventDefault()">
-			<h1>Create Account</h1>
-			<input type="text" placeholder="Username" [(ngModel)]="registerForm.username" name="username" />
+			<h1>Đăng ký</h1>
+			<input type="text" placeholder="Tài Khoản" [(ngModel)]="registerForm.username" name="username" />
 			<input type="email" placeholder="Email" [(ngModel)]="registerForm.email" name="email" />
-			<input type="password" placeholder="Password" [(ngModel)]="registerForm.password" name="password" />
-			<button type="button" (click)="register()">Sign Up</button>
+			<input type="password" placeholder="Mật khẩu" [(ngModel)]="registerForm.password" name="password" />
+			<button type="button" (click)="register()">Đăng ký</button>
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
 		<form (submit)="$event.preventDefault()">
-			<h1>Log in</h1>
-			<input type="text" placeholder="Username" [(ngModel)]="loginForm.username" name="username" />
-			<input type="password" placeholder="Password" [(ngModel)]="loginForm.password" name="password" />
+			<h1>Đăng nhập</h1>
+			<input type="text" placeholder="Tài Khoản" [(ngModel)]="loginForm.username" name="username" />
+			<input type="password" placeholder="Mật khẩu" [(ngModel)]="loginForm.password" name="password" />
 
-			<button type="button" (click)="login()">Login</button>
+			<button type="button" (click)="login()">Đăng nhập</button>
 			<div class="login-divider">
-				<span>OR</span>
+				<span>HOẶC</span>
 			</div>
 			<div class="social-login">
 				<button type="button" class="google-login-btn" (click)="simulateGoogleLogin()">
 					<img src="assets/image/google-logo.png" alt="Google" width="20">
-					<span>Login with Google</span>
+					<span>Đăng nhập với Google</span>
 				</button>
 			</div>
 		</form>
@@ -29,14 +29,14 @@
 	<div class="overlay-container">
 		<div class="overlay">
 			<div class="overlay-panel overlay-left">
-				<h1>Welcome Back!</h1>
-				<p>To keep connected with us please login with your personal info</p>
-				<button class="ghost" id="signIn" (click)="loginFormChange()">Sign In</button>
+				<h1>Chào mừng trở lại!</h1>
+				<p>Để giữ kết nối với chúng tôi, vui lòng đăng nhập với thông tin cá nhân của bạn</p>
+				<button class="ghost" id="signIn" (click)="loginFormChange()">Đăng nhập</button>
 			</div>
 			<div class="overlay-panel overlay-right">
-				<h1>Hello, Friend!</h1>
-				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp" (click)="registerFormChange()">Sign Up</button>
+				<h1>Chào, bạn!</h1>
+				<p>Vui lòng nhập thông tin cá nhân của bạn để bắt đầu hành trình với chúng tôi</p>
+				<button class="ghost" id="signUp" (click)="registerFormChange()">Đăng ký</button>
 			</div>
 		</div>
 	</div>
@@ -56,7 +56,7 @@
 </p-dialog>
 
 <!-- Dialog for successful registration notification -->
-<p-dialog [(visible)]="displayRegisterSuccessDialog" [modal]="true" header="Registration Successful"
+<p-dialog [(visible)]="displayRegisterSuccessDialog" [modal]="true" header="Đăng ký Thành Công"		
 	[style]="{width: '450px'}" [baseZIndex]="10000" [closable]="false">
 	<div class="success-dialog-content">
 		<i class="pi pi-check-circle" style="font-size: 3rem; color: #4CAF50; margin-bottom: 1rem;"></i>
@@ -64,7 +64,7 @@
 		<p>Vui lòng đăng nhập để tiếp tục sử dụng dịch vụ.</p>
 	</div>
 	<ng-template pTemplate="footer">
-		<button pButton type="button" label="Log in now" (click)="closeRegisterSuccessDialog()"
+		<button pButton type="button" label="Đăng nhập ngay" (click)="closeRegisterSuccessDialog()"
 			class="p-button-success"></button>
 	</ng-template>
 </p-dialog>
@@ -118,15 +118,15 @@
 		</div>
 	</div>
 	<ng-template pTemplate="footer">
-		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Hủy"
-			(click)="closeForgotPasswordDialog()" class="p-button-text"></button>
+		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Hủy" (click)="closeForgotPasswordDialog()"
+			class="p-button-text"></button>
 		<button *ngIf="forgotPasswordStep === 1" pButton type="button" label="Tiếp tục"
 			(click)="verifyForgotPasswordInfo()" class="p-button-primary"></button>
 
 		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Quay lại" (click)="forgotPasswordStep = 1"
 			class="p-button-text"></button>
-		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Cập nhật mật khẩu" (click)="resetPassword()"
-			class="p-button-primary"></button>
+		<button *ngIf="forgotPasswordStep === 2" pButton type="button" label="Cập nhật mật khẩu"
+			(click)="resetPassword()" class="p-button-primary"></button>
 
 		<button *ngIf="forgotPasswordStep === 3" pButton type="button" label="Đăng nhập ngay"
 			(click)="closeForgotPasswordAndLogin()" class="p-button-success"></button>
