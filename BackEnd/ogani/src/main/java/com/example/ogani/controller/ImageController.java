@@ -45,7 +45,7 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/api/image")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class ImageController {
-    private static String UPLOAD_DIR = "D:/VS CODE/Angular/work/ogani/BackEnd/ogani/src/main/resources/static/photos";
+    private static String UPLOAD_DIR = "D:/VS CODE/Angular/work/ogani/BackEnd/ogani/src/main/resources/static/photos/";
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
 
     @Autowired

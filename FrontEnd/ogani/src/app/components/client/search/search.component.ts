@@ -139,15 +139,24 @@ export class SearchComponent implements OnInit {
 
   addToCart(item: any) {
     this.cartService.getItems();
-    this.cartService.addToCart(item, 1);
+    const success = this.cartService.addToCart(item, 1);
 
-    // Hiển thị thông báo trực tiếp từ component
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: `${item.name} đã được thêm vào giỏ hàng của bạn!`,
-      life: 1500,
-    });
+    if (success) {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Thành công',
+        detail: `${item.name} đã được thêm vào giỏ hàng của bạn!`,
+        life: 1500,
+      });
+    } else {
+      // Hiển thị thông báo hết hàng
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Thông báo',
+        detail: `Cửa hàng đã hết sản phẩm "${item.name}"!`,
+        life: 1500,
+      });
+    }
   }
 
   addToWishList(item: any) {

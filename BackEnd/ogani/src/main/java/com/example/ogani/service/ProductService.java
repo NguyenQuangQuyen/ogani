@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.ogani.entity.Product;
 import com.example.ogani.model.request.CreateProductRequest;
+import com.example.ogani.model.request.CreateOrderDetailRequest;
 
 public interface ProductService {
     
@@ -30,5 +31,14 @@ public interface ProductService {
     Product updateProduct(long id, CreateProductRequest request);
 
     void deleteProduct(long id);
+
+    // Stock management methods
+    void validateStock(List<CreateOrderDetailRequest> orderDetails);
+    
+    void deductStock(List<CreateOrderDetailRequest> orderDetails);
+    
+    void restoreStock(Long productId, int quantity);
+    
+    int getAvailableStock(long productId);
 
 }

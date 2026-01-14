@@ -29,6 +29,10 @@ public class OrderDetail {
 
     private Long subTotal;
 
+    // ID sản phẩm để truy vết và quản lý tồn kho
+    @jakarta.persistence.Column(name = "product_id")
+    private Long productId;
+
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     @JsonBackReference

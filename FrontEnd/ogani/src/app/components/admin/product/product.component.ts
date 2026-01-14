@@ -48,7 +48,7 @@ export class ProductComponent implements OnInit {
     private productService: ProductService,
     private imageService: ImageService,
     private categoryService: CategoryService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getListProduct();
@@ -253,7 +253,7 @@ export class ProductComponent implements OnInit {
             }
             this.showError(
               'Không thể tải ảnh lên: ' +
-                (err.error?.message || err.message || 'Lỗi không xác định')
+              (err.error?.message || err.message || 'Lỗi không xác định')
             );
             this.currentFile = undefined;
           },
@@ -343,7 +343,7 @@ export class ProductComponent implements OnInit {
         next: (res) => {
           this.getListProduct();
           this.showForm = false;
-          this.showSuccess('Cập nhật thành công');
+          this.showSuccess('Cập nhật sản phẩm thành công');
         },
         error: (err) => {
           this.showError(err.message || 'Lỗi khi cập nhật sản phẩm');

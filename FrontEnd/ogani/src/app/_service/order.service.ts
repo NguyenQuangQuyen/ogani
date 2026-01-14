@@ -14,7 +14,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class OrderService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getListOrder(): Observable<any> {
     return this.http.get(ORDER_API + 'getall', httpOptions);
@@ -166,6 +166,7 @@ export class OrderService {
             ? item.price
             : parseInt(String(item.price)),
         quantity: item.quantity,
+        productId: item.productId, // Thêm productId để track tồn kho
       })),
       username: username.trim(),
       userId: userId ? parseInt(userId) : null,
@@ -316,6 +317,7 @@ export class OrderService {
             ? item.price
             : parseInt(String(item.price)),
         quantity: item.quantity,
+        productId: item.productId, // Thêm productId để track tồn kho
       })),
     };
 

@@ -57,9 +57,9 @@ export class ContactComponent implements OnInit {
   constructor(
     private messageService: MessageService,
     private contactService: ContactService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   sendMessage(): void {
     // Kiểm tra form
@@ -109,7 +109,7 @@ export class ContactComponent implements OnInit {
       severity: 'success',
       summary: 'Thành công',
       detail: text,
-      life: 5000, // Hiển thị trong 5 giây
+      life: 1500, // Hiển thị trong 5 giây
     });
   }
 
@@ -118,7 +118,7 @@ export class ContactComponent implements OnInit {
       severity: 'error',
       summary: 'Lỗi',
       detail: text,
-      life: 5000, // Hiển thị trong 5 giây
+      life: 1500, // Hiển thị trong 5 giây
     });
   }
 }

@@ -10,21 +10,21 @@ import { TagService } from 'src/app/_service/tag.service';
 
 })
 export class TagComponent implements OnInit {
-  
-  listTag : any;
+
+  listTag: any;
 
   displayForm: boolean = false;
 
-  deleteForm : boolean = false;
+  deleteForm: boolean = false;
 
-  onUpdate : boolean = false;
+  onUpdate: boolean = false;
 
-  tagForm : any ={
+  tagForm: any = {
     id: null,
-    name : null
+    name: null
   }
 
-  constructor(private tagService: TagService,private messageService:MessageService){
+  constructor(private tagService: TagService, private messageService: MessageService) {
 
   }
 
@@ -33,100 +33,102 @@ export class TagComponent implements OnInit {
   }
 
 
-  getList(){
+  getList() {
     this.tagService.getListTag().subscribe({
-      next : res =>{
+      next: res => {
         this.listTag = res;
-      },error: err =>{
+      }, error: err => {
         console.log(err);
       }
     })
   }
 
-  showForm(){
+  showForm() {
     this.onUpdate = false;
-    this.tagForm ={
-      id : null,
-      name : null
+    this.tagForm = {
+      id: null,
+      name: null
     }
     this.displayForm = true;
   }
 
-  onUpdateForm(id: number,name : string){
+  onUpdateForm(id: number, name: string) {
     this.onUpdate = true;
-    this.displayForm =true;
+    this.displayForm = true;
     this.tagForm.id = id;
     this.tagForm.name = name;
   }
-  onDelete(id:number,name : string){
+  onDelete(id: number, name: string) {
     this.deleteForm = true;
     this.tagForm.id = id;
     this.tagForm.name = name;
   }
 
-  createTag(){
-    const {name} = this.tagForm;
+  createTag() {
+    const { name } = this.tagForm;
     this.tagService.createTag(name).subscribe({
-      next: res =>{
+      next: res => {
         this.getList();
-        this.showSuccess("Tạo danh mục thành công!");
+        this.showSuccess("Tạo tag thành công!");
         this.displayForm = false;
-      },error: err=>{
+      }, error: err => {
         this.showError(err.message);
       }
     })
   }
 
-  updateTag(){
-    const {id,name} = this.tagForm;
-    this.tagService.updateTag(id,name).subscribe({
-      next: res =>{
+  updateTag() {
+    const { id, name } = this.tagForm;
+    this.tagService.updateTag(id, name).subscribe({
+      next: res => {
         this.getList();
-        this.showSuccess("Cập nhật danh mục thành công!");
+        this.showSuccess("Cập nhật tag thành công!");
         this.displayForm = false;
-      },error: err =>{
+      }, error: err => {
         this.showError(err.message);
       }
     })
   }
 
-  enableTag(id : number){
+  enableTag(id: number) {
     this.tagService.enableTag(id).subscribe({
-      next: res =>{
+      next: res => {
         this.getList();
-        this.showSuccess("Cập nhật thành công!!");
+        this.showSuccess("Cập nhật tag thành công!!");
 
-      },error: err=>{
+
+
+      }, error: err => {
         this.showError(err.message);
       }
     })
   }
 
-  deleteTag(){
-    const {id} = this.tagForm;
+  deleteTag() {
+    const { id } = this.tagForm;
     this.tagService.deleteTag(id).subscribe({
-      next: res =>{
+      next: res => {
         this.getList();
         this.showWarn("Xóa danh mục thành công!!");
         this.deleteForm = false;
-      },error: err=>{
+      }, error: err => {
         this.showError(err.message);
       }
     })
   }
 
-  
+
 
 
   showSuccess(text: string) {
-    this.messageService.add({severity:'success', summary: 'Success', detail: text});
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: text });
   }
   showError(text: string) {
-    this.messageService.add({severity:'error', summary: 'Error', detail: text});
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: text });
   }
 
-  showWarn(text : string) {
-    this.messageService.add({severity:'warn', summary: 'Warn', detail: text});
+  showWarn(text: string) {
+    this.messageService.add({ severity: 'warn', summary: 'Warn', detail: text });
   }
 
 }

@@ -182,7 +182,7 @@
     <div class="col-xl-4 col-lg-5">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Top 4 sản phẩm bán chạy</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Top những sản phẩm bán chạy nhất</h6>
             </div>
             <div class="card-body">
                 <div *ngIf="isLoading" class="text-center py-5">
@@ -243,7 +243,7 @@
                                 <th>Khách hàng</th>
                                 <th>Ngày đặt</th>
                                 <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -252,15 +252,7 @@
                                 <td>{{order.firstname}} {{order.lastname}}</td>
                                 <td>{{order.createdDate | date:'dd/MM/yyyy'}}</td>
                                 <td>{{order.totalPrice | vndCurrency}}</td>
-                                <td>
-                                    <span class="badge" [ngClass]="{
-                                        'badge-success': order.status === 'Paid' || order.status === 'PAID' || order.status === 'COMPLETED' || order.status === 'Completed' || order.status === 'DELIVERED' || order.status === 'Delivered',
-                                        'badge-warning': order.status === 'Unpaid' || order.status === 'UNPAID' || order.status === 'PENDING' || order.status === 'Pending',
-                                        'badge-danger': order.status === 'CANCELLED' || order.status === 'Cancelled'
-                                    }">
-                                        {{order.status}}
-                                    </span>
-                                </td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -272,47 +264,5 @@
         </div>
     </div>
 
-    <!-- Thống kê đơn hàng -->
-    <div class="col-xl-4 col-lg-5">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Thống kê đơn hàng</h6>
-            </div>
-            <div class="card-body">
-                <div *ngIf="isLoading" class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">Đang tải...</span>
-                    </div>
-                </div>
-                <div *ngIf="!isLoading && !error" class="py-3">
-                    <div class="mb-3">
-                        <h6 class="small font-weight-bold">Đơn hàng đã thanh toán <span
-                                class="float-right">{{getOrderPaidPercentage()}}%</span></h6>
-                        <div class="progress mb-4">
-                            <div class="progress-bar bg-success" role="progressbar"
-                                [style.width.%]="getOrderPaidPercentage()" aria-valuenow="20" aria-valuemin="0"
-                                aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <h6 class="small font-weight-bold">Đơn hàng chưa thanh toán <span
-                                class="float-right">{{getOrderUnpaidPercentage()}}%</span></h6>
-                        <div class="progress mb-4">
-                            <div class="progress-bar bg-warning" role="progressbar"
-                                [style.width.%]="getOrderUnpaidPercentage()" aria-valuenow="40" aria-valuemin="0"
-                                aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="card bg-light text-center p-3">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng số đơn hàng</h5>
-                                <p class="card-text display-4">{{statistics?.orderStatusCounts?.total || 0}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>

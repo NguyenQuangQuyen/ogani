@@ -102,7 +102,7 @@ export class ProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Information updated successfully',
+            detail: 'Thông tin đã được cập nhật thành công',
           });
         },
         error: (err) => {
@@ -110,7 +110,7 @@ export class ProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Could not update information',
+            detail: 'Could not update profile information',
           });
         },
       });
@@ -123,7 +123,7 @@ export class ProfileComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Please select an image file',
+          detail: 'Vui lòng chọn tệp hình ảnh',
         });
         return;
       }
@@ -132,7 +132,7 @@ export class ProfileComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'File size exceeds the maximum limit (5MB)',
+          detail: 'Kích thước tệp vượt quá giới hạn tối đa (5MB)',
         });
         return;
       }
@@ -147,7 +147,7 @@ export class ProfileComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Thông báo',
-        detail: 'Uploading image...',
+        detail: 'Đang tải hình ảnh lên...',
       });
 
       this.userService
@@ -157,7 +157,7 @@ export class ProfileComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Profile picture updated successfully',
+              detail: 'Hình ảnh hồ sơ đã được cập nhật thành công',
             });
 
             if (response) {
@@ -185,7 +185,7 @@ export class ProfileComponent implements OnInit {
             }
           },
           error: (err) => {
-            let errorMessage = 'Could not upload image';
+            let errorMessage = 'Không thể tải hình ảnh hồ sơ lên';
 
             if (err.error) {
               if (typeof err.error === 'string') {
