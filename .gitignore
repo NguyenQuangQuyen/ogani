@@ -1,0 +1,29 @@
+# Gitignore for Ogani Project
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backend
+BackEnd/ogani/target/
+BackEnd/ogani/.mvn/
+BackEnd/ogani/mvnw
+BackEnd/ogani/mvnw.cmd
+
+# Frontend
+FrontEnd/ogani/node_modules/
+FrontEnd/ogani/dist/
+FrontEnd/ogani/.angular/
+
+# Docker
+backend-photos/

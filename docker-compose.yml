@@ -8,9 +8,12 @@ services:
       - "1999:1999"  # Application port
     environment:
       # Database configuration
-      SPRING_DATASOURCE_URL: jdbc:postgresql://192.168.1.46:5432/ogani
-      SPRING_DATASOURCE_USERNAME: novax
-      SPRING_DATASOURCE_PASSWORD: Novax20250709
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://192.168.1.46:5432/ogani}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-novax}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-Novax20250709}
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     volumes:
       # Mount volume for uploaded images
       - ./backend-photos:/app/photos
