@@ -85,7 +85,7 @@ export class CategoryComponent implements OnInit {
     this.categoryService.updateCategory(id, name).subscribe({
       next: res => {
         this.getListCategory();
-        this.showSuccess("Updated successfully!");
+        this.showSuccess("Danh mục đã được cập nhật thành công!");
         this.displayForm = false;
       }, error: err => {
         this.showError(err.message);

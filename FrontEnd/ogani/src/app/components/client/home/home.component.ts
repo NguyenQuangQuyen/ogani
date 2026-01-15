@@ -83,7 +83,7 @@ export class HomeComponent implements OnInit {
     private cartService: CartService,
     private wishlistService: WishlistService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getListProduct();
@@ -110,8 +110,14 @@ export class HomeComponent implements OnInit {
 
   addToCart(item: any) {
     this.cartService.getItems();
-    this.cartService.addToCart(item, 1);
-    this.showSuccess(`${item.name} đã được thêm vào giỏ hàng của bạn!`);
+    const success = this.cartService.addToCart(item, 1);
+
+    if (success) {
+      this.showSuccess(`${item.name} đã được thêm vào giỏ hàng của bạn!`);
+    } else {
+      // Hiển thị thông báo hết hàng
+      this.showWarn(`Cửa hàng đã hết sản phẩm "${item.name}"!`);
+    }
   }
 
   addToWishList(item: any) {

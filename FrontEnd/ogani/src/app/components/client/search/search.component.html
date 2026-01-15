@@ -45,8 +45,8 @@
               class="mb-3"
             ></p-slider>
             <div class="price-input mt-3">
-              {{ rangeValues[0] | currency : "VND" : "" }} VNĐ -
-              {{ rangeValues[1] | currency : "VND" : "" }} VNĐ
+              {{ rangeValues[0] | vndCurrency }} -
+              {{ rangeValues[1] | vndCurrency }}
             </div>
 
             <!-- Thêm input fields cho nhập giá trực tiếp -->
@@ -112,7 +112,7 @@
                     <div class="latest-product__item__text">
                       <h6>{{ product.name }}</h6>
                       <span
-                        >{{ product.price | currency : "VND" : "" }} VNĐ</span
+                        >{{ product.price | vndCurrency }}</span
                       >
                     </div>
                   </a>
@@ -166,8 +166,8 @@
                 >Found {{ listProduct.length }} products with keyword "{{
                   keyword
                 }}" in price range from
-                {{ rangeValues[0] | currency : "VND" : "" }} VNĐ to
-                {{ rangeValues[1] | currency : "VND" : "" }} VNĐ.</span
+                {{ rangeValues[0] | vndCurrency }} to
+                {{ rangeValues[1] | vndCurrency }}.</span
               >
             </div>
           </div>
@@ -181,8 +181,8 @@
               >
               <span *ngIf="isFilteringByPrice"
                 >Không có sản phẩm nào với từ khóa là: "{{ keyword }}" trong khoảng giá từ
-                {{ rangeValues[0] | currency : "VND" : "" }} VNĐ đến
-                {{ rangeValues[1] | currency : "VND" : "" }} VNĐ.</span
+                {{ rangeValues[0] | vndCurrency }} đến
+                {{ rangeValues[1] | vndCurrency }}.</span
               >
             </div>
           </div>
@@ -246,7 +246,7 @@
                     <h6>
                       <a href="javascript:void(0)">{{ product.name }}</a>
                     </h6>
-                    <h5>{{ product.price | currency : "VND" : "" }} VNĐ</h5>
+                    <h5>{{ product.price | vndCurrency }}</h5>
                   </div>
                 </div>
               </div>

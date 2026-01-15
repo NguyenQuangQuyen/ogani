@@ -13,6 +13,7 @@ import com.example.ogani.entity.Image;
 import com.example.ogani.entity.Product;
 import com.example.ogani.exception.NotFoundException;
 import com.example.ogani.model.request.CreateProductRequest;
+import com.example.ogani.model.request.CreateOrderDetailRequest;
 import com.example.ogani.repository.CategoryRepository;
 import com.example.ogani.repository.ImageRepository;
 import com.example.ogani.repository.ProductRepository;
@@ -137,5 +138,71 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> searchProductByPriceRange(String keyword, Integer min, Integer max) {
         return productRepository.searchProductByPriceRange(keyword, min, max);
+    }
+
+    // ==================== Stock Management Methods ====================
+
+    @Override
+    public void validateStock(List<CreateOrderDetailRequest> orderDetails) {
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            return;
+        }
+        
+        for (CreateOrderDetailRequest item : orderDetails) {
+            if (item.getProductId() != null) {
+                Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm với ID: " + item.getProductId()));
+                
+                if (product.getQuantity() < item.getQuantity()) {
+                    throw new IllegalArgumentException(
+                        "Số lượng sản phẩm \"" + product.getName() + "\" không đủ. " +
+                        "Còn lại: " + product.getQuantity() + ", Yêu cầu: " + item.getQuantity()
+                    );
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deductStock(List<CreateOrderDetailRequest> orderDetails) {
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            return;
+        }
+        
+        for (CreateOrderDetailRequest item : orderDetails) {
+            if (item.getProductId() != null && item.getQuantity() != null) {
+                Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm với ID: " + item.getProductId()));
+                
+                int newQuantity = product.getQuantity() - item.getQuantity();
+                if (newQuantity < 0) {
+                    throw new IllegalArgumentException(
+                        "Không đủ tồn kho cho sản phẩm: " + product.getName()
+                    );
+                }
+                product.setQuantity(newQuantity);
+                productRepository.save(product);
+            }
+        }
+    }
+
+    @Override
+    public void restoreStock(Long productId, int quantity) {
+        if (productId == null) {
+            return;
+        }
+        
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm với ID: " + productId));
+        
+        product.setQuantity(product.getQuantity() + quantity);
+        productRepository.save(product);
+    }
+
+    @Override
+    public int getAvailableStock(long productId) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm với ID: " + productId));
+        return product.getQuantity();
     }
 }

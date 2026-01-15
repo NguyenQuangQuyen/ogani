@@ -32,8 +32,8 @@ export class IndexComponent implements OnInit {
   searchIcon = faSearch;
 
   showDepartment = false;
-  showMobileMenu = false; 
-  
+  showMobileMenu = false;
+
 
 
 
@@ -169,7 +169,7 @@ export class IndexComponent implements OnInit {
   toggleMobileMenu() {
     this.showMobileMenu = !this.showMobileMenu;
     console.log("Toggled mobile menu, now:", this.showMobileMenu ? "SHOWN" : "HIDDEN");
-    
+
     // Add/remove class to body to prevent scrolling when menu is open
     if (this.showMobileMenu) {
       document.body.classList.add('over_hid');
@@ -268,7 +268,7 @@ export class IndexComponent implements OnInit {
       next: res => {
         this.isSuccessful = true;
         this.isSignUpFailed = false;
-        this.showSuccess("Registration successful! Please log in to continue.");
+        this.showSuccess("Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.");
 
         // Đóng modal
         this.authModal = false;
@@ -336,7 +336,7 @@ export class IndexComponent implements OnInit {
         severity: 'info',
         summary: 'Thông báo',
         detail: 'Please log in to continue',
-        life: 3000
+        life: 1500
       });
       return;
     }

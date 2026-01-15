@@ -3,14 +3,13 @@
     <p-table #dt [value]="listOrder" [rows]="10" [paginator]="true"
         [globalFilterFields]="['id','firstname','lastname','address','town','country','state','postCode','email','phone','note','status','paymentMethod','totalPrice']"
         [tableStyle]="{'min-width': '75rem'}" [rowHover]="true" dataKey="id"
-        currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} đơn hàng" [showCurrentPageReport]="true"
-        [showFirstLastIcon]="true" [showPageLinks]="true">
+        currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} đơn hàng"
+        [showCurrentPageReport]="true" [showFirstLastIcon]="true" [showPageLinks]="true">
         <ng-template pTemplate="caption">
             <div class="flex align-items-center justify-content-between">
                 <h5 class="m-0">Quản lý đơn hàng</h5>
                 <div class="flex align-items-center gap-2">
-                    <button pButton pRipple icon="pi pi-refresh" class="p-button-rounded p-button-info p-button-sm"
-                        (click)="refreshOrders()" pTooltip="Refresh orders"></button>
+
                     <span class="p-input-icon-left">
                         <i class="pi pi-search"></i>
                         <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
@@ -35,7 +34,7 @@
                 <td>{{order.id}}</td>
                 <td>{{order.createdDate | date:'dd/MM/yyyy HH:mm'}}</td>
                 <td>{{order.firstname}} {{order.lastname}}</td>
-                <td>{{order.totalPrice | currency:'VND':'symbol':'1.0-0'}}</td>
+                <td>{{order.totalPrice | vndCurrency}}</td>
                 <td>
                     <span *ngIf="order.paymentMethod === 'COD'" class="badge bg-warning">Thanh toán khi nhận hàng</span>
                     <span *ngIf="order.paymentMethod === 'BANK'" class="badge bg-info">Chuyển khoản ngân hàng</span>
@@ -44,16 +43,16 @@
                 </td>
                 <td>
                     <span class="badge"
-                        [ngClass]="{'bg-warning': order.status === 'Pending', 'bg-success': order.status === 'Paid', 'bg-danger': order.status === 'Failed'}">
-                        {{order.status || 'Pending'}}
+                        [ngClass]="{'bg-warning': order.status === 'Pending' || order.status === 'Unpaid', 'bg-success': order.status === 'Paid', 'bg-danger': order.status === 'Failed'}">
+                        {{order.status === 'Paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}}
                     </span>
                 </td>
                 <td>
                     <div class="d-flex gap-2">
                         <button pButton type="button" label="Xem chi tiết" icon="pi pi-eye"
                             class="p-button-info p-button-sm" (click)="viewOrderDetails(order)"></button>
-                        <button pButton type="button" label="Hủy" icon="pi pi-times"
-                            class="p-button-danger p-button-sm" (click)="cancelOrder(order.id)"></button>
+                        <button pButton type="button" label="Hủy" icon="pi pi-times" class="p-button-danger p-button-sm"
+                            (click)="cancelOrder(order.id)"></button>
                     </div>
                 </td>
             </tr>
@@ -80,11 +79,13 @@
                 </div>
                 <div class="col-md-6">
                     <p><strong>Địa chỉ:</strong> {{selectedOrder.address}}, {{selectedOrder.town}}</p>
-                    <p><strong>Quốc gia:</strong> {{selectedOrder.country}}</p> 
+                    <p><strong>Quốc gia:</strong> {{selectedOrder.country}}</p>
                     <p><strong>Phương thức thanh toán:</strong>
-                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Thanh toán khi nhận hàng
+                        <span *ngIf="selectedOrder.paymentMethod === 'COD'" class="badge bg-warning">Thanh toán khi nhận
+                            hàng
                             (COD)</span>
-                        <span *ngIf="selectedOrder.paymentMethod === 'BANK'" class="badge bg-info">Chuyển khoản ngân hàng</span>
+                        <span *ngIf="selectedOrder.paymentMethod === 'BANK'" class="badge bg-info">Chuyển khoản ngân
+                            hàng</span>
                         <span *ngIf="selectedOrder.paymentMethod !== 'COD' && selectedOrder.paymentMethod !== 'BANK'"
                             class="badge bg-secondary">{{selectedOrder.paymentMethod || 'Unknown'}}</span>
                     </p>
@@ -107,15 +108,15 @@
                     <tbody>
                         <tr *ngFor="let item of selectedOrder.orderDetails">
                             <td>{{item.name}}</td>
-                            <td>{{item.price | currency:'VND':'symbol':'1.0-0'}}</td>
+                            <td>{{item.price | vndCurrency}}</td>
                             <td>{{item.quantity}}</td>
-                            <td>{{item.subTotal | currency:'VND':'symbol':'1.0-0'}}</td>
+                            <td>{{item.subTotal | vndCurrency}}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
-                            <td><strong>{{selectedOrder.totalPrice | currency:'VND':'symbol':'1.0-0'}}</strong></td>
+                            <td><strong>{{selectedOrder.totalPrice | vndCurrency}}</strong></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -126,11 +127,17 @@
                 <div class="d-flex align-items-center gap-3">
                     <p-dropdown [options]="paymentStatuses" [(ngModel)]="selectedPaymentStatus"
                         (onChange)="updatePaymentStatus(selectedOrder.id, selectedPaymentStatus)"
-                        [style]="{'width': '200px'}" [appendTo]="'body'"
-                        placeholder="Select Payment Status"></p-dropdown>
+                        [style]="{'width': '200px'}" [appendTo]="'body'" placeholder="Chọn trạng thái thanh toán">
+                        <ng-template let-status pTemplate="item">
+                            <span>{{ status === 'Paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}</span>
+                        </ng-template>
+                        <ng-template let-status pTemplate="selectedItem">
+                            <span>{{ status === 'Paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}</span>
+                        </ng-template>
+                    </p-dropdown>
                     <span class="badge ms-2"
                         [ngClass]="{'bg-warning': selectedPaymentStatus === 'Unpaid', 'bg-success': selectedPaymentStatus === 'Paid'}">
-                        {{selectedPaymentStatus}}
+                        {{selectedPaymentStatus === 'Paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}}
                     </span>
                 </div>
             </div>

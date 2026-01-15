@@ -62,7 +62,7 @@
                   <h5>{{ product.name }}</h5>
                 </td>
                 <td class="shoping__cart__price">
-                  {{ product.price | currency }}
+                  {{ product.price | vndCurrency }}
                 </td>
                 <td class="shoping__cart__quantity">
                   <div class="quantity">
@@ -85,7 +85,7 @@
                   </div>
                 </td>
                 <td class="shoping__cart__total">
-                  {{ product.subTotal | currency }}
+                  {{ product.subTotal | vndCurrency }}
                 </td>
                 <td class="shoping__cart__item__close">
                   <button
@@ -132,11 +132,11 @@
           <h5>Tổng giỏ hàng</h5>
           <ul>
             <li>
-              Thành tiền <span>{{ cartService.totalPrice | currency }}</span>
+              Thành tiền <span>{{ cartService.totalPrice | vndCurrency }}</span>
             </li>
             <li>Khuyến mãi <span>- 0%</span></li>
             <li>
-              Tổng <span>{{ cartService.total | currency }}</span>
+              Tổng <span>{{ cartService.total | vndCurrency }}</span>
             </li>
           </ul>
           <a
