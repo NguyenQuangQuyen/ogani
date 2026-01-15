@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const BLOG_API = 'http://localhost:8080/api/blog/';
+const BLOG_API = 'https://hgr0a62zxby.sn.mynetname.net:2003/api/blog/';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };

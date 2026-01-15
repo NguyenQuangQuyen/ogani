@@ -2,8 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const AUTH_API = 'http://localhost:8080/api/auth/';
-const USER_API = 'http://localhost:8080/api/user/';
+const AUTH_API = 'https://hgr0a62zxby.sn.mynetname.net:2003/api/auth/';
+const USER_API = 'https://hgr0a62zxby.sn.mynetname.net:2003/api/user/';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -64,7 +64,7 @@ export class AuthService {
 
   // Khởi tạo đăng nhập bằng Google OAuth2
   initiateGoogleLogin(): void {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = 'https://hgr0a62zxby.sn.mynetname.net:2003/oauth2/authorization/google';
   }
 
   logout(): Observable<any> {

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class ReportApiService {
-  private readonly REPORT_API = 'http://localhost:8080/api/report';
+  private readonly REPORT_API = 'https://hgr0a62zxby.sn.mynetname.net:2003/api/report';
 
   constructor(private http: HttpClient) {}
 

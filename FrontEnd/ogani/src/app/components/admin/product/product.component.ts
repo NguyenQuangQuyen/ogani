@@ -16,7 +16,7 @@ export class ProductComponent implements OnInit {
   listImage: any;
 
   disabled: boolean = true;
-  apiUrl = 'http://localhost:8080/api/image/file/';
+  apiUrl = 'https://hgr0a62zxby.sn.mynetname.net:2003/api/image/file/';
   timestamp = Date.now();
 
   selectedFiles?: FileList;

@@ -82,6 +82,6 @@ public class OAuthSuccessController {
     @GetMapping("/redirect")
     public void redirectToFrontend(HttpServletResponse response) throws IOException {
         logger.info("Redirecting to frontend login page");
-        response.sendRedirect("http://localhost:4200/login");
+        response.sendRedirect("https://hgr0a62zxby.sn.mynetname.net:1411/login");
     }
 } 

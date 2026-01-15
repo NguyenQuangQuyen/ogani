@@ -40,7 +40,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins = "https://hgr0a62zxby.sn.mynetname.net:1411", maxAge = 3600)
 public class AuthController {
 
     @Autowired
@@ -312,13 +312,13 @@ public class AuthController {
     @GetMapping("/login")
     public void loginRedirect(HttpServletResponse response) throws IOException {
         // Chuyển hướng về trang đăng nhập trên frontend
-        response.sendRedirect("http://localhost:4200/login");
+        response.sendRedirect("https://hgr0a62zxby.sn.mynetname.net:1411/login");
     }
 
     // Xử lý lỗi OAuth
     @GetMapping("/oauth2/error")
     public void handleOAuthError(HttpServletResponse response) throws IOException {
         // Chuyển hướng về trang đăng nhập trên frontend
-        response.sendRedirect("http://localhost:4200/login");
+        response.sendRedirect("https://hgr0a62zxby.sn.mynetname.net:1411/login");
     }
 }

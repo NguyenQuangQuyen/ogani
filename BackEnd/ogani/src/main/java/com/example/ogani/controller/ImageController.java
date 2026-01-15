@@ -43,7 +43,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/image")
-@CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
+@CrossOrigin(origins = "https://hgr0a62zxby.sn.mynetname.net:2003", maxAge = 3600)
 public class ImageController {
     private static String UPLOAD_DIR = "D:/VS CODE/Angular/work/ogani/BackEnd/ogani/src/main/resources/static/photos/";
     // private static String UPLOAD_DIR = "D:/ogani/ogani/BackEnd/ogani/src/main/resources/static/photos/";
@@ -99,7 +99,7 @@ public class ImageController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Lấy hình ảnh theo ID")
-    @CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
+    @CrossOrigin(origins = "https://hgr0a62zxby.sn.mynetname.net:2003", maxAge = 3600)
     public ResponseEntity<Resource> getImage(@PathVariable long id) {
         try {
             logger.info("Request received for image with ID: {}", id);
@@ -420,7 +420,7 @@ public class ImageController {
 
     @GetMapping("/file/{fileName}")
     @Operation(summary = "Lấy hình ảnh theo tên file")
-    @CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
+    @CrossOrigin(origins = "https://hgr0a62zxby.sn.mynetname.net:2003", maxAge = 3600)
     public ResponseEntity<Resource> getImageByFileName(@PathVariable String fileName) {
         try {
             logger.info("Getting image by fileName: {}", fileName);

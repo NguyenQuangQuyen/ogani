@@ -65,7 +65,7 @@
         <td>
           <img
             *ngIf="blog.image"
-            [src]="'http://localhost:8080/api/image/file/' + blog.image.name"
+            [src]="'https://hgr0a62zxby.sn.mynetname.net:2003/api/image/file/' + blog.image.name"
             [alt]="blog.title"
             width="100"
             class="shadow-4"
@@ -259,7 +259,7 @@
             <div class="image-container w-full h-full relative">
               <img
                 [src]="
-                  'http://localhost:8080/api/image/file/' + (image.name || '')
+                  'https://hgr0a62zxby.sn.mynetname.net:2003/api/image/file/' + (image.name || '')
                 "
                 alt="Image"
                 class="w-full h-full p-2 border-1"
@@ -277,7 +277,7 @@
         <p class="font-bold">Hình Ảnh Chọn:</p>
         <div class="product-image" style="max-width: 200px">
           <img
-            [src]="'http://localhost:8080/api/image/file/' + (image.name || '')"
+            [src]="'https://hgr0a62zxby.sn.mynetname.net:2003/api/image/file/' + (image.name || '')"
             alt="Selected image"
             class="w-full h-full border-1 border-primary border-round"
             onerror="this.src='assets/image/cat-1.jpg'; this.classList.add('error-image')"

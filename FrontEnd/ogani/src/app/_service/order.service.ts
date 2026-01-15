@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { Order } from '../_class/order';
 import { OrderDetail } from '../_class/order-detail';
 
-const ORDER_API = 'http://localhost:8080/api/order/';
+const ORDER_API = 'https://hgr0a62zxby.sn.mynetname.net:2003/api/order/';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };

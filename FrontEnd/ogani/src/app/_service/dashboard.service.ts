@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { OrderService } from './order.service';
 
-const API_URL = 'http://localhost:8080/api/order/';
+const API_URL = 'https://hgr0a62zxby.sn.mynetname.net:2003/api/order/';
 
 export interface DashboardStatistics {
   totalSoldProducts: number;
