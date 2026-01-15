@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,7 +40,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5361", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class AuthController {
 
     @Autowired
@@ -62,37 +61,34 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Đăng nhập")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-        try {
-            userService.getUserByUsername(loginRequest.getUsername());
+        // Xác thực thông tin đăng nhập
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        // Lưu thông tin xác thực vào SecurityContext
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        // Lấy thông tin người dùng
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        // Tạo JWT token
+        String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
+        
+        // Tạo JWT cookie
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
-            String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
-            
-            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+        // Lấy danh sách các vai trò của người dùng
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
 
-            List<String> roles = userDetails.getAuthorities().stream()
-                    .map(item -> item.getAuthority())
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                    .body(new UserInfoResponse(userDetails.getId(),
-                            userDetails.getUsername(),
-                            userDetails.getEmail(),
-                            roles,
-                            jwt));
-        } catch (com.example.ogani.exception.NotFoundException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Sai tài khoản hoặc tài khoản không tồn tại"));
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Sai mật khẩu"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new MessageResponse("Đã xảy ra lỗi khi đăng nhập: " + e.getMessage()));
-        }
+        // Trả về thông tin người dùng kèm JWT cookie và token
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(new UserInfoResponse(userDetails.getId(),
+                        userDetails.getUsername(),
+                        userDetails.getEmail(),
+                        roles,
+                        jwt));
     }
 
     /**
@@ -101,9 +97,11 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Đăng ký")
     public ResponseEntity<?> register(@Valid @RequestBody CreateUserRequest request) {
+        // Gọi service để thực hiện logic đăng ký
         userService.register(request);
 
-        return ResponseEntity.ok(new MessageResponse("Đăng ký tài khoản thành công"));
+        // Trả về thông báo đăng ký thành công
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
     /**
@@ -314,13 +312,13 @@ public class AuthController {
     @GetMapping("/login")
     public void loginRedirect(HttpServletResponse response) throws IOException {
         // Chuyển hướng về trang đăng nhập trên frontend
-        response.sendRedirect("http://localhost:5361/login");
+        response.sendRedirect("http://localhost:4200/login");
     }
 
     // Xử lý lỗi OAuth
     @GetMapping("/oauth2/error")
     public void handleOAuthError(HttpServletResponse response) throws IOException {
         // Chuyển hướng về trang đăng nhập trên frontend
-        response.sendRedirect("http://localhost:5361/login");
+        response.sendRedirect("http://localhost:4200/login");
     }
 }

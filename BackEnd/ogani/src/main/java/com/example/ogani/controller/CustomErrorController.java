@@ -26,7 +26,7 @@ public class CustomErrorController implements ErrorController {
         if (statusCode != null && statusCode == 404 && 
            (requestURI != null && (requestURI.contains("login") || requestURI.contains("oauth")))) {
             // Chuyển hướng khi là lỗi liên quan đến login/oauth
-            response.sendRedirect("http://localhost:5361/login");
+            response.sendRedirect("http://localhost:4200/login");
         } else {
             // Trả về API error response cho các lỗi khác
             response.setContentType("application/json");

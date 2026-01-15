@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const TAG_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/tag/';
+const TAG_API = 'http://localhost:8080/api/tag/';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };

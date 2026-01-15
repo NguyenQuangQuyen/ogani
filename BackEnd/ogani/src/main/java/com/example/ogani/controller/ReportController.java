@@ -23,10 +23,11 @@ import com.example.ogani.model.report.DashboardReportRequest;
 
 @RestController
 @RequestMapping("/api/report")
-@CrossOrigin(origins = {"http://localhost:5361"}, maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:4200"}, maxAge = 3600)
 public class ReportController {
 
 
+    @Autowired
     private OrderService orderService;
 
     @Autowired

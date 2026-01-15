@@ -171,4 +171,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
+  
+  // Lấy tháng hiện tại (1-12)
+  getCurrentMonth(): number {
+    return new Date().getMonth() + 1;
+  }
+  
+  // Lấy năm hiện tại
+  getCurrentYear(): number {
+    return new Date().getFullYear();
+  }
 }

@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const PRODUCT_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/product/';
+const PRODUCT_API = 'http://localhost:8080/api/product/';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
@@ -11,7 +11,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class ProductService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getListProduct(): Observable<any> {
     return this.http.get(PRODUCT_API, httpOptions);
@@ -96,10 +96,5 @@ export class ProductService {
     params = params.append('min', minPrice.toString());
     params = params.append('max', maxPrice.toString());
     return this.http.get(PRODUCT_API + 'search/price', { params: params });
-  }
-
-  // Lấy số lượng tồn kho của sản phẩm
-  getAvailableStock(productId: number): Observable<any> {
-    return this.http.get(PRODUCT_API + 'stock/' + productId, httpOptions);
   }
 }

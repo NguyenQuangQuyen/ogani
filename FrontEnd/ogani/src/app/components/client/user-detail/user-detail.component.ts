@@ -15,7 +15,7 @@ export class UserDetailComponent implements OnInit {
   profileImageUrl: string | null = null;
   selectedFile: File | null = null;
   timestamp = Date.now();
-  backendUrl = 'http://hgr0a62zxby.sn.mynetname.net:2003'; // Thêm base URL của backend
+  backendUrl = 'http://localhost:8080'; // Thêm base URL của backend
 
   changePassword: boolean = false;
   confirmPassword: string = '';
@@ -138,7 +138,7 @@ export class UserDetailComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Thông tin đã được cập nhật thành công',
+            detail: 'Information updated successfully',
           });
         },
         error: (err) => {
@@ -146,7 +146,7 @@ export class UserDetailComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Không thể cập nhật thông tin',
+            detail: 'Could not update information',
           });
         },
       });
@@ -161,7 +161,7 @@ export class UserDetailComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Vui lòng chọn tệp hình ảnh',
+          detail: 'Please select an image file',
         });
         return;
       }
@@ -171,7 +171,7 @@ export class UserDetailComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Kích thước tệp vượt quá giới hạn tối đa (5MB)',
+          detail: 'File size exceeds the maximum limit (5MB)',
         });
         return;
       }
@@ -188,7 +188,7 @@ export class UserDetailComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Thông báo',
-        detail: 'Đang tải hình ảnh lên...',
+        detail: 'Uploading image...',
       });
 
       // Log thông tin file trước khi upload
@@ -217,7 +217,7 @@ export class UserDetailComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Hình ảnh hồ sơ đã được cập nhật thành công',
+              detail: 'Profile picture updated successfully',
             });
 
             // Cập nhật URL ảnh đại diện

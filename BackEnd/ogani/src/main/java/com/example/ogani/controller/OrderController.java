@@ -55,16 +55,16 @@ public class OrderController {
     }
 
     @GetMapping("/statistics")
-    @Operation(summary = "Lấy thống kê dashboard từ bảng order_details")
+    @Operation(summary = "Lấy thống kê dashboard - THEO THÁNG HIỆN TẠI")
     public ResponseEntity<?> getDashboardStatistics() {
         try {
-            // Query trực tiếp từ order_details table
-            Long totalSoldProducts = orderDetailRepository.getTotalSoldProducts();
-            Long totalRevenue = orderDetailRepository.getTotalRevenue();
-            Long totalRevenueFromPaid = orderDetailRepository.getTotalRevenueFromPaidOrders();
+            // ==================== CURRENT MONTH STATISTICS ====================
+            Long totalSoldProducts = orderDetailRepository.getTotalSoldProductsCurrentMonth();
+            Long totalRevenue = orderDetailRepository.getTotalRevenueCurrentMonth();
+            Long totalRevenueFromPaid = orderDetailRepository.getTotalRevenueFromPaidOrdersCurrentMonth();
             
-            // Lấy sản phẩm bán chạy nhất
-            List<Object[]> topProducts = orderDetailRepository.getTopSellingProducts();
+            // Lấy sản phẩm bán chạy nhất TRONG THÁNG HIỆN TẠI
+            List<Object[]> topProducts = orderDetailRepository.getTopSellingProductsCurrentMonth();
             String bestProductName = "";
             Long bestProductQty = 0L;
             if (topProducts != null && !topProducts.isEmpty()) {
@@ -73,8 +73,8 @@ public class OrderController {
                 bestProductQty = ((Number) top[1]).longValue();
             }
             
-            // Lấy phân phối sản phẩm
-            List<Object[]> distribution = orderDetailRepository.getProductSalesDistribution();
+            // Lấy phân phối sản phẩm TRONG THÁNG HIỆN TẠI
+            List<Object[]> distribution = orderDetailRepository.getProductSalesDistributionCurrentMonth();
             List<DashboardStatisticsResponse.ProductSalesInfo> productSales = new java.util.ArrayList<>();
             for (Object[] row : distribution) {
                 String name = (String) row[0];
@@ -83,16 +83,59 @@ public class OrderController {
                 productSales.add(new DashboardStatisticsResponse.ProductSalesInfo(name, qty, percentage));
             }
             
+            // ==================== 12-MONTH REVENUE OVERVIEW ====================
+            List<Object[]> monthlyRevenueData = orderDetailRepository.getMonthlyRevenueForCurrentYear();
+            
+            // Khởi tạo mảng 12 tháng với revenue = 0
+            Long[] monthlyRevenue = new Long[12];
+            for (int i = 0; i < 12; i++) {
+                monthlyRevenue[i] = 0L;
+            }
+            
+            // Điền dữ liệu từ database vào mảng
+            for (Object[] row : monthlyRevenueData) {
+                int month = ((Number) row[0]).intValue(); // 1-12
+                Long revenue = ((Number) row[1]).longValue();
+                monthlyRevenue[month - 1] = revenue; // Array index 0-11
+            }
+            
+            // Tạo danh sách monthly sales với tên tháng
+            String[] monthNames = {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", 
+                                   "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8",
+                                   "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"};
+            List<DashboardStatisticsResponse.MonthlySaleInfo> monthlySales = new java.util.ArrayList<>();
+            for (int i = 0; i < 12; i++) {
+                monthlySales.add(new DashboardStatisticsResponse.MonthlySaleInfo(monthNames[i], monthlyRevenue[i]));
+            }
+            
+            // ==================== ORDER STATUS & RECENT ORDERS (CURRENT MONTH) ====================
             List<Order> allOrders = orderService.getList();
-            long totalOrders = allOrders.size();
-            long paidOrders = allOrders.stream()
+            
+            // Lọc đơn hàng theo tháng hiện tại
+            java.time.LocalDate now = java.time.LocalDate.now();
+            int currentYear = now.getYear();
+            int currentMonth = now.getMonthValue();
+            
+            List<Order> currentMonthOrders = allOrders.stream()
+                .filter(o -> {
+                    if (o.getCreatedDate() == null) return false;
+                    java.time.LocalDate orderDate = o.getCreatedDate().toInstant()
+                        .atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+                    return orderDate.getYear() == currentYear && orderDate.getMonthValue() == currentMonth;
+                })
+                .toList();
+            
+            long totalOrders = currentMonthOrders.size();
+            long paidOrders = currentMonthOrders.stream()
                 .filter(o -> "PAID".equalsIgnoreCase(o.getStatus()))
                 .count();
-            long unpaidOrders = allOrders.stream()
+            long unpaidOrders = currentMonthOrders.stream()
                 .filter(o -> "UNPAID".equalsIgnoreCase(o.getStatus()) || "PENDING".equalsIgnoreCase(o.getStatus()))
                 .count();
 
-            java.util.List<DashboardStatisticsResponse.RecentOrderInfo> recentOrders = allOrders.stream()
+            // Lấy 5 đơn hàng gần nhất TRONG THÁNG HIỆN TẠI - CHỈ ĐƠN PAID
+            java.util.List<DashboardStatisticsResponse.RecentOrderInfo> recentOrders = currentMonthOrders.stream()
+                .filter(o -> "PAID".equalsIgnoreCase(o.getStatus()))  // CHỈ LẤY ĐƠN PAID
                 .sorted((o1, o2) -> Long.compare(parseOrderIdToEpochMillis(o2.getOrderId()), parseOrderIdToEpochMillis(o1.getOrderId())))
                 .map(o -> {
                     long created = parseOrderIdToEpochMillis(o.getOrderId());
@@ -131,6 +174,7 @@ public class OrderController {
             response.setBestSellingProductName(bestProductName);
             response.setBestSellingProductQuantity(bestProductQty);
             response.setProductSalesDistribution(productSales);
+            response.setMonthlySales(monthlySales); // 12 tháng của năm hiện tại
             response.setOrderStatusCounts(new DashboardStatisticsResponse.OrderStatusCount(totalOrders, paidOrders, unpaidOrders));
             response.setRecentOrders(recentOrders);
             

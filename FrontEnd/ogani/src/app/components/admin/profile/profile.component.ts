@@ -15,7 +15,7 @@ export class ProfileComponent implements OnInit {
   profileImageUrl: string | null = null;
   selectedFile: File | null = null;
   timestamp = Date.now();
-  backendUrl = 'http://hgr0a62zxby.sn.mynetname.net:2003';
+  backendUrl = 'http://localhost:8080';
 
   changePassword: boolean = false;
   confirmPassword: string = '';
@@ -102,7 +102,7 @@ export class ProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Thông tin đã được cập nhật thành công',
+            detail: 'Information updated successfully',
           });
         },
         error: (err) => {
@@ -110,7 +110,7 @@ export class ProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Could not update profile information',
+            detail: 'Could not update information',
           });
         },
       });
@@ -123,7 +123,7 @@ export class ProfileComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Vui lòng chọn tệp hình ảnh',
+          detail: 'Please select an image file',
         });
         return;
       }
@@ -132,7 +132,7 @@ export class ProfileComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Kích thước tệp vượt quá giới hạn tối đa (5MB)',
+          detail: 'File size exceeds the maximum limit (5MB)',
         });
         return;
       }
@@ -147,7 +147,7 @@ export class ProfileComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Thông báo',
-        detail: 'Đang tải hình ảnh lên...',
+        detail: 'Uploading image...',
       });
 
       this.userService
@@ -157,7 +157,7 @@ export class ProfileComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Hình ảnh hồ sơ đã được cập nhật thành công',
+              detail: 'Profile picture updated successfully',
             });
 
             if (response) {
@@ -185,7 +185,7 @@ export class ProfileComponent implements OnInit {
             }
           },
           error: (err) => {
-            let errorMessage = 'Không thể tải hình ảnh hồ sơ lên';
+            let errorMessage = 'Could not upload image';
 
             if (err.error) {
               if (typeof err.error === 'string') {
