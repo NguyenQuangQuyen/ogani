@@ -62,8 +62,20 @@ public class Order {
     private Long price;
 
     private Integer quantity;
+    
+    @Column(name = "created_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date createdDate;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderDetail> orderDetails = new ArrayList<>();
+    
+    // Tự động set created_date khi tạo đơn hàng mới
+    @PrePersist
+    protected void onCreate() {
+        if (createdDate == null) {
+            createdDate = new java.util.Date();
+        }
+    }
 }

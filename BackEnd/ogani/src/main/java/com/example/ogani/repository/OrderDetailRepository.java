@@ -29,4 +29,68 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
     // Số lượng bán theo từng sản phẩm, sắp xếp theo quantity giảm dần
     @Query("SELECT od.name, SUM(od.quantity) as totalQty FROM OrderDetail od GROUP BY od.name ORDER BY totalQty DESC")
     List<Object[]> getProductSalesDistribution();
+    
+    // ==================== CURRENT MONTH STATISTICS ====================
+    // CHỈ TÍNH ĐơN HÀNG ĐÃ THANH TOÁN (PAID)
+    
+    // Tổng số sản phẩm đã bán TRONG THÁNG HIỆN TẠI (CHỈ ĐƠN PAID)
+    @Query(value = "SELECT COALESCE(SUM(od.quantity), 0) FROM order_details od " +
+                   "JOIN orders o ON od.order_id = o.order_id " +
+                   "WHERE o.status = 'PAID' " +
+                   "AND EXTRACT(YEAR FROM o.created_date) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+                   "AND EXTRACT(MONTH FROM o.created_date) = EXTRACT(MONTH FROM CURRENT_DATE)", 
+           nativeQuery = true)
+    Long getTotalSoldProductsCurrentMonth();
+    
+    // Tổng doanh thu TRONG THÁNG HIỆN TẠI (CHỈ ĐƠN PAID)
+    @Query(value = "SELECT COALESCE(SUM(od.sub_total), 0) FROM order_details od " +
+                   "JOIN orders o ON od.order_id = o.order_id " +
+                   "WHERE o.status = 'PAID' " +
+                   "AND EXTRACT(YEAR FROM o.created_date) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+                   "AND EXTRACT(MONTH FROM o.created_date) = EXTRACT(MONTH FROM CURRENT_DATE)", 
+           nativeQuery = true)
+    Long getTotalRevenueCurrentMonth();
+    
+    // Tổng doanh thu từ đơn hàng đã thanh toán TRONG THÁNG HIỆN TẠI
+    @Query(value = "SELECT COALESCE(SUM(od.sub_total), 0) FROM order_details od " +
+                   "JOIN orders o ON od.order_id = o.order_id " +
+                   "WHERE o.status = 'PAID' " +
+                   "AND EXTRACT(YEAR FROM o.created_date) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+                   "AND EXTRACT(MONTH FROM o.created_date) = EXTRACT(MONTH FROM CURRENT_DATE)", 
+           nativeQuery = true)
+    Long getTotalRevenueFromPaidOrdersCurrentMonth();
+    
+    // Sản phẩm bán chạy nhất TRONG THÁNG HIỆN TẠI (CHỈ ĐƠN PAID)
+    @Query(value = "SELECT od.name, SUM(od.quantity) as totalQty FROM order_details od " +
+                   "JOIN orders o ON od.order_id = o.order_id " +
+                   "WHERE o.status = 'PAID' " +
+                   "AND EXTRACT(YEAR FROM o.created_date) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+                   "AND EXTRACT(MONTH FROM o.created_date) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+                   "GROUP BY od.name ORDER BY totalQty DESC", 
+           nativeQuery = true)
+    List<Object[]> getTopSellingProductsCurrentMonth();
+    
+    // Phân phối sản phẩm TRONG THÁNG HIỆN TẠI (CHỈ ĐƠN PAID)
+    @Query(value = "SELECT od.name, SUM(od.quantity) as totalQty FROM order_details od " +
+                   "JOIN orders o ON od.order_id = o.order_id " +
+                   "WHERE o.status = 'PAID' " +
+                   "AND EXTRACT(YEAR FROM o.created_date) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+                   "AND EXTRACT(MONTH FROM o.created_date) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+                   "GROUP BY od.name ORDER BY totalQty DESC", 
+           nativeQuery = true)
+    List<Object[]> getProductSalesDistributionCurrentMonth();
+    
+    // ==================== 12-MONTH REVENUE OVERVIEW ====================
+    
+    // Doanh thu theo từng tháng trong năm hiện tại (12 tháng) - CHỈ ĐƠN PAID
+    @Query(value = "SELECT EXTRACT(MONTH FROM o.created_date) as month, " +
+                   "COALESCE(SUM(od.sub_total), 0) as revenue " +
+                   "FROM order_details od " +
+                   "JOIN orders o ON od.order_id = o.order_id " +
+                   "WHERE o.status = 'PAID' " +
+                   "AND EXTRACT(YEAR FROM o.created_date) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+                   "GROUP BY EXTRACT(MONTH FROM o.created_date) " +
+                   "ORDER BY month", 
+           nativeQuery = true)
+    List<Object[]> getMonthlyRevenueForCurrentYear();
 }

@@ -20,8 +20,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM Product ORDER BY price LIMIT 8", nativeQuery = true)
     List<Product> getListByPrice();
 
-    // ✅ Sản phẩm liên quan (native vì dùng RAND)
-    @Query(value = "SELECT * FROM Product WHERE category_id = :id ORDER BY RAND() LIMIT 4", nativeQuery = true)
+    // ✅ Sản phẩm liên quan (PostgreSQL dùng RANDOM() thay vì RAND())
+    @Query(value = "SELECT * FROM Product WHERE category_id = :id ORDER BY RANDOM() LIMIT 4", nativeQuery = true)
     List<Product> findRelatedProduct(@Param("id") long id);
 
     // ✅ Lấy tất cả sản phẩm theo danh mục

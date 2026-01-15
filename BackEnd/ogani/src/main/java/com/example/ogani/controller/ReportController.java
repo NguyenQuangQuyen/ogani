@@ -27,6 +27,7 @@ import com.example.ogani.model.report.DashboardReportRequest;
 public class ReportController {
 
 
+    @Autowired
     private OrderService orderService;
 
     @Autowired

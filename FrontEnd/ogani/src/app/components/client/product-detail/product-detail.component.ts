@@ -68,14 +68,27 @@ export class ProductDetailComponent implements OnInit {
   }
 
   getListRelatedProduct() {
+    console.log('Product:', this.product);
+    console.log('Category ID:', this.product?.category?.id);
+    
+    if (!this.product?.category?.id) {
+      console.error('Category ID is missing!');
+      return;
+    }
+    
     this.productService
       .getListRelatedProduct(this.product.category.id)
       .subscribe({
         next: (res) => {
-          this.listRelatedProduct = res;
+          console.log('Related products response:', res);
+          // Lọc bỏ sản phẩm hiện tại và chỉ lấy 4 sản phẩm
+          this.listRelatedProduct = res
+            .filter((p: any) => p.id !== this.product.id)
+            .slice(0, 4);
+          console.log('Filtered related products:', this.listRelatedProduct);
         },
         error: (err) => {
-          console.log(err);
+          console.error('Error fetching related products:', err);
         },
       });
   }

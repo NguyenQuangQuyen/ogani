@@ -15,6 +15,7 @@ public class DashboardStatisticsResponse {
     private String bestSellingProductName;
     private Long bestSellingProductQuantity;
     private List<ProductSalesInfo> productSalesDistribution;
+    private List<MonthlySaleInfo> monthlySales;  // 12 tháng của năm hiện tại
     private OrderStatusCount orderStatusCounts;
     private List<RecentOrderInfo> recentOrders;
     
@@ -25,6 +26,14 @@ public class DashboardStatisticsResponse {
         private String name;
         private Long quantity;
         private Double percentage;
+    }
+    
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MonthlySaleInfo {
+        private String month;    // Tên tháng (Tháng 1, Tháng 2, ...)
+        private Long revenue;    // Doanh thu của tháng đó
     }
     
     @Data

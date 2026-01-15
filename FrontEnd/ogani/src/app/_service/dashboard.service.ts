@@ -64,7 +64,11 @@ export class DashboardService {
             name: response.bestSellingProductName || '',
             quantity: response.bestSellingProductQuantity || 0
           },
-          monthlySales: [],
+          // Backend trả về 12 tháng của năm hiện tại
+          monthlySales: (response.monthlySales || []).map((item: any) => ({
+            month: item.month || '',
+            revenue: item.revenue || 0
+          })),
           productSalesDistribution: (response.productSalesDistribution || [])
             .map((item: any) => ({
               name: item.name || '',
