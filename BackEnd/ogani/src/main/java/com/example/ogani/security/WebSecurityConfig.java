@@ -75,10 +75,12 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5361"));
+        
+        // Temporarily allow all origins for debugging
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", 
-                "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "X-XSRF-TOKEN"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
@@ -120,7 +122,7 @@ public class WebSecurityConfig {
                         // Xử lý khi đăng nhập OAuth2 thất bại hoặc bị hủy
                         System.out.println("OAuth2 login failed: " + exception.getMessage());
                         // Chuyển hướng về trang đăng nhập của frontend
-                        response.sendRedirect("http://localhost:5361/login");
+                        response.sendRedirect("https://hgr0a62zxby.sn.mynetname.net:1411/login");
                     })
                     .successHandler((request, response, authentication) -> {
                         // Lưu thông tin xác thực vào SecurityContextHolder
@@ -134,7 +136,7 @@ public class WebSecurityConfig {
                         }
                         
                         // Chuyển hướng người dùng đã đăng nhập về trang frontend
-                        response.sendRedirect("http://localhost:5361/login/oauth2/success");
+                        response.sendRedirect("https://hgr0a62zxby.sn.mynetname.net:1411/login/oauth2/success");
                     })
                 )
                 .authenticationProvider(authenticationProvider()) // Cấu hình Provider

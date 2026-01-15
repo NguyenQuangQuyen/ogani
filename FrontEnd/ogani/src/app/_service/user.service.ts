@@ -1,8 +1,9 @@
 import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-const USER_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/user/';
+const USER_API = `${environment.apiUrl}/user/`;
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };

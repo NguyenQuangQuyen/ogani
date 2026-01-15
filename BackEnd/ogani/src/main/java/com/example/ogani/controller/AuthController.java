@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,34 +62,37 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Đăng nhập")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-        // Xác thực thông tin đăng nhập
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        try {
+            userService.getUserByUsername(loginRequest.getUsername());
 
-        // Lưu thông tin xác thực vào SecurityContext
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        // Lấy thông tin người dùng
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Tạo JWT token
-        String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
-        
-        // Tạo JWT cookie
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        // Lấy danh sách các vai trò của người dùng
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+            String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
+            
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
-        // Trả về thông tin người dùng kèm JWT cookie và token
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(new UserInfoResponse(userDetails.getId(),
-                        userDetails.getUsername(),
-                        userDetails.getEmail(),
-                        roles,
-                        jwt));
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .body(new UserInfoResponse(userDetails.getId(),
+                            userDetails.getUsername(),
+                            userDetails.getEmail(),
+                            roles,
+                            jwt));
+        } catch (com.example.ogani.exception.NotFoundException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Sai tài khoản hoặc tài khoản không tồn tại"));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Sai mật khẩu"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new MessageResponse("Đã xảy ra lỗi khi đăng nhập: " + e.getMessage()));
+        }
     }
 
     /**
@@ -97,11 +101,9 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Đăng ký")
     public ResponseEntity<?> register(@Valid @RequestBody CreateUserRequest request) {
-        // Gọi service để thực hiện logic đăng ký
         userService.register(request);
 
-        // Trả về thông báo đăng ký thành công
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse("Đăng ký tài khoản thành công"));
     }
 
     /**

@@ -42,13 +42,15 @@ public class UserServiceImpl implements UserService {
     public void register(CreateUserRequest request) {
         System.out.println("Register request: " + request.getUsername() + ", roles: " + request.getRole());
         
-        // Kiểm tra xem username hoặc email đã tồn tại chưa
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new BadRequestException("Error: Username is already taken!");
-        }
+        boolean usernameExists = userRepository.existsByUsername(request.getUsername());
+        boolean emailExists = userRepository.existsByEmail(request.getEmail());
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new BadRequestException("Error: Email is already in use!");
+        if (usernameExists && emailExists) {
+            throw new BadRequestException("Tên tài khoản và email đã được sử dụng");
+        } else if (usernameExists) {
+            throw new BadRequestException("Tên tài khoản đã tồn tại");
+        } else if (emailExists) {
+            throw new BadRequestException("Email đã được sử dụng");
         }
 
         // Tạo người dùng mới

@@ -259,11 +259,10 @@ public class UserController {
             
             System.out.println("User profile image updated: " + imageUrl);
             
-            // Trả về URL của ảnh đại diện và hướng dẫn cách hiển thị
+            // Trả về URL của ảnh đại diện
             Map<String, String> response = new HashMap<>();
             response.put("imageUrl", imageUrl);
-            response.put("fullUrl", "http://hgr0a62zxby.sn.mynetname.net:2003" + imageUrl);
-            response.put("message", "Sử dụng fullUrl để hiển thị ảnh hoặc thêm baseUrl vào imageUrl");
+            response.put("message", "Upload thành công");
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {

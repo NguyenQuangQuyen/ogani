@@ -243,33 +243,41 @@ export class OrderComponent implements OnInit {
   }
 
   updatePaymentStatus(orderId: number, status: string) {
-    // In a real application, you would call an API to update the payment status
-    // For now, we'll just update the local data
-    const orderIndex = this.listOrder.findIndex(order => order.id === orderId);
-    if (orderIndex !== -1) {
-      this.listOrder[orderIndex].status = status;
+    const backendStatus = status === 'Paid' ? 'PAID' : 'UNPAID';
+    const statusLabel = status === 'Paid' ? 'Đã thanh toán' : 'Chưa thanh toán';
 
-      // Save the payment status to localStorage
-      localStorage.setItem(`order_status_${orderId}`, status);
+    this.orderService.updateOrderStatus(String(orderId), backendStatus).subscribe({
+      next: () => {
+        const orderIndex = this.listOrder.findIndex(order => order.id === orderId);
+        if (orderIndex !== -1) {
+          this.listOrder[orderIndex].status = status;
+        }
 
-      // Also update the selected order if it's the same one
-      if (this.selectedOrder && this.selectedOrder.id === orderId) {
-        this.selectedOrder.status = status;
+        localStorage.setItem(`order_status_${orderId}`, status);
+
+        if (this.selectedOrder && this.selectedOrder.id === orderId) {
+          this.selectedOrder.status = status;
+        }
+
+        this.updateOrdersInLocalStorage();
+
+        this.dashboardService.notifyOrdersUpdated();
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Thành công',
+          detail: `Đơn hàng đã được cập nhật thành ${statusLabel}`
+        });
+      },
+      error: (error) => {
+        console.error('Error updating payment status via backend:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: 'Không thể cập nhật trạng thái thanh toán. Vui lòng thử lại.'
+        });
       }
-
-      // Cập nhật orders_all trong localStorage để đảm bảo dashboard lấy dữ liệu mới nhất
-      this.updateOrdersInLocalStorage();
-
-      // Thông báo cho DashboardService biết rằng đơn hàng đã được cập nhật
-      this.dashboardService.notifyOrdersUpdated();
-
-      // Show success message
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: `Payment status updated to ${status}`
-      });
-    }
+    });
   }
 
   // Phương thức mới để cập nhật orders_all trong localStorage

@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ReportApiService {
-  private readonly REPORT_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/report';
+  private readonly REPORT_API = `${environment.apiUrl}/report`;
 
   constructor(private http: HttpClient) {}
 

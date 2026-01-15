@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StorageService } from 'src/app/_service/storage.service';
 import { UserService } from 'src/app/_service/user.service';
 import { MessageService } from 'primeng/api';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-user-detail',
@@ -15,7 +16,7 @@ export class UserDetailComponent implements OnInit {
   profileImageUrl: string | null = null;
   selectedFile: File | null = null;
   timestamp = Date.now();
-  backendUrl = 'http://hgr0a62zxby.sn.mynetname.net:2003'; // Thêm base URL của backend
+  backendUrl = environment.apiUrl.replace('/api', ''); // Base URL from environment
 
   changePassword: boolean = false;
   confirmPassword: string = '';
@@ -138,7 +139,7 @@ export class UserDetailComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Information updated successfully',
+            detail: 'Thông tin đã được cập nhật thành công',
           });
         },
         error: (err) => {
@@ -146,7 +147,7 @@ export class UserDetailComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Could not update information',
+            detail: 'Không thể cập nhật thông tin',
           });
         },
       });
@@ -161,7 +162,7 @@ export class UserDetailComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Please select an image file',
+          detail: 'Vui lòng chọn tệp hình ảnh',
         });
         return;
       }
@@ -171,7 +172,7 @@ export class UserDetailComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'File size exceeds the maximum limit (5MB)',
+          detail: 'Kích thước tệp vượt quá giới hạn tối đa (5MB)',
         });
         return;
       }
@@ -188,7 +189,7 @@ export class UserDetailComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Thông báo',
-        detail: 'Uploading image...',
+        detail: 'Đang tải hình ảnh lên...',
       });
 
       // Log thông tin file trước khi upload
@@ -217,7 +218,7 @@ export class UserDetailComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Profile picture updated successfully',
+              detail: 'Hình ảnh hồ sơ đã được cập nhật thành công',
             });
 
             // Cập nhật URL ảnh đại diện
@@ -226,11 +227,7 @@ export class UserDetailComponent implements OnInit {
               this.timestamp = Date.now();
 
               // Cập nhật tạm thời URL ảnh mới
-              if (response.fullUrl) {
-                this.profileImageUrl =
-                  response.fullUrl + '?t=' + this.timestamp;
-                console.log('Using fullUrl from server:', this.profileImageUrl);
-              } else if (response.imageUrl) {
+              if (response.imageUrl) {
                 // Nếu có imageUrl nhưng không có domain, thêm vào
                 if (response.imageUrl.startsWith('http')) {
                   this.profileImageUrl =

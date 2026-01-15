@@ -1,26 +1,4 @@
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: ogani-postgres
-    environment:
-      POSTGRES_DB: ogani
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./BackEnd/ogani/ogani_postgres.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - ogani-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Spring Boot Backend
   backend:
     build:
       context: ./BackEnd/ogani
@@ -29,18 +7,9 @@ services:
     ports:
       - "1999:1999"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ogani
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 123456
-    volumes:
-      - backend_photos:/app/photos
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - ogani-network
-    restart: unless-stopped
-
+      SPRING_DATASOURCE_URL: jdbc:postgresql://192.168.1.46:5432/ogani
+      SPRING_DATASOURCE_USERNAME: novax
+      SPRING_DATASOURCE_PASSWORD: Novax20250709
   # Angular Frontend
   frontend:
     build:
@@ -49,16 +18,3 @@ services:
     container_name: ogani-frontend
     ports:
       - "5361:5361"
-    depends_on:
-      - backend
-    networks:
-      - ogani-network
-    restart: unless-stopped
-
-volumes:
-  postgres_data:
-  backend_photos:
-
-networks:
-  ogani-network:
-    driver: bridge

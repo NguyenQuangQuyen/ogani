@@ -5,12 +5,13 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
 
-const IMAGE_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/image/';
+const IMAGE_API = `${environment.apiUrl}/image/`;
 
 @Injectable({
   providedIn: 'root',

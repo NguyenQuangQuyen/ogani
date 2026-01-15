@@ -1,9 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-const AUTH_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/auth/';
-const USER_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/user/';
+const AUTH_API = `${environment.apiUrl}/auth/`;
+const USER_API = `${environment.apiUrl}/user/`;
+const OAUTH2_BASE_URL = 'https://hgr0a62zxby.sn.mynetname.net:2003'; // OAuth2 endpoint on external port
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -64,7 +66,7 @@ export class AuthService {
 
   // Khởi tạo đăng nhập bằng Google OAuth2
   initiateGoogleLogin(): void {
-    window.location.href = 'http://hgr0a62zxby.sn.mynetname.net:2003/oauth2/authorization/google';
+    window.location.href = `${OAUTH2_BASE_URL}/oauth2/authorization/google`;
   }
 
   logout(): Observable<any> {

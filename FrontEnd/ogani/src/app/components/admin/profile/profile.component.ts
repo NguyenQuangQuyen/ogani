@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StorageService } from 'src/app/_service/storage.service';
 import { UserService } from 'src/app/_service/user.service';
 import { MessageService } from 'primeng/api';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -15,7 +16,7 @@ export class ProfileComponent implements OnInit {
   profileImageUrl: string | null = null;
   selectedFile: File | null = null;
   timestamp = Date.now();
-  backendUrl = 'http://hgr0a62zxby.sn.mynetname.net:2003';
+  backendUrl = environment.apiUrl.replace('/api', '');
 
   changePassword: boolean = false;
   confirmPassword: string = '';
@@ -102,7 +103,7 @@ export class ProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Information updated successfully',
+            detail: 'Thông tin đã được cập nhật thành công',
           });
         },
         error: (err) => {
@@ -110,7 +111,7 @@ export class ProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Could not update information',
+            detail: 'Could not update profile information',
           });
         },
       });
@@ -123,7 +124,7 @@ export class ProfileComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Please select an image file',
+          detail: 'Vui lòng chọn tệp hình ảnh',
         });
         return;
       }
@@ -132,7 +133,7 @@ export class ProfileComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'File size exceeds the maximum limit (5MB)',
+          detail: 'Kích thước tệp vượt quá giới hạn tối đa (5MB)',
         });
         return;
       }
@@ -147,7 +148,7 @@ export class ProfileComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Thông báo',
-        detail: 'Uploading image...',
+        detail: 'Đang tải hình ảnh lên...',
       });
 
       this.userService
@@ -157,16 +158,13 @@ export class ProfileComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Profile picture updated successfully',
+              detail: 'Hình ảnh hồ sơ đã được cập nhật thành công',
             });
 
             if (response) {
               this.timestamp = Date.now();
 
-              if (response.fullUrl) {
-                this.profileImageUrl =
-                  response.fullUrl + '?t=' + this.timestamp;
-              } else if (response.imageUrl) {
+              if (response.imageUrl) {
                 if (response.imageUrl.startsWith('http')) {
                   this.profileImageUrl =
                     response.imageUrl + '?t=' + this.timestamp;
@@ -185,7 +183,7 @@ export class ProfileComponent implements OnInit {
             }
           },
           error: (err) => {
-            let errorMessage = 'Could not upload image';
+            let errorMessage = 'Không thể tải hình ảnh hồ sơ lên';
 
             if (err.error) {
               if (typeof err.error === 'string') {

@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-const CATEGORY_API = 'http://hgr0a62zxby.sn.mynetname.net:2003/api/category/';
+const CATEGORY_API = `${environment.apiUrl}/category/`;
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };

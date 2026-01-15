@@ -190,7 +190,7 @@ export class CheckoutComponent implements OnInit {
     const cancelUrl = `${baseUrl}/checkout`;
 
     const listOrderDetail = cartItems.map((item) => {
-      return new OrderDetail(item.name, parseInt(String(item.price)), item.quantity);
+      return new OrderDetail(item.name, parseInt(String(item.price)), item.quantity, item.id);
     });
 
     this.orderService
@@ -307,7 +307,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.listOrderDetail = cartItems.map((item) => {
-      return new OrderDetail(item.name, parseInt(String(item.price)), item.quantity);
+      return new OrderDetail(item.name, parseInt(String(item.price)), item.quantity, item.id);
     });
 
     if (!this.listOrderDetail || this.listOrderDetail.length === 0) {
@@ -318,6 +318,13 @@ export class CheckoutComponent implements OnInit {
       });
       return;
     }
+
+    // Debug: Log order details để verify productId
+    console.log('=== DEBUG: Cart items ===', cartItems);
+    console.log('=== DEBUG: listOrderDetail with productId ===', this.listOrderDetail);
+    this.listOrderDetail.forEach((item, index) => {
+      console.log(`Item ${index}: name=${item.name}, productId=${item.productId}, qty=${item.quantity}`);
+    });
 
     this.orderService
       .placeOrder(
