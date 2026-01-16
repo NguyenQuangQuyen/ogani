@@ -5,22 +5,12 @@ services:
       dockerfile: Dockerfile
     container_name: ogani-backend
     ports:
-      - "1999:1999"  # Application port
+      - "1999:1999"
     environment:
-      # Database configuration
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://192.168.1.46:5432/ogani}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-novax}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-Novax20250709}
-      # Google OAuth
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-    volumes:
-      # Mount volume for uploaded images
-      - ./backend-photos:/app/photos
-    restart: unless-stopped
-    networks:
-      - ogani-network
-
+      SPRING_DATASOURCE_URL: jdbc:postgresql://192.168.1.46:5432/ogani
+      SPRING_DATASOURCE_USERNAME: novax
+      SPRING_DATASOURCE_PASSWORD: Novax20250709
+      UPLOAD_DIR: /app/src/main/resources/static/photos/
   # Angular Frontend
   frontend:
     build:
@@ -28,16 +18,4 @@ services:
       dockerfile: Dockerfile
     container_name: ogani-frontend
     ports:
-      - "5361:5361"  # Frontend port
-    depends_on:
-      - backend
-    restart: unless-stopped
-    networks:
-      - ogani-network
-
-networks:
-  ogani-network:
-    driver: bridge
-
-volumes:
-  backend-photos:
+      - "5361:5361"

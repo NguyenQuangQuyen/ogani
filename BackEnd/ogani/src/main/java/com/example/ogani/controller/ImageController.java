@@ -39,14 +39,17 @@ import com.example.ogani.exception.InternalServerException;
 import com.example.ogani.exception.NotFoundException;
 import com.example.ogani.service.ImageService;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/image")
 @CrossOrigin(origins = "https://hgr0a62zxby.sn.mynetname.net:2003", maxAge = 3600)
 public class ImageController {
-    private static String UPLOAD_DIR = "D:/VS CODE/Angular/work/ogani/BackEnd/ogani/src/main/resources/static/photos/";
-    // private static String UPLOAD_DIR = "D:/ogani/ogani/BackEnd/ogani/src/main/resources/static/photos/";
+    @Value("${upload.dir}")
+    private String UPLOAD_DIR;
+    
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
 
     @Autowired
