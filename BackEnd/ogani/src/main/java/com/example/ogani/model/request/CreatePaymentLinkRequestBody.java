@@ -29,4 +29,5 @@ public class CreatePaymentLinkRequestBody {
     private Long price;
     private String cancelUrl;
     private List<CreateOrderDetailRequest> orderDetails;
+    private String paymentMethod;
 }

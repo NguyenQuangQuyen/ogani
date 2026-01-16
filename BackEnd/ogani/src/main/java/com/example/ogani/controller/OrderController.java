@@ -280,6 +280,7 @@ public class OrderController {
             order.setNote(requestBody.getNote());
             order.setPrice(requestBody.getPrice());
             order.setStatus(String.valueOf(data.getStatus()));
+            order.setPaymentMethod(requestBody.getPaymentMethod() != null ? requestBody.getPaymentMethod() : "BANK");
             orderService.saveOrder(order);
             
             // Trừ tồn kho ngay khi tạo đơn hàng (bất kể PAID hay UNPAID)
@@ -602,6 +603,7 @@ public class OrderController {
             order.setPrice(totalPrice);
             order.setQuantity(totalQuantity > 0 ? totalQuantity : 1);
             order.setStatus("UNPAID");
+            order.setPaymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : "COD");
             
             order.setOrderDetails(details);
 

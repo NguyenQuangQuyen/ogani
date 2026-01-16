@@ -70,6 +70,7 @@ public class OrderServiceImpl implements OrderService {
         order.setEmail(request.getEmail());
         order.setPhone(request.getPhone());
         order.setNote(request.getNote());
+        order.setPaymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : "COD");
     }
 
     /**

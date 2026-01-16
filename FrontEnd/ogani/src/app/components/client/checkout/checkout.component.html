@@ -175,10 +175,10 @@
                   type="button"
                   class="payment-method-btn"
                   [ngClass]="{
-                    active: orderForm.paymentMethod === 'PAYOS',
+                    active: orderForm.paymentMethod === 'BANK',
                     processing: isProcessingPayOS
                   }"
-                  (click)="selectPaymentMethod('PAYOS')"
+                  (click)="selectPaymentMethod('BANK')"
                   [disabled]="isProcessingPayOS"
                 >
                   <i class="fa fa-bank"></i>
@@ -190,7 +190,7 @@
                   <i
                     class="fa fa-check-circle check-icon"
                     *ngIf="
-                      orderForm.paymentMethod === 'PAYOS' && !isProcessingPayOS
+                      orderForm.paymentMethod === 'BANK' && !isProcessingPayOS
                     "
                   ></i>
                 </button>
@@ -201,7 +201,7 @@
 
               <!-- Thông báo khi đang xử lý Bank Transfer -->
               <div
-                *ngIf="orderForm.paymentMethod === 'PAYOS' && isProcessingPayOS"
+                *ngIf="orderForm.paymentMethod === 'BANK' && isProcessingPayOS"
                 class="processing-message"
                 style="
                   margin-top: 15px;

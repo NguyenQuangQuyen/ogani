@@ -67,7 +67,7 @@ export class OrderComponent implements OnInit {
               note: o.note,
               createdDate: new Date(idNum * 1000),
               totalPrice: total,
-              paymentMethod: o.status === 'PAID' ? 'BANK' : 'COD',
+              paymentMethod: o.paymentMethod || localStorage.getItem(`order_payment_method_${idNum}`) || 'COD',
               status: o.status === 'PAID' ? 'Paid' : (o.status || 'Unpaid'),
               orderDetails,
             };
@@ -130,7 +130,7 @@ export class OrderComponent implements OnInit {
                 note: o.note,
                 createdDate: new Date(idNum * 1000),
                 totalPrice: total,
-                paymentMethod: o.status === 'PAID' ? 'BANK' : 'COD',
+                paymentMethod: o.paymentMethod || localStorage.getItem(`order_payment_method_${idNum}`) || 'COD',
                 status: o.status === 'PAID' ? 'Paid' : (o.status || 'Unpaid'),
                 orderDetails,
               };
