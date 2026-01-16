@@ -55,4 +55,6 @@ public class CreateOrderRequest {
 
     @NotBlank(message = "Town is required.")
     private String town;
+    
+    private String paymentMethod; // COD, BANK, PAYOS, etc.
 }

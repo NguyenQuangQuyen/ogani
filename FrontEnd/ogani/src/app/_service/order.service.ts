@@ -130,7 +130,8 @@ export class OrderService {
     note: string,
     orderDetails: OrderDetail[],
     username: string,
-    userId: string
+    userId: string,
+    paymentMethod: string
   ): Observable<any> {
     // Validate phone number (10-15 digits)
     const formattedPhone = String(phone || '').replace(/\D/g, '');
@@ -158,6 +159,7 @@ export class OrderService {
       phone: formattedPhone,
       email: email.trim(),
       note: note ? note.trim() : '',
+      paymentMethod: paymentMethod || 'COD',
       // Chuyển đổi orderDetails để đảm bảo định dạng đúng
       orderDetails: orderDetails.map((item) => ({
         name: item.name,
@@ -288,7 +290,8 @@ export class OrderService {
     cancelUrl: string,
     price: number,
     productId: number | null,
-    orderDetails: OrderDetail[] = []
+    orderDetails: OrderDetail[] = [],
+    paymentMethod: string = 'BANK'
   ): Observable<any> {
     const requestBody = {
       userId: userId ? parseInt(userId) : null,
@@ -303,6 +306,7 @@ export class OrderService {
       town: town,
       postCode: postCode || '',
       note: note || '',
+      paymentMethod: paymentMethod,
       productName: productName,
       productId: productId,
       description: description,

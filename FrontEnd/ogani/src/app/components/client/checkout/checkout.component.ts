@@ -213,7 +213,8 @@ export class CheckoutComponent implements OnInit {
         cancelUrl,
         this.total,
         productId,
-        listOrderDetail
+        listOrderDetail,
+        this.orderForm.paymentMethod || 'BANK'
       )
       .subscribe({
         next: (res) => {
@@ -278,7 +279,7 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    if (this.orderForm.paymentMethod === 'PAYOS') {
+    if (this.orderForm.paymentMethod === 'BANK') {
       this.placeOrderWithPayOS();
       return;
     }
@@ -340,7 +341,8 @@ export class CheckoutComponent implements OnInit {
         note,
         this.listOrderDetail,
         this.username,
-        this.userId
+        this.userId,
+        this.orderForm.paymentMethod || 'COD'
       )
       .subscribe({
         next: (res) => {

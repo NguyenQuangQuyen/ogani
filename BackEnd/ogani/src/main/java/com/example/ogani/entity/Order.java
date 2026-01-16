@@ -58,6 +58,9 @@ public class Order {
     private Long productId;
 
     private String status;
+    
+    @Column(length = 20)
+    private String paymentMethod; // COD, BANK, PAYOS, etc.
 
     private Long price;
 

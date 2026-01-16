@@ -164,8 +164,8 @@
               <span *ngIf="isFilteringByPrice"
                 >Tìm thấy {{ listProduct.length }} sản phẩm với từ khóa "{{
                   keyword
-                }}" in price range from
-                {{ rangeValues[0] | vndCurrency }} to
+                }}" trong khoảng giá từ
+                {{ rangeValues[0] | vndCurrency }} đến
                 {{ rangeValues[1] | vndCurrency }}.</span
               >
             </div>
@@ -193,7 +193,7 @@
               fill="#EEEEEE"
               animationDuration=".5s"
             ></p-progressSpinner>
-            <p class="mt-3">Searching for products...</p>
+            <p class="mt-3">Đang tìm kiếm sản phẩm...</p>
           </div>
           <p-dataView
             [value]="listProduct"
