@@ -27,48 +27,68 @@ public class AiService {
     }
 
     public String generateContent(String prompt) {
-        try {
-            AiRequest request = new AiRequest(
-                    List.of(
-                            new AiRequest.Content(
-                                    List.of(new AiRequest.Part(prompt))
-                            )
-                    )
-            );
+        String cleanApiKey = (apiKey != null) ? apiKey.trim() : "";
+        String cleanModel = (model != null && !model.isBlank()) ? model.trim() : "gemini-1.5-flash";
 
-            AiResponse response = webClient.post()
-                    .uri("/v1beta/models/{model}:generateContent?key={key}",
-                            model, apiKey)
-                    .bodyValue(request)
-                    .retrieve()
-                    .bodyToMono(AiResponse.class)
-                    .block();
-
-            if (response == null
-                    || response.getCandidates() == null
-                    || response.getCandidates().isEmpty()) {
-                return "Xin lỗi, tôi không thể xử lý câu hỏi này lúc này.";
-            }
-
-            return response.getCandidates()
-                    .get(0)
-                    .getContent()
-                    .getParts()
-                    .get(0)
-                    .getText();
-                    
-        } catch (WebClientResponseException.Forbidden e) {
-            System.err.println("Gemini API 403 Error: " + e.getMessage());
-            System.err.println("Check API key and model name: " + model);
-            return "Xin lỗi, hệ thống AI đang gặp vấn đề với quyền truy cập. Vui lòng kiểm tra lại cấu hình API key hoặc thử lại sau.";
-        } catch (WebClientResponseException e) {
-            System.err.println("Gemini API Error (" + e.getStatusCode() + "): " + e.getMessage());
-            return "Xin lỗi, hệ thống AI đang gặp sự cố. Vui lòng thử lại sau.";
-        } catch (Exception e) {
-            System.err.println("Unexpected error calling Gemini API: " + e.getMessage());
-            e.printStackTrace();
-            return "Xin lỗi, đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.";
+        if (cleanApiKey.isEmpty()) {
+            return "Vui lòng cấu hình `gemini.api-key` trong file `application.properties` để sử dụng tính năng Chat AI.";
         }
+
+        // Danh sách model thế hệ mới theo thứ tự ưu tiên
+        List<String> modelsToTry = List.of(
+                cleanModel,
+                "gemini-2.5-flash-lite",
+                "gemini-2.5-flash",
+                "gemini-3.6-flash",
+                "gemini-2.5-pro"
+        ).stream().distinct().toList();
+
+        StringBuilder errorLog = new StringBuilder();
+
+        for (String currentModel : modelsToTry) {
+            try {
+                AiRequest request = new AiRequest(
+                        List.of(
+                                new AiRequest.Content(
+                                        List.of(new AiRequest.Part(prompt))
+                                )
+                        )
+                );
+
+                AiResponse response = webClient.post()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/v1beta/models/" + currentModel + ":generateContent")
+                                .queryParam("key", cleanApiKey)
+                                .build())
+                        .header("x-goog-api-key", cleanApiKey)
+                        .header("Content-Type", "application/json")
+                        .bodyValue(request)
+                        .retrieve()
+                        .bodyToMono(AiResponse.class)
+                        .timeout(java.time.Duration.ofSeconds(20))
+                        .block();
+
+                if (response != null && response.getCandidates() != null && !response.getCandidates().isEmpty()) {
+                    var candidate = response.getCandidates().get(0);
+                    if (candidate.getContent() != null && candidate.getContent().getParts() != null && !candidate.getContent().getParts().isEmpty()) {
+                        return candidate.getContent().getParts().get(0).getText();
+                    } else {
+                        errorLog.append("[").append(currentModel).append("] Candidate content/parts trống. ");
+                    }
+                } else {
+                    errorLog.append("[").append(currentModel).append("] Candidates list trống. ");
+                }
+            } catch (WebClientResponseException e) {
+                String body = e.getResponseBodyAsString();
+                System.err.println("Gemini API Error (" + e.getStatusCode() + ") [" + currentModel + "]: " + body);
+                errorLog.append("[").append(currentModel).append(" - HTTP ").append(e.getStatusCode().value()).append("]: ").append(body).append("; ");
+            } catch (Exception e) {
+                System.err.println("Lỗi gọi Gemini API [" + currentModel + "]: " + e.getMessage());
+                errorLog.append("[").append(currentModel).append(" - Exception]: ").append(e.getMessage()).append("; ");
+            }
+        }
+
+        return "⚠️ Không thể kết nối Gemini AI. Chi tiết lỗi từ hệ thống: " + errorLog.toString();
     }
 
     /**
